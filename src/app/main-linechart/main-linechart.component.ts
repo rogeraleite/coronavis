@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 import * as d3 from "d3";
+import * as $ from 'jquery';
+import { SelectorContext } from '@angular/compiler';
 
 @Component({
   selector: 'app-main-linechart',
@@ -19,7 +21,7 @@ export class MainLinechartComponent implements OnInit {
 
   private margin = {top: 50, right: 30, bottom: 30, left: 90};
   private width = 400 - this.margin.left - this.margin.right;
-  private height = 730 - this.margin.top - this.margin.bottom;
+  private height = 300 - this.margin.top - this.margin.bottom;
   private data = [
     {date: "2007-04-23", value: 93.24},
     {date: "2007-04-24", value: 95.35},
@@ -65,10 +67,13 @@ export class MainLinechartComponent implements OnInit {
  
   constructor() { }
 
-  ngOnInit() {
+  ngOnInit() {    
+    this.createChart()
+  }
+  
+  createChart(){
     /////////////////////// Part1
     this.setSVG();
-    this.setRange();
     this.setValueLine();
     /////////////////////// Part2
     this.formatData();
@@ -77,6 +82,11 @@ export class MainLinechartComponent implements OnInit {
     this.drawLines();
     this.drawAxis();  
   }
+
+  ngAfterContentInit(){  
+    $("path.line").css({ fill: "none", stroke: "steelblue" })
+  }
+
   //////////////////////////////////////////////// Part1
   setSVG(){
     this.svg_width = this.width + this.margin.left + this.margin.right;
@@ -90,8 +100,6 @@ export class MainLinechartComponent implements OnInit {
                         "translate(" + this.margin.left + "," +
                                        this.margin.top + ")");
   }  
-  setRange(){
-  }
   setValueLine(){    
     this.x = d3.scaleTime().range([0, this.width]);
     this.y = d3.scaleLinear().range([this.height, 0]);
@@ -112,7 +120,8 @@ export class MainLinechartComponent implements OnInit {
   }
   scaleXYDomains() {
     this.x.domain(d3.extent(this.data, function(d) { return d.date; }));
-    this.y.domain([0, d3.max(this.data, function(d) { return d.value; })]);
+    this.y.domain([d3.min(this.data, function(d) { return d.value; }),
+                   d3.max(this.data, function(d) { return d.value; })]);
   }
   //////////////////////////////////////////////// Part3
   drawLines() {
