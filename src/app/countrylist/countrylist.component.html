@@ -1,3 +1,12 @@
-<p>
-  countrylist works!
-</p>
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label
+    formArrayName="orders"
+    *ngFor="let order of form.controls.orders.controls; let i = index"
+  >
+    <input type="checkbox" [formControlName]="i" />
+    {{ordersData[i].name}}
+  </label>
+  <div *ngIf="!form.valid">At least one order must be selected</div>
+  <br>
+  <button>submit</button>
+</form>

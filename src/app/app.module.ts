@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { MainLinechartComponent } from './main-linechart/main-linechart.component';
 import { TimechartComponent } from './timechart/timechart.component';
 import { CountrylistComponent } from './countrylist/countrylist.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,9 @@ import { CountrylistComponent } from './countrylist/countrylist.component';
     CountrylistComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
