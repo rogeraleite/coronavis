@@ -10,13 +10,13 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-2 countrylist">
-      <app-countrylist></app-countrylist>
+      <app-countrylist [dm]="_dm"></app-countrylist>
     </div>
     <div class="col-sm-10">
-      <app-main-linechart></app-main-linechart>
+      <app-main-linechart [dm]="_dm"></app-main-linechart>
     </div>
     <div class="col-sm-12">      
-      <app-timechart></app-timechart>
+      <app-timechart [dm]="_dm"></app-timechart>
     </div>
   </div>
 </div>

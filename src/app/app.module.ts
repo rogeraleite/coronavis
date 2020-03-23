@@ -7,12 +7,15 @@ import { TimechartComponent } from './timechart/timechart.component';
 import { CountrylistComponent } from './countrylist/countrylist.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { DataManagerComponent } from './_datamanager/datamanager.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     MainLinechartComponent,
     TimechartComponent,
-    CountrylistComponent
+    CountrylistComponent,
+    DataManagerComponent
   ],
   imports: [
     BrowserModule,

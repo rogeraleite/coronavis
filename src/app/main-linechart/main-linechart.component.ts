@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 import * as d3 from "d3";
 import * as $ from 'jquery';
 import { SelectorContext } from '@angular/compiler';
+import { DataManagerComponent } from '../_datamanager/datamanager.component';
 
 @Component({
   selector: 'app-main-linechart',
@@ -10,6 +11,8 @@ import { SelectorContext } from '@angular/compiler';
   styleUrls: ['./main-linechart.component.css']
 })
 export class MainLinechartComponent implements OnInit {
+  
+  @Input() dm: DataManagerComponent;
   
   private svg: any;
   private svg_width: any;

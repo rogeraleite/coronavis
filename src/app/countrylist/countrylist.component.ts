@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
+import { DataManagerComponent } from '../_datamanager/datamanager.component';
 
 @Component({
   selector: 'app-countrylist',
@@ -7,25 +8,20 @@ import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
   styleUrls: ['./countrylist.component.css']
 })
 export class CountrylistComponent implements OnInit {
-
+  
+  @Input() dm: DataManagerComponent;
   form: FormGroup;
   
-  private ordersData = [
-    { id: 1, name: 'order 1' },
-    { id: 2, name: 'order 2' },
-    { id: 3, name: 'order 3' },
-    { id: 4, name: 'order 4' }
-  ];
+  private country_list;
 
   constructor(private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
       orders: new FormArray([])
     });
-    this.addCheckboxes();
   }
   
   private addCheckboxes() {
-    this.ordersData.forEach((o, i) => {
+    this.country_list.forEach((o, i) => {
       const control = new FormControl(i === 0); // if first item set to true, else false
       (this.form.controls.orders as FormArray).push(control);
     });
@@ -33,13 +29,15 @@ export class CountrylistComponent implements OnInit {
 
   submit() { 
     const selectedOrderIds = this.form.value.orders
-      .map((v, i) => (v ? this.ordersData[i].id : null))
+      .map((v, i) => (v ? this.country_list[i] : null))
       .filter(v => v !== null);
     console.log(selectedOrderIds);
-    console.log("submit clicked")
   }
 
   ngOnInit() {
+    console.log(this.dm.getDataIds())  
+    this.country_list = this.dm.getDataIds();
+    this.addCheckboxes();  
   }
 
 }
