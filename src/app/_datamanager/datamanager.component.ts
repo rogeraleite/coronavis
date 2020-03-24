@@ -8,6 +8,7 @@ import { Data } from '../../assets/data/Data';
     templateUrl: './datamanager.component.html',
 })
 export class DataManagerComponent implements OnInit {
+    
     private _data: Array<any>;
     private _data_grouped_by_country: any;
     private _data_ids: Array<any>;
@@ -19,6 +20,8 @@ export class DataManagerComponent implements OnInit {
     private MIN_DATE: Date;
     private MAX_DATE: Date;
 
+    private initialSelection = ["Brazil","Argentina","Italy"];
+
     private _colors: D3.ScaleOrdinal<string, string>;
     private _colors_array = [
         '#e6194b', '#f58231', '#ffe119', '#bfef45', '#3cb44b',
@@ -28,7 +31,7 @@ export class DataManagerComponent implements OnInit {
     ]
 
     constructor() {
-        this._data = Data.getData();
+        this._data = this.fetchData();
         this._data_ids = this.getUniqueCountriesId();
         this._data_grouped_by_country = this.groupDataByCountry();   
 
@@ -41,9 +44,26 @@ export class DataManagerComponent implements OnInit {
     ngOnInit(): void {
         throw new Error("Method not implemented.");
     }
+    fetchData(): any[] {
+        let d = Data.getData();  
+        d = this.createDateObjectsToData(d);
+        return d;
+    }
+    createDateObjectsToData(data){
+        let result = [];
+        data.forEach(sample => {
+            let date_split = sample.date.split("/");
+            let y = 20+date_split[2];
+            let d = date_split[1];
+            let m = parseInt(date_split[0])-1;
+            sample.date = new Date(y,m,d)
+            result.push(sample)             
+        });
+        return result;
+    }
+
     groupDataByCountry(): any{
         let grouped = this.groupBy(this._data, sample => sample.country);
-        console.log(grouped)
         return grouped;
     }
     getUniqueCountriesId():Array<any>{
@@ -55,19 +75,18 @@ export class DataManagerComponent implements OnInit {
         return this._data_ids;
     }
     getDataByCountryList(countries: Array<string>){
+        if(!countries) countries = this.getInitialSelection()
         let result = [];
         countries.forEach(c => {
             let country = this._data_grouped_by_country.get(c);
             country.forEach(sample => {
-                let date_split = sample.date.split("/");
-                let y = 20+date_split[2];
-                let d = date_split[1];
-                let m = parseInt(date_split[0])-1;
-                sample.date = new Date(y,m,d)
                 result.push(sample)             
             });            
         });
         return result;        
+    }
+    getInitialSelection() {
+        return this.initialSelection;
     }
     getType(v){
         return typeof v 

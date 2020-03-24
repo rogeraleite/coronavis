@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { DataManagerComponent } from '../_datamanager/datamanager.component';
 
@@ -9,29 +9,38 @@ import { DataManagerComponent } from '../_datamanager/datamanager.component';
 })
 export class CountrylistComponent implements OnInit {
   
-  @Input() dm: DataManagerComponent;
+  @Input() dm: DataManagerComponent;  
+  @Output() countriesOutput = new EventEmitter<Array<string>>();
   form: FormGroup;
+  private selectedCountries: any
   
   private country_list;
 
   constructor(private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
-      orders: new FormArray([])
+      countries: new FormArray([])
     });
   }
   
   private addCheckboxes() {
-    this.country_list.forEach((o, i) => {
-      const control = new FormControl(i === 0); // if first item set to true, else false
-      (this.form.controls.orders as FormArray).push(control);
+    let initial_selection = this.dm.getInitialSelection();
+    this.country_list.forEach((country, i) => {
+      let control = new FormControl() // if first item set to true, else false
+      if(initial_selection.includes(country)){
+        control.setValue(true)
+      }
+      (this.form.controls.countries as FormArray).push(control);
     });
   }
 
   submit() { 
-    const selectedOrderIds = this.form.value.orders
-      .map((v, i) => (v ? this.country_list[i] : null))
-      .filter(v => v !== null);
-    console.log(selectedOrderIds);
+    this.selectedCountries = this.form.value.countries
+                                  .map((v, i) => (v ? this.country_list[i] : null))
+                                  .filter(v => v !== null);
+    this.emitCountriesOutput();
+  }
+  emitCountriesOutput(){
+    this.countriesOutput.emit(this.selectedCountries);
   }
 
   ngOnInit() {

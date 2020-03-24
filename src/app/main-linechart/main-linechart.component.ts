@@ -17,29 +17,30 @@ export class MainLinechartComponent implements OnInit {
   private svg: any;
   private svg_width: any;
   private svg_height: any;
+  private canvas: any;
+  private color_scale: any;
   private x: any;
   private y: any;
 
   private valueLine;
   private groups;
 
-  private margin = {top: 50, right: 30, bottom: 30, left: 90};
-  private width = 1200 - this.margin.left - this.margin.right;
-  private height = 900 - this.margin.top - this.margin.bottom;
+  private margin = {top: 50, right: 30, bottom: 30, left: 40};
+  private width = 800 - this.margin.left - this.margin.right;
+  private height = 600 - this.margin.top - this.margin.bottom;
   private data;
  
   constructor() { }
 
   ngOnInit() {        
-    this.data = this.dm.getDataByCountryList(["Brazil","Argentina"]);
-    console.log(this.data)
-    //{date: "2007-04-24", value: 95.35},
+    this.data = this.dm.getDataByCountryList(null);
     this.createChart()
   }
   
   createChart(){
     /////////////////////// Part1
     this.setSVG();
+    this.setCanvas();
     this.groupData()
     /////////////////////// Part2
     this.formatData();
@@ -47,12 +48,21 @@ export class MainLinechartComponent implements OnInit {
     this.scaleXYDomains();
     /////////////////////// Part3
     this.drawLines();
+    this.addLegend();
     this.drawAxis();  
   }
 
-  ngAfterContentInit(){  
-    $("path.line").css({ fill: "none", stroke: "steelblue" })
+  loadCountriesByArray(countries:Array<string>){
+    this.data = this.dm.getDataByCountryList(countries);
+    this.cleanCanvas();
+    this.createChart();
   }
+
+  ngAfterContentInit(){  }
+  cleanCanvas(){
+    if(this.svg) this.svg.remove();
+  }
+
 
   //////////////////////////////////////////////// Part1
   setSVG(){
@@ -61,12 +71,13 @@ export class MainLinechartComponent implements OnInit {
     this.svg = d3.select('div.linechart')
                   .append("svg")
                   .attr("width", this.svg_width)
-                  .attr("height", this.svg_height)
-                  .append("g")
-                  .attr("transform",
-                        "translate(" + this.margin.left + "," +
-                                       this.margin.top + ")");
+                  .attr("height", this.svg_height);
   }  
+  setCanvas(){
+    this.canvas = this.svg.append("g")
+                          .attr("transform",
+                                "translate(" + this.margin.left + "," + this.margin.top + ")");
+  }
   groupData() {
     this.groups = d3.nest() // nest function allows to group the calculation per level of a factor
                     .key(function(d) { return d.country;})
@@ -98,34 +109,54 @@ export class MainLinechartComponent implements OnInit {
   //////////////////////////////////////////////// Part3
   drawLines() {
     let res = this.groups.map(function(d){ return d.key }) // list of group names
-    let color = d3.scaleOrdinal()
+    this.color_scale = d3.scaleOrdinal()
                   .domain(res)
                   .range(this.dm.getColorsArray())
 
     console.log(this.groups)
-    this.svg.selectAll(".line")
-            .data(this.groups)
-            .enter()
-              .append("path")
-              .attr("fill", "none")
-              .attr("stroke", function(d){ 
-                return color(d.key) 
+    this.canvas.selectAll(".line")
+              .data(this.groups)
+              .enter()
+                .append("path")
+                .attr("fill", "none")
+                .attr("stroke", (d)=>{ 
+                  return this.color_scale(d.key) 
+                })
+                .attr("stroke-width", 2)
+                .attr("d", (d)=>{
+                  return this.valueLine(d.values)
+                })
+  }
+  addLegend(){
+    let lineLegend = this.canvas.selectAll(".lineLegend")
+                                .data(this.groups)
+                                .enter()
+                                  .append("g")
+                                  .attr("class","lineLegend")
+                                  .attr("transform", (d,i) => {
+                                          return "translate(" + 25 + "," + (i*20)+")";
+                                      });
+
+    lineLegend.append("text")
+              .text((d) => {
+                return d.key;
               })
-              .attr("stroke-width", 2)
-              .attr("d", (d)=>{
-                return this.valueLine(d.values)
-              })
+              .attr("transform", "translate(15,9)"); //align texts with boxes
+
+    lineLegend.append("rect")
+              .attr("fill", (d, i) => {return this.color_scale(d.key); })
+              .attr("width", 10).attr("height", 10);
   }
   drawAxis() {
     // Add the X Axis
-    this.svg.append("g")
-            .attr("transform", "translate(0," + this.height + ")")
-            .call(d3.axisBottom(this.x)
-                    .tickFormat(d3.timeFormat("%Y-%m-%d")));
+    this.canvas.append("g")
+                .attr("transform", "translate(0," + this.height + ")")
+                .call(d3.axisBottom(this.x)
+                        .tickFormat(d3.timeFormat("%m-%d")));
 
     // Add the Y Axis
-    this.svg.append("g")
-            .call(d3.axisLeft(this.y));
+    this.canvas.append("g")
+                .call(d3.axisLeft(this.y));
   }
 
   

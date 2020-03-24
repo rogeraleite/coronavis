@@ -1,13 +1,13 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
+  <button>submit</button>
+  <br>
+  <div *ngIf="!form.valid">At least one order must be selected</div>
   <ng-container
-    formArrayName="orders"
-    *ngFor="let order of form.controls.orders.controls; let i = index"
+    formArrayName="countries"
+    *ngFor="let order of form.controls.countries.controls; let i = index"
   >
     <input type="checkbox" [formControlName]="i" />
     {{country_list[i]}}
     <br />
   </ng-container>
-  <div *ngIf="!form.valid">At least one order must be selected</div>
-  <br>
-  <button>submit</button>
 </form>
