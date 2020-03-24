@@ -9,7 +9,7 @@ import { Data } from '../../assets/data/Data';
 })
 export class DataManagerComponent implements OnInit {
     private _data: Array<any>;
-    private _data_grouped_by_country: Array<any>;
+    private _data_grouped_by_country: any;
     private _data_ids: Array<any>;
     private _data_map: Map<any, any>;
 
@@ -20,42 +20,60 @@ export class DataManagerComponent implements OnInit {
     private MAX_DATE: Date;
 
     private _colors: D3.ScaleOrdinal<string, string>;
+    private _colors_array = [
+        '#e6194b', '#f58231', '#ffe119', '#bfef45', '#3cb44b',
+        '#808000', '#42d4f4', '#4363d8', '#911eb4', '#f032e6',
+        '#fabebe', '#ffd8b1', '#9a6324', '#800000', '#e6beff',
+        '#aaffc3', '#469990', '#000075', '#808080', '#000000',
+    ]
 
     constructor() {
         this._data = Data.getData();
-        this._data_ids = this.calculateDataIds();
-        this._data_grouped_by_country = this.groupDataByCountry();
+        this._data_ids = this.getUniqueCountriesId();
+        this._data_grouped_by_country = this.groupDataByCountry();   
 
         this._data_map = new Map();
         this._timeRange = new Array<Date>();
 
-        this._colors = D3.scaleOrdinal([
-            '#e6194b', '#f58231', '#ffe119', '#bfef45', '#3cb44b',
-            '#808000', '#42d4f4', '#4363d8', '#911eb4', '#f032e6',
-            '#fabebe', '#ffd8b1', '#9a6324', '#800000', '#e6beff',
-            '#aaffc3', '#469990', '#000075', '#808080', '#000000',
-        ]);
+        this._colors = D3.scaleOrdinal(this._colors_array);
     }
     
     ngOnInit(): void {
         throw new Error("Method not implemented.");
     }
-    groupDataByCountry(): Array<any>{
-        // this._data_grouped_by_country = [];
-        // let result = [];
-        // for (let item in this._data) {
-        //     resultArr.push({ Phase: item, Value: obj[item] });
-        // }
-        return null;
+    groupDataByCountry(): any{
+        let grouped = this.groupBy(this._data, sample => sample.country);
+        console.log(grouped)
+        return grouped;
     }
-
-    calculateDataIds():Array<any>{
+    getUniqueCountriesId():Array<any>{
         const allCountries = this._data.map((c) => c.country);
         let uniques = Array.from(new Set(allCountries));
         return uniques;
     }
     getDataIds(){
         return this._data_ids;
+    }
+    getDataByCountryList(countries: Array<string>){
+        let result = [];
+        countries.forEach(c => {
+            let country = this._data_grouped_by_country.get(c);
+            country.forEach(sample => {
+                let date_split = sample.date.split("/");
+                let y = 20+date_split[2];
+                let d = date_split[1];
+                let m = parseInt(date_split[0])-1;
+                sample.date = new Date(y,m,d)
+                result.push(sample)             
+            });            
+        });
+        return result;        
+    }
+    getType(v){
+        return typeof v 
+    }
+    getColorsArray(){
+        return this._colors_array;
     }
 
     get dataMap(): Map<any, any> {
@@ -95,6 +113,20 @@ export class DataManagerComponent implements OnInit {
         return D3.extent(this._data, (d: any) => {
             return d.date_time;
         });
+    }
+
+    groupBy(list, keyGetter) {
+        const map = new Map();
+        list.forEach((item) => {
+             const key = keyGetter(item);
+             const collection = map.get(key);
+             if (!collection) {
+                 map.set(key, [item]);
+             } else {
+                 collection.push(item);
+             }
+        });
+        return map;
     }
    
 }//end class
