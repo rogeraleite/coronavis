@@ -11,7 +11,7 @@ export class CountrylistComponent implements OnInit {
   
   @Input() dm: DataManagerComponent;  
   @Output() countriesOutput = new EventEmitter<Array<string>>();
-  form: FormGroup;
+  public form: FormGroup;
   private selectedCountries: any
   
   private country_list;
@@ -48,4 +48,7 @@ export class CountrylistComponent implements OnInit {
     this.addCheckboxes();  
   }
 
+  getControls() {
+    return (this.form.get('controlName') as FormArray).controls;
+  }
 }

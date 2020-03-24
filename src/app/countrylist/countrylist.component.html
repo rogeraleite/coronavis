@@ -4,7 +4,7 @@
   <div *ngIf="!form.valid">At least one order must be selected</div>
   <ng-container
     formArrayName="countries"
-    *ngFor="let order of form.controls.countries.controls; let i = index"
+    *ngFor="let order of getControls(); let i = index"
   >
     <input type="checkbox" [formControlName]="i" />
     {{country_list[i]}}
