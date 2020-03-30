@@ -17,6 +17,9 @@ export class CountrylistComponent implements OnInit {
   private country_list;
 
   constructor(private formBuilder: FormBuilder) {
+    
+  }
+  createForm(){
     this.form = this.formBuilder.group({
       countries: new FormArray([])
     });
@@ -44,11 +47,12 @@ export class CountrylistComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.country_list = this.dm.getDataIds();
+    this.country_list = this.dm.getDataCountriesIds();
+    this.createForm();
     this.addCheckboxes();  
   }
 
   getControls() {
-    return (this.form.get('controlName') as FormArray).controls;
+    return (this.form.get('countries') as FormArray).controls;
   }
 }

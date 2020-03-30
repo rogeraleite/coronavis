@@ -13,14 +13,14 @@ export class DataManagerComponent implements OnInit {
     private _data_grouped_by_country: any;
     private _data_ids: Array<any>;
     private _data_map: Map<any, any>;
+    private countries_id: Array<any> = [
+        "Switzerland","Belgium","Netherlands","Turkey","South Korea",
+        "Austria","Canada","Portugal","Norway","Israel","Australia",
+        "Sweden","Brazil","US","China","Italy"
+    ]
 
     private _timeRange: Array<Date>;
-    private timeLinearScale: D3.ScaleLinear<number, number>;
-
-    private MIN_DATE: Date;
-    private MAX_DATE: Date;
-
-    private initialSelection = ["Brazil","Argentina","Italy"];
+    private initialSelection = ["Austria","Brazil","China","Italy","US"];
 
     private _colors: D3.ScaleOrdinal<string, string>;
     private _colors_array = [
@@ -71,8 +71,10 @@ export class DataManagerComponent implements OnInit {
         let uniques = Array.from(new Set(allCountries));
         return uniques;
     }
-    getDataIds(){
-        return this._data_ids;
+    getDataCountriesIds(){
+        let filtered_countries_id = this.getMostEffectedCountries();
+
+        return filtered_countries_id;
     }
     getDataByCountryList(countries: Array<string>){
         if(!countries) countries = this.getInitialSelection()
@@ -117,7 +119,6 @@ export class DataManagerComponent implements OnInit {
         });
     }
 
-
     createDataMap(): any {
         if (this._data) {
             this._data_map = new Map();
@@ -126,7 +127,6 @@ export class DataManagerComponent implements OnInit {
             });
         }
     }
-
     
     private getTimeExtentAsDate(): Array<Date> {
         return D3.extent(this._data, (d: any) => {
@@ -146,6 +146,20 @@ export class DataManagerComponent implements OnInit {
              }
         });
         return map;
+    }
+
+    getMostEffectedCountries(){
+        let result = [];
+        this._data_ids.forEach(e=>{
+            if(this.countries_id.indexOf(e) > -1){
+                result.push(e);
+            }
+        })
+        //check if typed names fit data names
+        if(result.length == this.countries_id.length){            
+            // console.log("all countries were found")
+        }
+        return result;
     }
    
 }//end class

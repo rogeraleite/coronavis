@@ -1,7 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
 import { CountrylistComponent } from './countrylist/countrylist.component';
-import { MainLinechartComponent } from './main-linechart/main-linechart.component';
-import { TimechartComponent } from './timechart/timechart.component';
+import { LinechartNComponent } from './linechart-n/linechart-n.component';
+import { LinechartLognComponent } from './linechart-logn/linechart-logn.component';
+import { LinechartNewcasesComponent } from './linechart-newcases/linechart-newcases.component';
+import { CardsPanelComponent } from './cards-panel/cards-panel.component';
 import { DataManagerComponent } from './_datamanager/datamanager.component'
 
 @Component({
@@ -14,11 +16,10 @@ export class AppComponent {
   public _dm: DataManagerComponent;
 
   @ViewChild(CountrylistComponent) countryListComponent_child;
-  @ViewChild(MainLinechartComponent) mainlineChartComponent_child;
-  @ViewChild(TimechartComponent) timeChartComponent_child;
-  // @ViewChild(CountrylistComponent, {static: true}) countryListComponent_child;
-  // @ViewChild(MainLinechartComponent, {static: true}) mainlineChartComponent_child;
-  // @ViewChild(TimechartComponent, {static: true}) timeChartComponent_child;
+  @ViewChild(CardsPanelComponent) cardsPanelComponent_child;
+  @ViewChild(LinechartNComponent) lineChartNComponent_child;
+  @ViewChild(LinechartLognComponent) lineChartLognComponent_child;
+  @ViewChild(LinechartNewcasesComponent) lineChartNewCases_child;
 
   constructor() { 
     this._dm = new DataManagerComponent(); 
@@ -26,6 +27,6 @@ export class AppComponent {
 
   async receiveCountriesSelection($event){
     let countries = $event;
-    this.mainlineChartComponent_child.loadCountriesByArray(countries)
+    this.lineChartNComponent_child.loadCountriesByArray(countries)
   }
 }

@@ -1,23 +1,31 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <div style="text-align:center">
 </div>
-<div class="container">
-  
-  <div class="row">    
-    <div class="col-sm-2">
-      <img width="150" alt="Corona Logo" src="assets/corona.png">
-    </div>  
-    <div class="col-sm-10">
-      <app-timechart [dm]="_dm"></app-timechart>      
-    </div>
-  </div>
+<div class="container">  
   <div class="row">
-    <div class="col-sm-2 countrylist">
-      <app-countrylist [dm]="_dm"
-                       (countriesOutput)="receiveCountriesSelection($event)"></app-countrylist>
-    </div>
-    <div class="col-sm-10">
-      <app-main-linechart [dm]="_dm"></app-main-linechart>
-    </div>
+      <div class="col-sm-2 countrylist">
+          <img width="150" alt="Corona Logo" src="assets/corona.png">
+          <app-countrylist [dm]="_dm"
+                          (countriesOutput)="receiveCountriesSelection($event)"></app-countrylist>
+      </div>
+      
+      <div class="row">
+          <div class="col-sm-4 linechart-n">
+            <app-linechart-n [dm]="_dm"></app-linechart-n>
+          </div>
+          <div class="col-sm-3 linechart-logn">
+            <app-linechart-logn [dm]="_dm"></app-linechart-logn>
+          </div>
+          <div class="col-sm-3 linechart-newcases">
+            <app-linechart-newcases [dm]="_dm"></app-linechart-newcases>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-sm-12">
+            <app-cards-panel [dm]="_dm"></app-cards-panel>
+          </div>
+      </div>
   </div>
+
+
 </div>
