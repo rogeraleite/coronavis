@@ -236,7 +236,7 @@ export class LinechartNComponent implements OnInit {
     } 
     this.zoom = d3.zoom()
                   .scaleExtent([0.7, 5])
-                  // .translateExtent([[-100, -100], [width + 90, height + 100]])
+                  .translateExtent([[-100, -100], [this.width + 90, this.height + 100]])
                   .on('zoom', zoomed);
     this.zoom(this.svg);
                   
