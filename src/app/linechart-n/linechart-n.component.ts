@@ -169,29 +169,6 @@ export class LinechartNComponent implements OnInit {
               .on("mouseout", ()=>{
                 return this.tooltip.style("visibility", "hidden");                
               });
-    // .on("mouseover", (d) =>{		      
-    //   let currentMousePos = { x: -1, y: -1 };
-    //   $(document).mousemove((event) => {
-    //       currentMousePos.x = d3.event.pageX;
-    //       currentMousePos.y = d3.event.pageY;
-    //   });
-    //   // console.log(d3.mouse(this))
-    //   this.tooltip.transition()		
-    //               .duration(200)		
-    //               .style("opacity", .9);		
-    //   this.tooltip.html("growth: "+Number(d.confirmed_gfactor).toFixed(2))	
-    //               .style("left", d3.mouse(this)[0]+"px")		 
-    //               .style("top", d3.mouse(this)[1]+"px")           
-    //               // .style("left", (d3.mouse()[0]) + "px")		
-    //               // .style("left", pos_x)		
-    //               // .style("top", (d3.mouse()[1]) + "px");
-    //               // .style("top", pos_y);	
-    // })					
-    // .on("mouseout", (d) => {		
-    //   this.tooltip.transition()		
-                  // .duration(500)		
-                  // .style("opacity", 0);	
-    // });
   }
   addLegend(){
     let lineLegend = this.gCanvas.selectAll(".lineLegend")
