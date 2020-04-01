@@ -78,8 +78,12 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                     .enter()
                       .append("circle")
                       .attr("r", 2.5)
+                      .style("visibility",(d)=>{
+                        let lastDate = this.dm.getLastDate(d.country);
+                        return (d.date == lastDate) ? "visible" : "hidden";
+                      })
+                      .style("fill", (d) => { return this.color_scale(d.country); })                      
                       .attr("stroke", "gray")
-                      .style("fill", (d) => { return this.color_scale(d.country) })
                       .attr("cx", (d) => { return this.scale_x(d.total_confirmed); })
                       .attr("cy", (d) => { return this.scale_y(d.confirmed_last_week); });
     this.addTooltipBehaviorToDots();

@@ -25,7 +25,7 @@ export class LinechartsParent implements OnInit {
     protected initialTransform: any;
   
     protected valueLine;
-    protected groups;
+    protected grouped_data;
   
     protected margin = {top: 15, right: 0, bottom: 0, left: 0};
     protected width;// = 800 - this.margin.left - this.margin.right;
@@ -53,7 +53,7 @@ export class LinechartsParent implements OnInit {
       /////////////////////// Part1
       this.setSVG();
       this.setCanvas();
-      this.groupData()
+      this.getGroupedData()
       /////////////////////// Part2
       this.setXYScales();
       this.createLines();
@@ -91,8 +91,8 @@ export class LinechartsParent implements OnInit {
                              .attr("class", "canvas");
       // if (this.curTransform) this.gCanvas.attr('transform', this.curTransform);
     }
-    groupData() {
-      this.groups = d3.nest() // nest function allows to group the calculation per level of a factor
+    getGroupedData() {
+      this.grouped_data = d3.nest() // nest function allows to group the calculation per level of a factor
                       .key((d) => { return d.country;})
                       .entries(this.data);
     }
@@ -122,13 +122,13 @@ export class LinechartsParent implements OnInit {
                       .style("visibility", "hidden");
     }
     drawCreatedLines() {
-      let map_result = this.groups.map(function(d){ return d.key }) // list of group names
+      let map_result = this.grouped_data.map(function(d){ return d.key }) // list of group names
       this.color_scale = d3.scaleOrdinal()
                             .domain(map_result)
                             .range(this.dm.getColorsArray())
   
       this.gCanvas.selectAll(".line")
-                  .data(this.groups)
+                  .data(this.grouped_data)
                   .enter()
                     .append("path")
                     .attr("fill", "none")

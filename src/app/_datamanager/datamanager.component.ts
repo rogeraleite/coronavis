@@ -113,6 +113,10 @@ export class DataManagerComponent implements OnInit {
         });
         return result;        
     }
+    getLastDate(country_name){
+        let country = this._lastweek_data_groupedByCountry.get(country_name);
+        return country[country.length-1].date;
+    }
     getInitialSelection() {
         return this.initialSelection;
     }

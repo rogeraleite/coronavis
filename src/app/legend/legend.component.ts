@@ -23,7 +23,7 @@ export class LegendComponent implements OnInit {
   protected margin;
 
   protected data;  
-  protected groups;
+  protected grouped_data;
 
   constructor() { }
 
@@ -41,7 +41,7 @@ export class LegendComponent implements OnInit {
   }
   calculateWidthHeight() {    
     this.width = $(document).width()*1/6;
-    this.height = (this.groups.length * this.space_each_item)+this.margin;
+    this.height = (this.grouped_data.length * this.space_each_item)+this.margin;
   }  
   createLegend(){
     this.setSVG();
@@ -50,7 +50,7 @@ export class LegendComponent implements OnInit {
     this.addLegend(); 
   }
   groupData() {
-    this.groups = d3.nest() // nest function allows to group the calculation per level of a factor
+    this.grouped_data = d3.nest() // nest function allows to group the calculation per level of a factor
                     .key((d) => { return d.country;})
                     .entries(this.data);
   }
@@ -63,7 +63,7 @@ export class LegendComponent implements OnInit {
   loadDataByCountries(countries){
     if(countries){
       this.data = this.dm.getDataByCountryList(countries);
-      this.groups = d3.nest() // nest function allows to group the calculation per level of a factor
+      this.grouped_data = d3.nest() // nest function allows to group the calculation per level of a factor
                         .key((d) => { return d.country;})
                         .entries(this.data);
     }
@@ -79,7 +79,7 @@ export class LegendComponent implements OnInit {
     this.gCanvas = this.svg.append("g")
                            .attr("class", "canvas");  }
   getColorScale() {
-    let map_result = this.groups.map(function(d){ return d.key }) // list of group names
+    let map_result = this.grouped_data.map(function(d){ return d.key }) // list of group names
     this.color_scale = d3.scaleOrdinal()
                             .domain(map_result)
                             .range(this.dm.getColorsArray())
@@ -88,9 +88,7 @@ export class LegendComponent implements OnInit {
     let rect_size = 10;
     this.gCanvas.append("rect")
               .attr("width", this.width*2/3)
-              .attr("height",(d) => {
-                  return this.height;
-              })
+              .attr("height", this.height)
               .attr("x", 0)
               .attr("y", -this.margin)
               // .attr("fill","#E8E8E8")              
@@ -98,7 +96,7 @@ export class LegendComponent implements OnInit {
               .attr("opacity","1");
 
     let gLegend = this.gCanvas.selectAll(".lineLegend")
-                                .data(this.groups)
+                                .data(this.grouped_data)
                                 .enter()
                                   .append("g")
                                   .attr("class","lineLegend")
