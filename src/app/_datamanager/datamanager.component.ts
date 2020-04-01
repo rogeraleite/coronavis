@@ -10,7 +10,9 @@ import { Data } from '../../assets/data/Data';
 export class DataManagerComponent implements OnInit {
     
     private _data: Array<any>;
-    private _data_grouped_by_country: any;
+    private _data_groupedByCountry: any;
+    private _lastweek_data: Array<any>;
+    private _lastweek_data_groupedByCountry: any;
     private _data_ids: Array<any>;
     private _data_map: Map<any, any>;
     private countries_id: Array<any> = [
@@ -32,8 +34,10 @@ export class DataManagerComponent implements OnInit {
 
     constructor() {
         this._data = this.fetchData();
+        this._lastweek_data = this.fetchLastWeekData();
         this._data_ids = this.getUniqueCountriesId();
-        this._data_grouped_by_country = this.groupDataByCountry();   
+        this._data_groupedByCountry = this.groupDataByCountry();           
+        this._lastweek_data_groupedByCountry = this.groupLastWeekDataByCountry();
 
         this._data_map = new Map();
         this._timeRange = new Array<Date>();
@@ -46,17 +50,24 @@ export class DataManagerComponent implements OnInit {
     }
     fetchData(): any[] {
         let d = Data.getData();  
-        d = this.createDateObjectsToData(d);
+        d = this.parsingDateStringObjToDateObj(d);
         return d;
     }
-    createDateObjectsToData(data){
+    fetchLastWeekData(): any[] {
+        let d = Data.getLastWeekData();  
+        d = this.parsingDateStringObjToDateObj(d);
+        return d;
+    }
+    parsingDateStringObjToDateObj(data){
         let result = [];
-        data.forEach(sample => {
-            let date_split = sample.date.split("/");
-            let y = 20+date_split[2];
-            let d = date_split[1];
-            let m = parseInt(date_split[0])-1;
-            sample.date = new Date(y,m,d)
+        data.forEach((sample,i) => {
+            if(typeof sample.date === 'string'){
+                let date_split = sample.date.split("/");
+                let y = 20+date_split[2];
+                let d = date_split[1];
+                let m = parseInt(date_split[0])-1;
+                sample.date = new Date(y,m,d);
+            }
             result.push(sample)             
         });
         return result;
@@ -64,6 +75,10 @@ export class DataManagerComponent implements OnInit {
 
     groupDataByCountry(): any{
         let grouped = this.groupBy(this._data, sample => sample.country);
+        return grouped;
+    }
+    groupLastWeekDataByCountry(): any{
+        let grouped = this.groupBy(this._lastweek_data, sample => sample.country);
         return grouped;
     }
     getUniqueCountriesId():Array<any>{
@@ -80,7 +95,18 @@ export class DataManagerComponent implements OnInit {
         if(!countries) countries = this.getInitialSelection()
         let result = [];
         countries.forEach(c => {
-            let country = this._data_grouped_by_country.get(c);
+            let country = this._data_groupedByCountry.get(c);
+            country.forEach(sample => {
+                result.push(sample)             
+            });            
+        });
+        return result;        
+    }
+    getLastWeekDataByCountryList(countries: Array<string>){
+        if(!countries) countries = this.getInitialSelection()
+        let result = [];
+        countries.forEach(c => {
+            let country = this._lastweek_data_groupedByCountry.get(c);
             country.forEach(sample => {
                 result.push(sample)             
             });            
@@ -103,6 +129,9 @@ export class DataManagerComponent implements OnInit {
 
     getData(): Array<any> {
         return this._data;
+    }
+    getLastWeekData(): Array<any> {
+        return this._lastweek_data;
     }
 
     get timeRange(): any {
