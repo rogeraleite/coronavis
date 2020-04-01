@@ -10,6 +10,7 @@ import { CountrylistComponent } from './countrylist/countrylist.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { DataManagerComponent } from './_datamanager/datamanager.component';
+import { LegendComponent } from './legend/legend.component';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { DataManagerComponent } from './_datamanager/datamanager.component';
     LinechartLognComponent,
     LinechartNewcasesComponent,
     CardsPanelComponent,
+    LegendComponent,
   ],
   imports: [
     BrowserModule,
