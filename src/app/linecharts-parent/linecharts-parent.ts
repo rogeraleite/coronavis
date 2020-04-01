@@ -18,6 +18,9 @@ export class LinechartsParent implements OnInit {
     protected axis_y: any;
     protected gAxis_x: any;
     protected gAxis_y: any;
+    protected axis_x_legend: any;
+    protected axis_y_legend: any;
+    
     // protected curTransform: any;
     protected zoom: any;
     protected dots: any;
@@ -43,6 +46,8 @@ export class LinechartsParent implements OnInit {
         // this.height = $(document).height()*1/3;
         // this.getInitialSelection();
         // this.createChart()
+        this.axis_y_legend = "Confirmed Cases";
+        this.axis_x_legend = "Date";
     }
 
     getInitialSelection(){
@@ -170,6 +175,7 @@ export class LinechartsParent implements OnInit {
         this.drawAxisX();
         this.drawAxisY();      
         this.paintAxis();
+        this.addAxisLegends();
     }
     drawAxisX(){
         this.axis_x = d3.axisTop(this.scale_x)
@@ -195,16 +201,31 @@ export class LinechartsParent implements OnInit {
                                   .call(this.axis_y);         
     }
     paintAxis(){        
-      let axis_color = "gray";
-      let axis_opacity = .1;  
-      this.gAxis_x.selectAll(".tick line")
-                  .attr("stroke",axis_color)
-                  .attr("opacity",axis_opacity);
-      this.gAxis_x.selectAll(".tick text")
-                  .attr("transform", "translate(-8,-15) rotate(90)");
-      this.gAxis_y.selectAll(".tick line")
-                  .attr("stroke",axis_color)
-                  .attr("opacity",axis_opacity);
+        let axis_color = "gray";
+        let axis_opacity = .1;  
+        this.gAxis_x.selectAll(".tick line")
+                    .attr("stroke",axis_color)
+                    .attr("opacity",axis_opacity);
+        this.gAxis_x.selectAll(".tick text")
+                    .attr("transform", "translate(-8,-15) rotate(90)");
+        this.gAxis_y.selectAll(".tick line")
+                    .attr("stroke",axis_color)
+                    .attr("opacity",axis_opacity);
+    }
+    addAxisLegends() {
+      this.svg.append("text")
+                  .attr("y", this.margin.top*2.5)
+                  .attr("x", -this.height / 2)
+                  .attr("transform", "rotate(-90)")
+                  .attr("dy", "1em")
+                  .style("text-anchor", "middle")
+                  .text(this.axis_y_legend);  
+      this.svg.append("text")
+                  .attr("y", this.height - 48)
+                  .attr("x", this.width / 2)
+                  .attr("dy", "1em")
+                  .style("text-anchor", "middle")
+                  .text(this.axis_x_legend); 
     }
     applyZoomFeature() {          
       let zoomed = () => {
