@@ -120,6 +120,10 @@ export class CardsPanelComponent implements OnInit {
     this.gCards.append("text")
                 .text((d) => { return d.key; })
                 .attr("transform", "translate("+this.margin+","+this.margin*1.5+")"); 
+    this.gCards.append("text")
+                .attr("dy", "0em")
+                .text("to add information")
+                .attr("transform", "translate("+this.margin+","+this.margin*5+")"); 
   }
 
 }

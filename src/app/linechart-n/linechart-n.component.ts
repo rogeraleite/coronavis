@@ -15,10 +15,6 @@ export class LinechartNComponent extends LinechartsParent {
     super();
   }
   
-  ngOnInit() {   
-    this.setup();
-    this.createChart();
-  }
   setup(){
     this.divKey = ".linechart-n";
     this.initialTransform = d3.zoomIdentity.translate(25, 10).scale(0.88);

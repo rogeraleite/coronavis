@@ -15,10 +15,6 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     super();
   }
 
-  ngOnInit() {    
-    this.setup();
-    this.createChart();
-  }
   setup(){
     this.divKey = ".linechart-newcases";    
     this.initialTransform = d3.zoomIdentity.translate(80, 10).scale(0.8);
@@ -85,7 +81,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                       .attr("r", 2.5)
                       .style("visibility",(d)=>{
                         let lastDate = this.dm.getLastDate(d.country);
-                        return (d.date == lastDate) ? "visible" : "hidden";
+                        return (d.date === lastDate) ? "visible" : "hidden";
                       })
                       .style("fill", (d) => { return this.color_scale(d.country); })                      
                       .attr("stroke", "gray")
@@ -93,12 +89,31 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                       .attr("cy", (d) => { return this.scale_y(d.confirmed_last_week); });
     this.addTooltipBehaviorToDots();
   }
+  
+  getTooltipText(d){
+    let day = d.date.getDate();
+    let month = d.date.getMonth() + 1;
+    //pipe
+    if(day<10) day = "0"+day;
+    if(month<10) month = "0"+month;
+    let date_str = day + "/" + month;
+
+    let last_week = d.confirmed_last_week;
+    let total = d.total_confirmed;
+    let percentage_growth = last_week*100/total;
+
+
+    return "Last week growth:"+
+           "<br> +"+Number(percentage_growth).toFixed(2)+"%"+
+           "<br> date: "+date_str;
+  }
   addTooltipBehaviorToDots(){
-    this.dots.on("mouseover", ()=>{
+    this.dots.on("mouseover", (d)=>{
+                console.log(d)
                 return this.tooltip.style("visibility", "visible");
               })
               .on("mousemove", (d)=>{
-                this.tooltip.html("growth: "+Number(d.confirmed_last_week).toFixed(2))
+                this.tooltip.html(this.getTooltipText(d))
                 return this.tooltip.style("top", (d3.event.pageY-10)+"px")
                                    .style("left",(d3.event.pageX+10)+"px");
               })

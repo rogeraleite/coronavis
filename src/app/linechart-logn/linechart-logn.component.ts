@@ -15,10 +15,6 @@ export class LinechartLognComponent extends LinechartsParent {
     super();
   }
 
-  ngOnInit() {    
-    this.setup();
-    this.createChart()
-  }
   setup(){
     this.divKey = ".linechart-logn";    
     this.initialTransform = d3.zoomIdentity.translate(80, 10).scale(0.8);

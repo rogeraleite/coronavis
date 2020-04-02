@@ -38,16 +38,11 @@ export class LinechartsParent implements OnInit {
     constructor() { }
   
     ngOnInit() {   
-      console.log("here goes the linechart setup, see other examples.")
-      //EX:
-        // this.divKey = ".linechart-logn";    
-        // this.initialTransform = d3.zoomIdentity.translate(80, 10).scale(0.8);
-        // this.width = $(this.divKey).width()
-        // this.height = $(document).height()*1/3;
-        // this.getInitialSelection();
-        // this.createChart()
-        this.axis_y_legend = "Confirmed Cases";
-        this.axis_x_legend = "Date";
+      this.setup();
+      this.createChart();
+    }
+    setup(){
+      //to complete inside every child class
     }
 
     getInitialSelection(){
@@ -157,12 +152,16 @@ export class LinechartsParent implements OnInit {
                         .attr("cy", (d) => { return this.scale_y(d.confirmed); });
       this.addTooltipBehaviorToDots();
     }
+    getTooltipText(d){
+      return "growth: "+Number(d.confirmed_gfactor).toFixed(2)+
+              "<br> +"+Number(d.percentage_growth).toFixed(2)+"%";
+    }
     addTooltipBehaviorToDots(){
       this.dots.on("mouseover", ()=>{
                   return this.tooltip.style("visibility", "visible");
                 })
                 .on("mousemove", (d)=>{
-                  this.tooltip.html("growth: "+Number(d.confirmed_gfactor).toFixed(2))
+                  this.tooltip.html(this.getTooltipText(d))
                   return this.tooltip.style("top", (d3.event.pageY-10)+"px")
                                      .style("left",(d3.event.pageX+10)+"px");
                 })
