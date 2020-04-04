@@ -19,10 +19,11 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     this.divKey = ".linechart-newcases";    
     this.initialTransform = d3.zoomIdentity.translate(80, 10).scale(0.8);
     this.width = $(this.divKey).width()
-    this.height = $(document).height()*1.5/5;
+    this.height = $(document).height()*3/5;
     this.data = this.dm.getLastWeekDataByCountryList(null);
     this.axis_y_legend = "Log(Cases Last Week)";
     this.axis_x_legend = "Total Cases";
+    this.scaleYType = "log";
   }
   
   loadCountriesByArray(countries:Array<string>){

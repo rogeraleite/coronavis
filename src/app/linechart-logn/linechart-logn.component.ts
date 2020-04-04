@@ -20,26 +20,11 @@ export class LinechartLognComponent extends LinechartsParent {
     this.initialTransform = d3.zoomIdentity.translate(80, 10).scale(0.8);
     this.width = $(this.divKey).width()
     this.height = $(document).height()*1.5/5;
-    this.axis_y_legend = "Log(Confirmed Cases)";
+    this.axis_y_legend = "log(confirmed cases)";
     this.axis_x_legend = "Date";
+    this.scaleYType = "log";
     this.getInitialSelection();
   }
 
-  setXYScales(){    
-    this.scale_x = d3.scaleTime().range([0, this.width]);
-    this.scale_y = d3.scaleLog().range([this.height, 0]);
-  }
 
-  drawAxisY(){
-      this.axis_y = d3.axisRight(this.scale_y)
-                      .ticks(4,'.02f')
-                      .tickFormat((d)=>{                         
-                        if(d>=0) return d/1000 + "k";   
-                      })
-                      .tickSize(this.width)
-                      .tickPadding(8 - this.width)
-      this.gAxis_y = this.svg.append("g")
-                                .attr("class", "axis axis-y")                              
-                                .call(this.axis_y);         
-  }
 }

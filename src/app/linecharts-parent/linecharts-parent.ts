@@ -20,6 +20,7 @@ export class LinechartsParent implements OnInit {
     protected gAxis_y: any;
     protected axis_x_legend: any;
     protected axis_y_legend: any;
+    protected scaleYType: string;
     
     // protected curTransform: any;
     protected zoom: any;
@@ -66,11 +67,15 @@ export class LinechartsParent implements OnInit {
       this.applyZoomFeature(); 
       // this.addResetFeatureToButton();
     }
+
+    refreshChart(){
+      this.cleanCanvas();
+      this.createChart();
+    }
   
     loadCountriesByArray(countries:Array<string>){
       this.data = this.dm.getDataByCountryList(countries);
-      this.cleanCanvas();
-      this.createChart();
+      this.refreshChart();
     }
   
     ngAfterContentInit(){  }
@@ -98,8 +103,19 @@ export class LinechartsParent implements OnInit {
     }
     //////////////////////////////////////////////// Part2
     setXYScales(){    
+      if(this.scaleYType=="log") this.setYScale_asLog();
+      else if(this.scaleYType=="linear") this.setYScale_asLinear();     
+      
+      this.setXScale();   
+    }
+    setXScale(){      
       this.scale_x = d3.scaleTime().range([0, this.width]);
+    }
+    setYScale_asLinear(){      
       this.scale_y = d3.scaleLinear().range([this.height, 0]);
+    }
+    setYScale_asLog(){      
+      this.scale_y = d3.scaleLog().range([this.height, 0]);
     }
     createLines(){
         this.valueLine = d3.line()
@@ -188,16 +204,32 @@ export class LinechartsParent implements OnInit {
                                   .call(this.axis_x);        
     }
     drawAxisY(){
-        this.axis_y = d3.axisRight(this.scale_y)
+        if(this.scaleYType=="log") this.drawAxisY_asLog();
+        else if(this.scaleYType=="linear") this.drawAxisY_asLinear();        
+    }
+    drawAxisY_asLog(){
+      this.axis_y = d3.axisRight(this.scale_y)
+                      .ticks(4,'.02f')
+                      .tickFormat((d)=>{                         
+                        if(d>=0) return d/1000 + "k";   
+                      })
+                      .tickSize(this.width)
+                      .tickPadding(8 - this.width)
+      this.gAxis_y = this.svg.append("g")
+                                .attr("class", "axis axis-y")                              
+                                .call(this.axis_y);
+    }
+    drawAxisY_asLinear(){
+      this.axis_y = d3.axisRight(this.scale_y)
                         .ticks(10)
                         .tickFormat((d)=>{ if(d>=0) {
                           return d/1000 + "k"
                         }; })
                         .tickSize(this.width)
                         .tickPadding(8 - this.width)
-        this.gAxis_y = this.svg.append("g")
-                                  .attr("class", "axis axis-y")                              
-                                  .call(this.axis_y);         
+      this.gAxis_y = this.svg.append("g")
+                        .attr("class", "axis axis-y")                              
+                        .call(this.axis_y);         
     }
     paintAxis(){        
         let axis_color = "gray";
@@ -252,6 +284,19 @@ export class LinechartsParent implements OnInit {
         if(curTransform){
             this.gAxis_y.call(this.axis_y.scale(curTransform.rescaleY(this.scale_y)));
         }
+    }
+
+    switchYScale(){
+      if(this.scaleYType=="linear") this.scaleYType = "log";
+      else this.scaleYType = "linear";
+      this.updateAxisYLegend();
+
+      this.refreshChart();
+    }
+    updateAxisYLegend(){
+      if(this.scaleYType=="log") this.axis_y_legend = "log(confirmed cases)";
+      else if(this.scaleYType=="linear") this.axis_y_legend = "confirmed cases";     
+
     }
     
 
