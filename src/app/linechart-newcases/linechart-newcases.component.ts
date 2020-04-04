@@ -21,8 +21,8 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     this.width = $(this.divKey).width()
     this.height = $(document).height()*3/5;
     this.data = this.dm.getLastWeekDataByCountryList(null);
-    this.axis_y_legend = "Log(Cases Last Week)";
-    this.axis_x_legend = "Total Cases";
+    this.axis_y_legend = "log(cases last week)";
+    this.axis_x_legend = "total cases";
     this.scaleYType = "log";
   }
   
