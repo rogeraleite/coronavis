@@ -33,9 +33,9 @@ export class TotalOverviewComponent implements OnInit {
   protected selectedCountries;
 
   //displayed
-  protected total;
-  protected deaths;
-  protected recovered;
+  public total;
+  public deaths;
+  public recovered;
 
   public form: FormGroup;
 
