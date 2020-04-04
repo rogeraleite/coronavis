@@ -6,7 +6,6 @@ import { LinechartNComponent } from './linechart-n/linechart-n.component';
 import { LinechartLognComponent } from './linechart-logn/linechart-logn.component';
 import { LinechartNewcasesComponent } from './linechart-newcases/linechart-newcases.component';
 import { CardsPanelComponent } from './cards-panel/cards-panel.component';
-import { CountrylistComponent } from './countrylist/countrylist.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { DataManagerComponent } from './_datamanager/datamanager.component';
@@ -17,7 +16,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [
     AppComponent,
-    CountrylistComponent,
     DataManagerComponent,
     LinechartNComponent,
     LinechartLognComponent,
