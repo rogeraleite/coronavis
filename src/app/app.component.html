@@ -6,8 +6,8 @@
       <div class="col-sm-2 countrylist">
           <!--img width="150" alt="Corona Logo" src="assets/corona.png"-->
           <!--app-legend [dm]="_dm"></app-legend-->
-          <app-countrylist [dm]="_dm"
-                          (countriesOutput)="receiveCountriesSelection($event)"></app-countrylist>
+          <!--app-countrylist [dm]="_dm"
+                          (countriesOutput)="receiveCountriesSelection($event)"></app-countrylist-->
       </div>
       
       <div class="col-sm-10">  
@@ -23,13 +23,11 @@
                     <app-linechart-newcases [dm]="_dm"></app-linechart-newcases>
                   </div>
               </div>
-              <!--div class="col-sm-12">
-                <app-cards-panel [dm]="_dm"></app-cards-panel>
-              </div-->
           </div>
       </div>   
       <div class="col-sm-2">
-        <app-total-overview [dm]="_dm"></app-total-overview>
+        <app-total-overview [dm]="_dm"
+                            (countriesOutput)="receiveCountriesSelection($event)"></app-total-overview>
       </div>   
       <div class="col-sm-10">
         <app-cards-panel [dm]="_dm"></app-cards-panel>

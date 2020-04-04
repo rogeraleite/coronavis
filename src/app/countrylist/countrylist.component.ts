@@ -47,9 +47,13 @@ export class CountrylistComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.country_list = this.dm.getDataCountriesIds();
+    this.getData();
     this.createForm();
     this.addCheckboxes();  
+  }
+
+  getData(){
+    this.country_list = this.dm.getDataCountriesIds();
   }
 
   getControls() {

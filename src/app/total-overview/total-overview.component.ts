@@ -1,9 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DataManagerComponent } from '../_datamanager/datamanager.component';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import * as d3 from "d3";
 import * as $ from 'jquery';
+import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-total-overview',
@@ -13,6 +14,7 @@ import * as $ from 'jquery';
 export class TotalOverviewComponent implements OnInit {
 
   @Input() dm: DataManagerComponent;
+  @Output() countriesOutput = new EventEmitter<Array<string>>();
   
   protected divKey;
   protected svg: any;
@@ -25,15 +27,41 @@ export class TotalOverviewComponent implements OnInit {
   protected height;
   protected cards_height;  
   
-  protected data;
+  protected total_data;
+  protected country_list_data;
+  protected closeResult = '';
+  protected selectedCountries;
 
-  constructor(private modalService: NgbModal) { }
+  public form: FormGroup;
+
+  constructor(private modalService: NgbModal,
+              private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.divKey = ".total-overview"; 
     this.calculateOverallDimensions();
     this.getData();
+    this.createForm();
+    this.addCheckboxes();  
     this.createChart()
+  }
+  createForm(){
+    this.form = this.formBuilder.group({
+      countries: new FormArray([])
+    });
+  }
+  addCheckboxes() {
+    let initial_selection = this.dm.getInitialSelection();
+    this.country_list_data.forEach((country, i) => {
+      let control = new FormControl() // if first item set to true, else false
+      if(initial_selection.includes(country)){
+        control.setValue(true)
+      }
+      (this.form.controls.countries as FormArray).push(control);
+    });
+  }
+  getControls() {
+    return (this.form.get('countries') as FormArray).controls;
   }
   calculateOverallDimensions() {
     this.width = $(this.divKey).width();
@@ -42,7 +70,8 @@ export class TotalOverviewComponent implements OnInit {
     this.cards_width = this.width;
   }
   getData() {
-    this.data = this.dm.getDataByCountryList(["Total"])[0];
+    this.total_data = this.dm.getDataByCountryList(["Total"])[0];
+    this.country_list_data = this.dm.getDataCountriesIds();
   }
   createChart(){
     this.setSVG();
@@ -77,11 +106,11 @@ export class TotalOverviewComponent implements OnInit {
                 .attr("ry", 8);
   }
   writeInCard() {
-    let total = this.pipeNumberToString(this.data.confirmed);
-    let deaths = this.pipeNumberToString(this.data.death);
-    let recovered = this.pipeNumberToString(this.data.recovered);
-    console.log(this.data.death)
-    console.log(this.data.recovered)
+    let total = this.pipeNumberToString(this.total_data.confirmed);
+    let deaths = this.pipeNumberToString(this.total_data.death);
+    let recovered = this.pipeNumberToString(this.total_data.recovered);
+    console.log(this.total_data.death)
+    console.log(this.total_data.recovered)
     this.gCanvas.append("text")
                 .text("World")
                 .attr("transform", "translate("+this.margin/2+","+
@@ -123,8 +152,35 @@ export class TotalOverviewComponent implements OnInit {
     return number;
   }
 
-  addCountry(){    
-    console.log("aaaaa")
+  addCountry(content){    
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+      console.log("aaaaa")
+    }, 
+    (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+
+  getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
+  }
+
+  submit() { 
+    this.selectedCountries = this.form.value.countries
+                                  .map((v, i) => (v ? this.country_list_data[i] : null))
+                                  .filter(v => v !== null);
+    this.emitCountriesOutput();
+    this.modalService.dismissAll();
+  }
+  emitCountriesOutput(){
+    this.countriesOutput.emit(this.selectedCountries);
   }
 
 }
