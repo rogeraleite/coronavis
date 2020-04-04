@@ -32,6 +32,10 @@ export class TotalOverviewComponent implements OnInit {
   protected closeResult = '';
   protected selectedCountries;
 
+  private total;
+  private deaths;
+  private recovered;
+
   public form: FormGroup;
 
   constructor(private modalService: NgbModal,
@@ -76,7 +80,7 @@ export class TotalOverviewComponent implements OnInit {
   createChart(){
     this.setSVG();
     this.setCanvas(); 
-    this.drawCardsBackground();
+    // this.drawCardsBackground();
     this.writeInCard();
   }
   setSVG(){
@@ -95,38 +99,37 @@ export class TotalOverviewComponent implements OnInit {
                             });
     // if (this.curTransform) this.gCanvas.attr('transform', this.curTransform);
   }
+
+  //DEPRECATED
   drawCardsBackground() {
     this.gCanvas.append("rect")
                 .attr("fill", "none")
                 .style("stroke", "black")
                 .style("stroke-width", 2)
-                .attr("width", this.cards_width-2)
+                .attr("width", this.cards_width/2-2)
                 .attr("height", this.cards_height - this.margin)
                 .attr("rx", 8)
                 .attr("ry", 8);
   }
   writeInCard() {
-    let total = this.pipeNumberToString(this.total_data.confirmed);
-    let deaths = this.pipeNumberToString(this.total_data.death);
-    let recovered = this.pipeNumberToString(this.total_data.recovered);
-    console.log(this.total_data.death)
-    console.log(this.total_data.recovered)
-    this.gCanvas.append("text")
-                .text("World")
-                .attr("transform", "translate("+this.margin/2+","+
-                                                this.margin*1.5+")"); 
-    this.gCanvas.append("text")
-                .text("Total: "+total)
-                .attr("transform", "translate("+this.margin/2+","+
-                                                this.margin*4+")"); 
-    this.gCanvas.append("text")
-                .text("Recovered: "+recovered)
-                .attr("transform", "translate("+this.margin/2+","+
-                                                this.margin*5+")"); 
-    this.gCanvas.append("text")
-                .text("Deaths: "+deaths)
-                .attr("transform", "translate("+this.margin/2+","+
-                                                this.margin*6+")");
+    this.total = this.pipeNumberToString(this.total_data.confirmed);
+    this.deaths = this.pipeNumberToString(this.total_data.death);
+    this.recovered = this.pipeNumberToString(this.total_data.recovered);
+    // let font_size = 20;
+    // let space_division = 4;
+
+    // this.gCanvas.append("text")
+    //             .text("Total: "+total).style("font-size", font_size)
+    //             .attr("transform", "translate("+this.width/space_division+","+
+    //                                             this.margin/2+")"); 
+    // this.gCanvas.append("text")
+    //             .text("Recovered: "+recovered).style("font-size", font_size)
+    //             .attr("transform", "translate("+this.width*2/space_division+","+
+    //                                             this.margin/2+")"); 
+    // this.gCanvas.append("text")
+    //             .text("Deaths: "+deaths).style("font-size", font_size)
+    //             .attr("transform", "translate("+this.width*3/space_division+","+
+    //                                             this.margin/2+")");
   }
 
   pipeNumberToString(number: number){
