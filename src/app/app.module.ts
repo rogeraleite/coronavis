@@ -10,7 +10,7 @@ import { CountrylistComponent } from './countrylist/countrylist.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { DataManagerComponent } from './_datamanager/datamanager.component';
-import { LegendComponent } from './legend/legend.component';
+import { TotalOverviewComponent } from './total-overview/total-overview.component'
 
 
 @NgModule({
@@ -22,7 +22,7 @@ import { LegendComponent } from './legend/legend.component';
     LinechartLognComponent,
     LinechartNewcasesComponent,
     CardsPanelComponent,
-    LegendComponent,
+    TotalOverviewComponent
   ],
   imports: [
     BrowserModule,

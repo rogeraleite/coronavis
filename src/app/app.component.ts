@@ -5,7 +5,7 @@ import { LinechartLognComponent } from './linechart-logn/linechart-logn.componen
 import { LinechartNewcasesComponent } from './linechart-newcases/linechart-newcases.component';
 import { CardsPanelComponent } from './cards-panel/cards-panel.component';
 import { DataManagerComponent } from './_datamanager/datamanager.component'
-import { LegendComponent } from './legend/legend.component';
+
 
 @Component({
   selector: 'app-root',
