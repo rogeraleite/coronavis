@@ -20,7 +20,7 @@ export class CardsPanelComponent implements OnInit {
   protected gCards: any;
   protected color_scale: any;
 
-  protected margin = 15;  
+  protected margin = 5;  
   protected width;
   protected cards_width;
   protected height;
@@ -117,15 +117,15 @@ export class CardsPanelComponent implements OnInit {
                 .attr("ry", 8);
   }
   writeCardsTitle() {
-    let top_margin = 10;
-    let left_margin = 5;
+    let top_margin = 15;
+    let left_margin = 10;
     this.gCards.append("text")
                 .text((d) => { return d.key; })
-                .attr("transform", "translate("+this.margin+","+this.margin*1.5+")"); 
+                .attr("transform", "translate("+left_margin+","+top_margin*1.5+")"); 
     this.gCards.append("text")
                 .attr("dy", "0em")
                 .text("to add information")
-                .attr("transform", "translate("+this.margin+","+this.margin*5+")"); 
+                .attr("transform", "translate("+left_margin+","+top_margin*5+")"); 
   }
 
 }

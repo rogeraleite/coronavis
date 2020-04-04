@@ -30,7 +30,7 @@ export class LinechartsParent implements OnInit {
     protected valueLine;
     protected grouped_data;
   
-    protected margin = {top: 15, right: 0, bottom: 0, left: 0};
+    protected margin = {top: 5, right: 0, bottom: 0, left: 0};
     protected width;// = 800 - this.margin.left - this.margin.right;
     protected height;// = 600 - this.margin.top - this.margin.bottom;
     protected data;

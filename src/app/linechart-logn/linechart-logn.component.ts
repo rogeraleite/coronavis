@@ -19,7 +19,7 @@ export class LinechartLognComponent extends LinechartsParent {
     this.divKey = ".linechart-logn";    
     this.initialTransform = d3.zoomIdentity.translate(80, 10).scale(0.8);
     this.width = $(this.divKey).width()
-    this.height = $(document).height()*1/3;
+    this.height = $(document).height()*1.5/5;
     this.axis_y_legend = "Log(Confirmed Cases)";
     this.axis_x_legend = "Date";
     this.getInitialSelection();

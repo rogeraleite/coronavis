@@ -19,7 +19,7 @@ export class LinechartNComponent extends LinechartsParent {
     this.divKey = ".linechart-n";
     this.initialTransform = d3.zoomIdentity.translate(25, 10).scale(0.88);
     this.width = $(this.divKey).width()
-    this.height = ($(document).height()*2/3) + this.margin.top/2;    
+    this.height = ($(document).height()*3/5) + this.margin.top/2;    
     this.axis_y_legend = "Confirmed Cases";
     this.axis_x_legend = "Date";
     this.data = this.dm.getDataByCountryList(null);
