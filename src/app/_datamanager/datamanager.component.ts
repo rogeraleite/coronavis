@@ -17,8 +17,9 @@ export class DataManagerComponent implements OnInit {
     private _data_map: Map<any, any>;
     private countries_id: Array<any> = [
         "Switzerland","Belgium","Netherlands","Turkey","South Korea",
-        "Austria","Canada","Portugal","Norway","Israel","Australia",
-        "Sweden","Brazil","US","China","Italy"
+        "Austria","Canada","Portugal","Norway","Australia",
+        "Sweden","Brazil","US","China","Italy","Spain","Germany","France",
+        "United Kingdom","Netherlands","Poland"
     ]
 
     private _timeRange: Array<Date>;

@@ -26,7 +26,6 @@ export class CardsPanelComponent implements OnInit {
   protected height;
   protected cards_height;  
 
-
   protected data;
   protected lastweek_data;
   protected grouped_data;
@@ -55,6 +54,7 @@ export class CardsPanelComponent implements OnInit {
   }
 
   loadCountriesGroupsByArray(countries){
+    console.log(countries)
     this.getDataByCountries(countries);
     this.cleanCanvas();
     this.createChart();
@@ -117,6 +117,8 @@ export class CardsPanelComponent implements OnInit {
                 .attr("ry", 8);
   }
   writeCardsTitle() {
+    let top_margin = 10;
+    let left_margin = 5;
     this.gCards.append("text")
                 .text((d) => { return d.key; })
                 .attr("transform", "translate("+this.margin+","+this.margin*1.5+")"); 
