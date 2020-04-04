@@ -213,7 +213,7 @@ export class LinechartsParent implements OnInit {
     }
     addAxisLegends() {
       this.svg.append("text")
-                  .attr("y", this.margin.top*2.5)
+                  .attr("y", 30)
                   .attr("x", -this.height / 2)
                   .attr("transform", "rotate(-90)")
                   .attr("dy", "1em")
