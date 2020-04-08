@@ -18,8 +18,8 @@ export class LinechartsParent implements OnInit {
     protected axis_y: any;
     protected gAxis_x: any;
     protected gAxis_y: any;
-    protected axis_x_legend: any;
-    protected axis_y_legend: any;
+    protected axis_x_label: any;
+    protected axis_y_label: any;
     protected scaleYType: string;
     
     // protected curTransform: any;
@@ -190,7 +190,7 @@ export class LinechartsParent implements OnInit {
         this.drawAxisX();
         this.drawAxisY();      
         this.paintAxis();
-        this.addAxisLegends();
+        this.addAxisLabels();
     }
     drawAxisX(){
         this.axis_x = d3.axisTop(this.scale_x)
@@ -243,20 +243,20 @@ export class LinechartsParent implements OnInit {
                     .attr("stroke",axis_color)
                     .attr("opacity",axis_opacity);
     }
-    addAxisLegends() {
+    addAxisLabels() {
       this.svg.append("text")
-                  .attr("y", 30)
+                  .attr("y", 28)
                   .attr("x", -this.height / 2)
                   .attr("transform", "rotate(-90)")
                   .attr("dy", "1em")
                   .style("text-anchor", "middle")
-                  .text(this.axis_y_legend);  
+                  .text(this.axis_y_label);  
       this.svg.append("text")
-                  .attr("y", this.height - 48)
+                  .attr("y", this.height - 45)
                   .attr("x", this.width / 2)
                   .attr("dy", "1em")
                   .style("text-anchor", "middle")
-                  .text(this.axis_x_legend); 
+                  .text(this.axis_x_label); 
     }
     applyZoomFeature() {          
       let zoomed = () => {
@@ -294,8 +294,8 @@ export class LinechartsParent implements OnInit {
       this.refreshChart();
     }
     updateAxisYLegend(){
-      if(this.scaleYType=="log") this.axis_y_legend = "log(confirmed cases)";
-      else if(this.scaleYType=="linear") this.axis_y_legend = "confirmed cases";     
+      if(this.scaleYType=="log") this.axis_y_label = "log(confirmed cases)";
+      else if(this.scaleYType=="linear") this.axis_y_label = "confirmed cases";     
 
     }
     

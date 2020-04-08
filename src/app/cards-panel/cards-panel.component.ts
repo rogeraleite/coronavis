@@ -29,6 +29,7 @@ export class CardsPanelComponent implements OnInit {
   protected data;
   protected lastweek_data;
   protected grouped_data;
+  protected prediction_datamap;
 
   constructor() { }
 
@@ -51,6 +52,8 @@ export class CardsPanelComponent implements OnInit {
     this.drawCardsStructure();
     this.drawCardsBackground();
     this.writeCardsTitle();
+    this.writeCardsInfo();
+    this.writeCardsFootnote();
   }
 
   loadCountriesGroupsByArray(countries){
@@ -77,6 +80,7 @@ export class CardsPanelComponent implements OnInit {
   }
   getData() {
     this.getDataByCountries(null);
+    this.prediction_datamap = this.dm.getPredictionDataMap();
   }
   getDataByCountries(countries) {
     this.data = this.dm.getDataByCountryList(countries);
@@ -122,10 +126,96 @@ export class CardsPanelComponent implements OnInit {
     this.gCards.append("text")
                 .text((d) => { return d.key; })
                 .attr("transform", "translate("+left_margin+","+top_margin*1.5+")"); 
+  }
+  writeCardsFootnote() {
+    let bottom_margin = -8;
+    let right_margin = -65;
+    let font_size = 11;
+
     this.gCards.append("text")
-                .attr("dy", "0em")
-                .text("to add information")
-                .attr("transform", "translate("+left_margin+","+top_margin*5+")"); 
+                .text("based on")
+                .style("font-size", font_size+"px")
+                .attr("transform", "translate("+
+                        (this.cards_width+right_margin)+","+ //x
+                        (this.cards_height+(bottom_margin*1.5)-font_size)+")");//y
+    this.gCards.append("text")
+                .text((d) => { 
+                  let amount_samples = this.prediction_datamap[d.key].amount_samples;
+                  return amount_samples + " samples"; 
+                })
+                .style("font-size", font_size+"px")
+                .attr("transform", "translate("+
+                        (this.cards_width+right_margin)+","+ //x
+                        (this.cards_height+bottom_margin*1.5)+")");//y
+  }
+  writeCardsInfo() {
+    //TODO
+    let top_margin = 35;
+    let left_margin = 10;
+    let font_size = 15;
+
+    let info = ["infection_speed","current_infections","exp_infected_number","end_day_date"];
+    info.forEach((e,i)=>{
+      let top_info_margin = top_margin + i*font_size*2
+      //HEADER
+      this.gCards.append("text")
+                .text(this.getInfoHeaderByInfoId(e))
+                .style("font-size", font_size*2/3+"px")
+                .attr("transform", "translate("+
+                        (left_margin)+","+      //x
+                        (top_info_margin)+")"); //y
+      //INFO
+      this.gCards.append("text")
+                .text((d) => { 
+                  let country = d.key;
+                  let info = this.getInfoByInfoId(e,country);
+                  return info; 
+                })
+                .style("font-size", font_size+"px")
+                .attr("transform", "translate("+
+                        (left_margin*2)+","+                //x
+                        (top_info_margin + font_size)+")"); //y      
+    })
+
+    
+  }
+  getInfoHeaderByInfoId(infoId){
+    let result = "Error:";
+    if(infoId=="infection_speed"){ result = "Speed:" }
+    else if(infoId=="current_infections"){ result = "Cur. infections (people):" }
+    else if(infoId=="exp_infected_number"){ result = "Exp. infections (people):" }
+    else if(infoId=="end_day_date"){ result = "Exp. end date:" }
+    return result;
+  }
+  getInfoByInfoId(infoId, country){
+    let info = this.prediction_datamap[country];
+    let result = "error";
+    if(infoId=="infection_speed"){
+      result = info.infection_speed.toFixed(2)
+    }
+    else if(infoId=="current_infections"){
+      result = this.dm.pipeNumberToString(this.dm.getCurrentInfections(country));
+    }
+    else if(infoId=="exp_infected_number"){
+      let cur_infections = this.dm.getCurrentInfections(country);
+      let exp_infections = info.infected_number.toFixed(0);
+      if(cur_infections>exp_infections){//"fix" concluded cases prediction issue
+        exp_infections = cur_infections;
+      }
+      let number = this.dm.pipeNumberToString(exp_infections);
+      result = number
+    }
+    else if(infoId=="infected_number_error"){
+      result = info.infected_number_error.toFixed(2)      
+    }
+    else if(infoId=="end_day_date"){
+      let date = new Date(info.end_day_date);
+      let day = this.dm.addZeroToDateStringNumberIfNeeded(date.getDate());
+      let month = this.dm.addZeroToDateStringNumberIfNeeded(date.getMonth()+1);
+      let year = date.getFullYear()
+      result = day+"/"+month+"/"+year;
+    }
+    return result;
   }
 
 }

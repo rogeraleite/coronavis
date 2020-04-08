@@ -80,33 +80,11 @@ export class TotalOverviewComponent implements OnInit {
   }
   
   calculateDisplayedVariables() {
-    this.total = this.pipeNumberToString(this.total_data.confirmed);
-    this.deaths = this.pipeNumberToString(this.total_data.death);
-    this.recovered = this.pipeNumberToString(this.total_data.recovered);
+    this.total = this.dm.pipeNumberToString(this.total_data.confirmed);
+    this.deaths = this.dm.pipeNumberToString(this.total_data.death);
+    this.recovered = this.dm.pipeNumberToString(this.total_data.recovered);
   }
 
-  pipeNumberToString(number: number){
-    let mil = Math.floor(number/1000000);
-    let tho = Math.floor((number-mil*1000000)/1000);
-    let un = Math.floor(number-mil*1000000-tho*1000);
-
-    let tho_str = tho+"";
-    let un_str = un+"";
-    
-    if(mil>0) tho_str =this.addZeroToStringNumberIfNeeded(tho);
-    if(tho>0) un_str =this.addZeroToStringNumberIfNeeded(un);
-
-    let result_str = un_str;
-    if(tho>0) result_str = tho_str+"."+result_str;
-    if(mil>0) result_str = mil+"."+result_str;
-
-    return result_str;    
-  }
-  addZeroToStringNumberIfNeeded(number){
-    if(number<10) return "00"+number;
-    if(number<100) return "0"+number;
-    return number;
-  }
 
   addCountry(content){    
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {

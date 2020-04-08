@@ -13,6 +13,8 @@ export class DataManagerComponent implements OnInit {
     private _data_groupedByCountry: any;
     private _lastweek_data: Array<any>;
     private _lastweek_data_groupedByCountry: any;
+    private _prediction_data: Array<any>;
+
     private _data_ids: Array<any>;
     private _data_map: Map<any, any>;
     private countries_id: Array<any> = [
@@ -39,6 +41,7 @@ export class DataManagerComponent implements OnInit {
         this._data_ids = this.getUniqueCountriesId();
         this._data_groupedByCountry = this.groupDataByCountry();           
         this._lastweek_data_groupedByCountry = this.groupLastWeekDataByCountry();
+        this._prediction_data = this.fetchPredictionData();
 
         this._data_map = new Map();
         this._timeRange = new Array<Date>();
@@ -58,6 +61,20 @@ export class DataManagerComponent implements OnInit {
         let d = Data.getLastWeekData();  
         d = this.parsingDateStringObjToDateObj(d);
         return d;
+    }
+    fetchPredictionData(): any[] {
+        let d = Data.getPredictionData();  
+        d = this.parsingDateStringObjToDateObj(d);
+        return d;
+    }
+    getPredictionDataMap(){
+        let map = new Map();
+        if (this._prediction_data) {
+            this._prediction_data.forEach(e => {
+                map[e.country] = e;
+            });
+        }
+        return map;
     }
     parsingDateStringObjToDateObj(data){
         let result = [];
@@ -117,6 +134,10 @@ export class DataManagerComponent implements OnInit {
     getLastDate(country_name){
         let country = this._lastweek_data_groupedByCountry.get(country_name);
         return country[country.length-1].date;
+    }
+    getCurrentInfections(country_name){
+        let country = this._data_groupedByCountry.get(country_name);
+        return country[country.length-1].confirmed;
     }
     getInitialSelection() {
         return this.initialSelection;
@@ -195,5 +216,30 @@ export class DataManagerComponent implements OnInit {
         }
         return result;
     }
-   
+    pipeNumberToString(number: number){
+        let mil = Math.floor(number/1000000);
+        let tho = Math.floor((number-mil*1000000)/1000);
+        let un = Math.floor(number-mil*1000000-tho*1000);
+    
+        let tho_str = tho+"";
+        let un_str = un+"";
+        
+        if(mil>0) tho_str =this.addZeroToStringNumberIfNeeded(tho);
+        if(tho>0) un_str =this.addZeroToStringNumberIfNeeded(un);
+    
+        let result_str = un_str;
+        if(tho>0) result_str = tho_str+"."+result_str;
+        if(mil>0) result_str = mil+"."+result_str;
+    
+        return result_str;    
+      }
+      addZeroToStringNumberIfNeeded(number){
+        if(number<10) return "00"+number;
+        if(number<100) return "0"+number;
+        return number;
+      }
+      addZeroToDateStringNumberIfNeeded(number){
+        if(number<10) return "0"+number;
+        return number;
+      }
 }//end class
