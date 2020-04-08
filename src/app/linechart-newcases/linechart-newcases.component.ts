@@ -91,7 +91,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     this.addTooltipBehaviorToDots();
   }
   
-  getTooltipText(d){
+  getDotsTooltipText(d){
     let day = d.date.getDate();
     let month = d.date.getMonth() + 1;
     //pipe
@@ -114,7 +114,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                 return this.tooltip.style("visibility", "visible");
               })
               .on("mousemove", (d)=>{
-                this.tooltip.html(this.getTooltipText(d))
+                this.tooltip.html(this.getDotsTooltipText(d))
                 return this.tooltip.style("top", (d3.event.pageY-10)+"px")
                                    .style("left",(d3.event.pageX+10)+"px");
               })
@@ -149,6 +149,8 @@ export class LinechartNewcasesComponent extends LinechartsParent {
           this.gAxis_y.call(this.axis_y.scale(curTransform.rescaleY(this.scale_y)));
       }
   }
+  drawPrediction() {}
+
 
 
 

@@ -25,6 +25,7 @@ export class LinechartsParent implements OnInit {
     // protected curTransform: any;
     protected zoom: any;
     protected dots: any;
+    protected predictionRects: any;
     protected tooltip: any;
     protected initialTransform: any;
   
@@ -63,6 +64,7 @@ export class LinechartsParent implements OnInit {
       this.drawToolTip();
       this.drawCreatedLines();
       this.drawDots();
+      this.drawPrediction();
       this.drawAxis();  
       this.applyZoomFeature(); 
       // this.addResetFeatureToButton();
@@ -98,8 +100,8 @@ export class LinechartsParent implements OnInit {
     }
     getGroupedData() {
       this.grouped_data = d3.nest() // nest function allows to group the calculation per level of a factor
-                      .key((d) => { return d.country;})
-                      .entries(this.data);
+                            .key((d) => { return d.country;})
+                            .entries(this.data);
     }
     //////////////////////////////////////////////// Part2
     setXYScales(){    
@@ -123,11 +125,18 @@ export class LinechartsParent implements OnInit {
                            .y((d) => { return this.scale_y(+d.confirmed); });
     }
     scaleXYDomains() {
-      this.scale_x.domain(d3.extent(this.data, function(d) { 
-        return d.date; 
-      }));
+      // this.scale_x.domain(d3.extent(this.data, function(d) { return d.date; }));
+      // this.scale_y.domain([d3.min(this.data, function(d) { return +d.confirmed; }),
+      //                     d3.max(this.data, function(d) { return +d.confirmed; })]);
+
+      let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
+      let biggest_predicted_infections = this.dm.getBiggestPredictedInfectedNumber();
+
+      this.scale_x.domain([d3.min(this.data, function(d) { return d.date; }),
+                           latest_predicted_date]);
+      
       this.scale_y.domain([d3.min(this.data, function(d) { return +d.confirmed; }),
-                     d3.max(this.data, function(d) { return +d.confirmed; })]);
+                           biggest_predicted_infections]);
     }
     //////////////////////////////////////////////// Part3
     drawToolTip() {
@@ -162,14 +171,14 @@ export class LinechartsParent implements OnInit {
                       .enter()
                         .append("circle")
                         .attr("r", 2.5)
-                        .attr("stroke", "gray")
                         .style("fill", (d) => { return this.color_scale(d.country) })
                         .attr("cx", (d) => { return this.scale_x(d.date); })
                         .attr("cy", (d) => { return this.scale_y(d.confirmed); });
       this.addTooltipBehaviorToDots();
     }
-    getTooltipText(d){
-      return "growth: "+Number(d.confirmed_gfactor).toFixed(2)+
+    getDotsTooltipText(d){
+      return  d.country+
+              "<br>"+Number(d.confirmed).toFixed(0)+" cases"+
               "<br> +"+Number(d.percentage_growth).toFixed(2)+"%";
     }
     addTooltipBehaviorToDots(){
@@ -177,13 +186,72 @@ export class LinechartsParent implements OnInit {
                   return this.tooltip.style("visibility", "visible");
                 })
                 .on("mousemove", (d)=>{
-                  this.tooltip.html(this.getTooltipText(d))
+                  this.tooltip.html(this.getDotsTooltipText(d))
                   return this.tooltip.style("top", (d3.event.pageY-10)+"px")
                                      .style("left",(d3.event.pageX+10)+"px");
                 })
                 .on("mouseout", ()=>{
                   return this.tooltip.style("visibility", "hidden");                
                 });
+    }
+    
+    drawPrediction() {
+      let prediction_data = this.dm.getPredictionDataMap();  
+      this.predictionRects = this.gCanvas.selectAll(".predictor")
+                                      .data(this.grouped_data)
+                                      .enter()
+                                        .append("g")
+                                        .attr("class","predictor")
+                                        .attr("transform", (d)=>{
+                                          let country = d.key;
+                                          let prediction = prediction_data[country];
+                                          let end_date = new Date(prediction.end_day_date);
+                                          let infected = prediction.infected_number;
+                                          let in_scaleX = this.scale_x(end_date);
+                                          let in_scaleY = this.scale_y(infected);
+                                          return "translate("+in_scaleX+","+in_scaleY+")";
+                                        });
+      this.predictionRects.append("circle")
+                          .attr("r", (d) => { 
+                            let country = d.key;
+                            let prediction = prediction_data[country];
+                            let error = prediction.infected_number_error;
+                            let size = this.height - this.scale_y(error);
+                            if(size<2) size=2;
+                            return size*5; 
+                          })       
+                          .attr("opacity",.7)
+                          .attr("stroke", "black")
+                          .attr("fill", (d) => { 
+                            let country = d.key;
+                            return this.color_scale(country); 
+                          })
+                          .style("stroke-dasharray", ("10,5")) // make the stroke dashed
+      this.addTooltipBehaviorToPrediction();
+    }
+    getPredictionTooltipText(d){      
+      let country = d.key;
+      let prediction = this.dm.getPredictionDataMap();
+      let info = prediction[country];
+      let end_date = this.dm.getDateString(info.end_day_date);
+      let infections = this.dm.pipeNumberToString(info.infected_number.toFixed(0));
+      let infections_error = this.dm.pipeNumberToString(info.infected_number_error.toFixed(0));
+      return  country+
+              "<br>"+infections+" <small>(+-"+infections_error+")</small> cases"+
+              "<br> end "+end_date;
+    }
+    addTooltipBehaviorToPrediction() {
+      this.predictionRects.on("mouseover", ()=>{
+                            return this.tooltip.style("visibility", "visible");
+                          })
+                          .on("mousemove", (d)=>{
+                            this.tooltip.html(this.getPredictionTooltipText(d))
+                            return this.tooltip.style("top", (d3.event.pageY-10)+"px")
+                                              .style("left",(d3.event.pageX+10)+"px");
+                          })
+                          .on("mouseout", ()=>{
+                            return this.tooltip.style("visibility", "hidden");                
+                          });
     }
     
     drawAxis() {

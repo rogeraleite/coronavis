@@ -56,7 +56,7 @@ export class TotalOverviewComponent implements OnInit {
     });
   }
   addCheckboxes() {
-    let initial_selection = this.dm.getInitialSelection();
+    let initial_selection = this.dm.getCountriesSelection();
     this.country_list_data.forEach((country, i) => {
       let control = new FormControl() // if first item set to true, else false
       if(initial_selection.includes(country)){

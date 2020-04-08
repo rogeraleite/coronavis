@@ -25,7 +25,7 @@ export class DataManagerComponent implements OnInit {
     ]
 
     private _timeRange: Array<Date>;
-    private initialSelection = ["Austria","Brazil","China","Italy","US"];
+    private countriesSelection = ["Austria","Brazil","Netherlands","Italy","US"];
 
     private _colors: D3.ScaleOrdinal<string, string>;
     private _colors_array = [
@@ -52,6 +52,9 @@ export class DataManagerComponent implements OnInit {
     ngOnInit(): void {
         throw new Error("Method not implemented.");
     }
+    updateSelectedCountries(countries){
+        this.countriesSelection = countries;
+    }
     fetchData(): any[] {
         let d = Data.getData();  
         d = this.parsingDateStringObjToDateObj(d);
@@ -75,6 +78,29 @@ export class DataManagerComponent implements OnInit {
             });
         }
         return map;
+    }
+    getLatestPredictedDate(){
+        let latest = 0
+        this._prediction_data.forEach(e => {
+            if(e.end_day_date>latest &&
+               this.countriesSelection.includes(e.country)){
+                   latest = e.end_day_date;
+               }
+        });
+        return latest;
+    }
+    getBiggestPredictedInfectedNumber(){
+        let biggest = 0;
+        let error = 0;
+        
+        this._prediction_data.forEach(e => {
+            if(e.infected_number>biggest &&
+               this.countriesSelection.includes(e.country)) {
+                biggest = e.infected_number;
+                error = e.infected_number_error;
+            }
+        });
+        return biggest+error;
     }
     parsingDateStringObjToDateObj(data){
         let result = [];
@@ -110,7 +136,7 @@ export class DataManagerComponent implements OnInit {
         return filtered_countries_id;
     }
     getDataByCountryList(countries: Array<string>){
-        if(!countries) countries = this.getInitialSelection()
+        if(!countries) countries = this.getCountriesSelection()
         let result = [];
         countries.forEach(c => {
             let country = this._data_groupedByCountry.get(c);
@@ -121,7 +147,7 @@ export class DataManagerComponent implements OnInit {
         return result;        
     }
     getLastWeekDataByCountryList(countries: Array<string>){
-        if(!countries) countries = this.getInitialSelection()
+        if(!countries) countries = this.getCountriesSelection()
         let result = [];
         countries.forEach(c => {
             let country = this._lastweek_data_groupedByCountry.get(c);
@@ -139,8 +165,8 @@ export class DataManagerComponent implements OnInit {
         let country = this._data_groupedByCountry.get(country_name);
         return country[country.length-1].confirmed;
     }
-    getInitialSelection() {
-        return this.initialSelection;
+    getCountriesSelection() {
+        return this.countriesSelection;
     }
     getType(v){
         return typeof v 
@@ -241,5 +267,13 @@ export class DataManagerComponent implements OnInit {
       addZeroToDateStringNumberIfNeeded(number){
         if(number<10) return "0"+number;
         return number;
+      }
+      getDateString(date_num){
+        let date = new Date(date_num);
+        let day = this.addZeroToDateStringNumberIfNeeded(date.getDate());
+        let month = this.addZeroToDateStringNumberIfNeeded(date.getMonth()+1);
+        let year = date.getFullYear()
+        let result = day+"/"+month+"/"+year;
+        return result;
       }
 }//end class
