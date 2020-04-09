@@ -236,7 +236,7 @@ export class LinechartsParent implements OnInit {
       let country = d.key;
       let prediction = this.dm.getPredictionDataMap();
       let info = prediction[country];
-      let end_date = this.dm.getDateString(info.end_day_date);
+      let end_date = this.dm.parseDateObjToDateString(info.end_day_date);
       let infections = this.dm.pipeNumberToString(info.infected_number.toFixed(0));
       let infections_error = this.dm.pipeNumberToString(info.infected_number_error.toFixed(0));
       return  country+" <small>prediction</small>"+

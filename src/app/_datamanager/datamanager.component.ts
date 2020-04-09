@@ -57,17 +57,17 @@ export class DataManagerComponent implements OnInit {
     }
     fetchData(): any[] {
         let d = Data.getData();  
-        d = this.parsingDateStringObjToDateObj(d);
+        d = this.parseDateStringObjToDateObj(d);
         return d;
     }
     fetchLastWeekData(): any[] {
         let d = Data.getLastWeekData();  
-        d = this.parsingDateStringObjToDateObj(d);
+        d = this.parseDateStringObjToDateObj(d);
         return d;
     }
     fetchPredictionData(): any[] {
         let d = Data.getPredictionData();  
-        d = this.parsingDateStringObjToDateObj(d);
+        d = this.parseDateStringObjToDateObj(d);
         return d;
     }
     getPredictionDataMap(){
@@ -102,7 +102,7 @@ export class DataManagerComponent implements OnInit {
         });
         return biggest+error;
     }
-    parsingDateStringObjToDateObj(data){
+    parseDateStringObjToDateObj(data){
         let result = [];
         data.forEach((sample,i) => {
             if(typeof sample.date === 'string'){
@@ -268,7 +268,7 @@ export class DataManagerComponent implements OnInit {
         if(number<10) return "0"+number;
         return number;
       }
-      getDateString(date_num){
+      parseDateObjToDateString(date_num){
         let date = new Date(date_num);
         let day = this.addZeroToDateStringNumberIfNeeded(date.getDate());
         let month = this.addZeroToDateStringNumberIfNeeded(date.getMonth()+1);

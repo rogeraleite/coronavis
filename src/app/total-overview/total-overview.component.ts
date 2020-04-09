@@ -33,6 +33,7 @@ export class TotalOverviewComponent implements OnInit {
   protected selectedCountries;
 
   //displayed
+  public date;
   public total;
   public deaths;
   public recovered;
@@ -80,6 +81,7 @@ export class TotalOverviewComponent implements OnInit {
   }
   
   calculateDisplayedVariables() {
+    this.date = this.dm.parseDateObjToDateString(this.dm.getLastDate("US"));
     this.total = this.dm.pipeNumberToString(this.total_data.confirmed);
     this.deaths = this.dm.pipeNumberToString(this.total_data.death);
     this.recovered = this.dm.pipeNumberToString(this.total_data.recovered);

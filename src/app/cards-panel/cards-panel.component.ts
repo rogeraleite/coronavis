@@ -209,7 +209,7 @@ export class CardsPanelComponent implements OnInit {
       result = info.infected_number_error.toFixed(2)      
     }
     else if(infoId=="end_day_date"){
-      result = this.dm.getDateString(info.end_day_date);
+      result = this.dm.parseDateObjToDateString(info.end_day_date);
     }
     return result;
   }
