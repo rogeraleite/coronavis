@@ -177,8 +177,9 @@ export class LinechartsParent implements OnInit {
       this.addTooltipBehaviorToDots();
     }
     getDotsTooltipText(d){
+      let confirmed = this.dm.pipeNumberToString(d.confirmed);
       return  d.country+
-              "<br>"+Number(d.confirmed).toFixed(0)+" cases"+
+              "<br>"+confirmed+" cases"+
               "<br> +"+Number(d.percentage_growth).toFixed(2)+"%";
     }
     addTooltipBehaviorToDots(){
