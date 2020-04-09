@@ -129,7 +129,6 @@ export class LinechartNewcasesComponent extends LinechartsParent {
       this.zoomAxisX(curTransform);
       this.zoomAxisY(curTransform);        
       this.paintAxis();
-      console.log(curTransform)
     } 
     this.zoom = d3.zoom()
                   .scaleExtent([0.7, 5])

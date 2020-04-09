@@ -105,8 +105,8 @@ export class LinechartsParent implements OnInit {
     }
     //////////////////////////////////////////////// Part2
     setXYScales(){    
-      if(this.scaleYType=="log") this.setYScale_asLog();
-      else if(this.scaleYType=="linear") this.setYScale_asLinear();     
+      if(this.isLogScaled()) this.setYScale_asLog();
+      else this.setYScale_asLinear();     
       
       this.setXScale();   
     }
@@ -218,8 +218,10 @@ export class LinechartsParent implements OnInit {
                             let prediction = prediction_data[country];
                             let error = prediction.infected_number_error;
                             let size = this.height - this.scale_y(error);
-                            if(size<2) size=2;
-                            return size*5; 
+                            
+                            if(size<3) size=3;
+                            if(this.isLogScaled()) size = Math.log(size)
+                            return size;
                           })       
                           .attr("opacity",.7)
                           .attr("stroke", "black")
@@ -273,8 +275,8 @@ export class LinechartsParent implements OnInit {
                                   .call(this.axis_x);        
     }
     drawAxisY(){
-        if(this.scaleYType=="log") this.drawAxisY_asLog();
-        else if(this.scaleYType=="linear") this.drawAxisY_asLinear();        
+        if(this.isLogScaled()) this.drawAxisY_asLog();
+        else this.drawAxisY_asLinear();        
     }
     drawAxisY_asLog(){
       this.axis_y = d3.axisRight(this.scale_y)
@@ -356,16 +358,21 @@ export class LinechartsParent implements OnInit {
     }
 
     switchYScale(){
-      if(this.scaleYType=="linear") this.scaleYType = "log";
+      if(this.isLinearScaled()) this.scaleYType = "log";
       else this.scaleYType = "linear";
       this.updateAxisYLegend();
 
       this.refreshChart();
     }
     updateAxisYLegend(){
-      if(this.scaleYType=="log") this.axis_y_label = "log(confirmed cases)";
-      else if(this.scaleYType=="linear") this.axis_y_label = "confirmed cases";     
-
+      if(this.isLogScaled()) this.axis_y_label = "log(confirmed cases)";
+      else this.axis_y_label = "confirmed cases";    
+    }
+    isLogScaled(){
+      return this.scaleYType=="log"
+    }
+    isLinearScaled(){
+      return this.scaleYType=="linear"
     }
     
 
