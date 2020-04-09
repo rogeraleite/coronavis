@@ -17,12 +17,12 @@ export class LinechartNewcasesComponent extends LinechartsParent {
 
   setup(){
     this.divKey = ".linechart-newcases";    
-    this.initialTransform = d3.zoomIdentity.translate(80, 10).scale(0.8);
+    this.initialTransform = d3.zoomIdentity.translate(-200, 123).scale(1.13);
     this.width = $(this.divKey).width()
     this.height = $(document).height()*3/5;
     this.data = this.dm.getLastWeekDataByCountryList(null);
     this.axis_y_label = "log(cases last week)";
-    this.axis_x_label = "total cases";
+    this.axis_x_label = "log(total cases)";
     this.scaleYType = "log";
   }
   
@@ -33,7 +33,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
   }
   //////////////////////////////////////////////// Part 2
   setXYScales(){    
-    this.scale_x = d3.scaleLinear().range([0, this.width]);
+    this.scale_x = d3.scaleLog().range([0, this.width]);
     this.scale_y = d3.scaleLog().range([this.height, 0]);
   }
   createLines(){
@@ -67,6 +67,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                       if(d>=0) return d/1000 + "k";                       
                     })
                     .ticks((this.width + 2) / (this.height + 2) * 10)
+                    .ticks(4)
                     .tickSize(this.height)
                     .tickPadding(8 - this.height);
     this.gAxis_x = this.svg.append("g")
@@ -110,7 +111,6 @@ export class LinechartNewcasesComponent extends LinechartsParent {
   }
   addTooltipBehaviorToDots(){
     this.dots.on("mouseover", (d)=>{
-                console.log(d)
                 return this.tooltip.style("visibility", "visible");
               })
               .on("mousemove", (d)=>{
@@ -129,6 +129,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
       this.zoomAxisX(curTransform);
       this.zoomAxisY(curTransform);        
       this.paintAxis();
+      console.log(curTransform)
     } 
     this.zoom = d3.zoom()
                   .scaleExtent([0.7, 5])

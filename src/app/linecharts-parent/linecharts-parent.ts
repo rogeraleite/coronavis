@@ -236,9 +236,9 @@ export class LinechartsParent implements OnInit {
       let end_date = this.dm.getDateString(info.end_day_date);
       let infections = this.dm.pipeNumberToString(info.infected_number.toFixed(0));
       let infections_error = this.dm.pipeNumberToString(info.infected_number_error.toFixed(0));
-      return  country+
-              "<br>"+infections+" <small>(+-"+infections_error+")</small> cases"+
-              "<br> end "+end_date;
+      return  country+" <small>prediction</small>"+
+              "<br>"+infections+" <small>(+-"+infections_error+") cases</small>"+
+              "<br> <small>end at </small> "+end_date;
     }
     addTooltipBehaviorToPrediction() {
       this.predictionRects.on("mouseover", ()=>{
