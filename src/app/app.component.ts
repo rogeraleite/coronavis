@@ -26,8 +26,7 @@ export class AppComponent {
 
   async receiveCountriesSelection($event){
     let countries = $event;
-    console.log(countries)
-    this._dm.updateSelectedCountries(countries);
+    countries = this._dm.updateSelectedCountries(countries);
     this.lineChartNComponent_child.loadCountriesByArray(countries);
     this.lineChartNewCases_child.loadCountriesByArray(countries);
     this.cardsPanelComponent_child.loadCountriesGroupsByArray(countries);

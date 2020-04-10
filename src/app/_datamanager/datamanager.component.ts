@@ -25,7 +25,7 @@ export class DataManagerComponent implements OnInit {
     ]
 
     private _timeRange: Array<Date>;
-    private countriesSelection = ["Austria","Brazil","Netherlands","Italy","US"];
+    private countries_selection = ["Austria","Brazil","Netherlands","Italy","US"];
 
     private _colors: D3.ScaleOrdinal<string, string>;
     private _colors_array = [
@@ -53,7 +53,15 @@ export class DataManagerComponent implements OnInit {
         throw new Error("Method not implemented.");
     }
     updateSelectedCountries(countries){
-        this.countriesSelection = countries;
+        let result = [];
+        this.countries_selection.forEach((c)=>{
+            if(countries.includes(c)) result.push(c)
+        })
+        countries.forEach((c)=>{
+            if(!result.includes(c)) result.push(c)
+        })
+        this.countries_selection = result;
+        return this.countries_selection;
     }
     fetchData(): any[] {
         let d = Data.getData();  
@@ -83,7 +91,7 @@ export class DataManagerComponent implements OnInit {
         let latest = 0
         this._prediction_data.forEach(e => {
             if(e.end_day_date>latest &&
-               this.countriesSelection.includes(e.country)){
+               this.countries_selection.includes(e.country)){
                    latest = e.end_day_date;
                }
         });
@@ -95,7 +103,7 @@ export class DataManagerComponent implements OnInit {
         
         this._prediction_data.forEach(e => {
             if(e.infected_number>biggest &&
-               this.countriesSelection.includes(e.country)) {
+               this.countries_selection.includes(e.country)) {
                 biggest = e.infected_number;
                 error = e.infected_number_error;
             }
@@ -166,7 +174,7 @@ export class DataManagerComponent implements OnInit {
         return country[country.length-1].confirmed;
     }
     getCountriesSelection() {
-        return this.countriesSelection;
+        return this.countries_selection;
     }
     getType(v){
         return typeof v 
