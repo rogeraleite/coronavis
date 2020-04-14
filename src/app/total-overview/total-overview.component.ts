@@ -76,7 +76,7 @@ export class TotalOverviewComponent implements OnInit {
     this.cards_width = this.width;
   }
   getData() {
-    this.total_data = this.dm.getDataByCountryList(["Total"])[0];
+    this.total_data = this.dm.getCurrentDataByCountryList(["Total"])[0];
     this.country_list_data = this.dm.getDataCountriesIds();
   }
   

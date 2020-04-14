@@ -23,7 +23,8 @@ export class LinechartNComponent extends LinechartsParent {
     this.axis_y_label = "confirmed cases";
     this.axis_x_label = "date";
     this.scaleYType = "linear";
-    this.data = this.dm.getDataByCountryList(null);
+    this.current_curve_data = this.dm.getCurrentDataByCountryList(null);
+    this.prediction_curve_data = this.dm.getPredictionDataByCountryList(null);
   }
 
 

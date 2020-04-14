@@ -29,13 +29,17 @@ export class LinechartsParent implements OnInit {
     protected tooltip: any;
     protected initialTransform: any;
   
-    protected valueLine;
-    protected grouped_data;
+    protected lineRules;
+    protected predictionLine;
+    protected grouped_current_data;
+    protected grouped_prediction_data;
   
     protected margin = {top: 5, right: 0, bottom: 0, left: 0};
     protected width;// = 800 - this.margin.left - this.margin.right;
     protected height;// = 600 - this.margin.top - this.margin.bottom;
-    protected data;
+    
+    protected current_curve_data;
+    protected prediction_curve_data;
    
     constructor() { }
   
@@ -48,7 +52,9 @@ export class LinechartsParent implements OnInit {
     }
 
     getInitialSelection(){
-        this.data = this.dm.getDataByCountryList(null);
+        this.current_curve_data = this.dm.getCurrentDataByCountryList(null);
+        this.prediction_curve_data = this.dm.getPredictionDataByCountryList(null);
+        console.log(this.prediction_curve_data)
     }
     
     createChart(){
@@ -62,7 +68,8 @@ export class LinechartsParent implements OnInit {
       this.scaleXYDomains();
       /////////////////////// Part3
       this.drawToolTip();
-      this.drawCreatedLines();
+      this.drawCurrentLines();
+      this.drawPredictionLines();
       this.drawDots();
       this.drawPrediction();
       this.drawAxis();  
@@ -76,7 +83,8 @@ export class LinechartsParent implements OnInit {
     }
   
     loadCountriesByArray(countries:Array<string>){
-      this.data = this.dm.getDataByCountryList(countries);
+      this.current_curve_data = this.dm.getCurrentDataByCountryList(countries);
+      this.prediction_curve_data = this.dm.getPredictionDataByCountryList(countries);
       this.refreshChart();
     }
   
@@ -99,10 +107,22 @@ export class LinechartsParent implements OnInit {
       // if (this.curTransform) this.gCanvas.attr('transform', this.curTransform);
     }
     getGroupedData() {
-      this.grouped_data = d3.nest() // nest function allows to group the calculation per level of a factor
-                            .key((d) => { return d.country;})
-                            .entries(this.data);
+      this.getCurrentDataGroup();
+      this.getPredictionDataGroup();      
     }
+    getCurrentDataGroup(){
+      this.grouped_current_data = d3.nest() // nest function allows to group the calculation per level of a factor
+                                    .key((d) => { return d.country;})
+                                    .entries(this.current_curve_data);
+    }
+    getPredictionDataGroup(){
+      if(this.prediction_curve_data){
+        this.grouped_prediction_data = d3.nest() // nest function allows to group the calculation per level of a factor
+                                      .key((d) => { return d.country;})
+                                      .entries(this.prediction_curve_data);
+      }
+    }
+
     //////////////////////////////////////////////// Part2
     setXYScales(){    
       if(this.isLogScaled()) this.setYScale_asLog();
@@ -120,7 +140,7 @@ export class LinechartsParent implements OnInit {
       this.scale_y = d3.scaleLog().range([this.height, 0]);
     }
     createLines(){
-        this.valueLine = d3.line()
+        this.lineRules = d3.line()
                            .x((d) => { return this.scale_x(d.date); })
                            .y((d) => { return this.scale_y(+d.confirmed); });
     }
@@ -132,10 +152,10 @@ export class LinechartsParent implements OnInit {
       let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
       let biggest_predicted_infections = this.dm.getBiggestPredictedInfectedNumber();
 
-      this.scale_x.domain([d3.min(this.data, function(d) { return d.date; }),
+      this.scale_x.domain([d3.min(this.current_curve_data, function(d) { return d.date; }),
                            latest_predicted_date]);
       
-      this.scale_y.domain([d3.min(this.data, function(d) { return +d.confirmed; }),
+      this.scale_y.domain([d3.min(this.current_curve_data, function(d) { return +d.confirmed; }),
                            biggest_predicted_infections]);
     }
     //////////////////////////////////////////////// Part3
@@ -146,14 +166,14 @@ export class LinechartsParent implements OnInit {
                       .style("z-index", "10")
                       .style("visibility", "hidden");
     }
-    drawCreatedLines() {
-      let map_result = this.grouped_data.map(function(d){ return d.key }) // list of group names
+    drawCurrentLines() {
+      let map_result = this.grouped_current_data.map(function(d){ return d.key }) // list of group names
       this.color_scale = d3.scaleOrdinal()
                             .domain(map_result)
                             .range(this.dm.getColorsArray())
   
-      this.gCanvas.selectAll(".line")
-                  .data(this.grouped_data)
+      this.gCanvas.selectAll(".line-current")
+                  .data(this.grouped_current_data)
                   .enter()
                     .append("path")
                     .attr("fill", "none")
@@ -162,12 +182,30 @@ export class LinechartsParent implements OnInit {
                     })
                     .attr("stroke-width", 2)
                     .attr("d", (d)=>{
-                      return this.valueLine(d.values)
+                      return this.lineRules(d.values)
                     })
     }
+    
+    drawPredictionLines() {
+      if(this.grouped_prediction_data){
+        let map_result = this.grouped_prediction_data.map((d)=>{ return d.key }) // list of group names
+            
+        this.gCanvas.selectAll(".line-prediction")
+                    .data(this.grouped_prediction_data)
+                    .enter()
+                      .append("path")
+                      .attr("fill", "none")
+                      .attr("stroke", "gray")
+                      .attr("stroke-width", 2)
+                      .attr("d", (d)=>{
+                        return this.lineRules(d.values)
+                      })
+      }      
+    }
+
     drawDots() {
       this.dots = this.gCanvas.selectAll("circle")
-                      .data(this.data)
+                      .data(this.current_curve_data)
                       .enter()
                         .append("circle")
                         .attr("r", 2.5)
@@ -199,7 +237,7 @@ export class LinechartsParent implements OnInit {
     drawPrediction() {
       let prediction_data = this.dm.getPredictionDataMap();  
       this.predictionRects = this.gCanvas.selectAll(".predictor")
-                                      .data(this.grouped_data)
+                                      .data(this.grouped_current_data)
                                       .enter()
                                         .append("g")
                                         .attr("class","predictor")

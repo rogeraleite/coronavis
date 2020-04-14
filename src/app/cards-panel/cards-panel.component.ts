@@ -83,7 +83,7 @@ export class CardsPanelComponent implements OnInit {
     this.prediction_datamap = this.dm.getPredictionDataMap();
   }
   getDataByCountries(countries) {
-    this.data = this.dm.getDataByCountryList(countries);
+    this.data = this.dm.getCurrentDataByCountryList(countries);
     this.lastweek_data = this.dm.getLastWeekDataByCountryList(countries);
     this.grouped_data = d3.nest() // nest function allows to group the calculation per level of a factor
                           .key((d) => { return d.country;})

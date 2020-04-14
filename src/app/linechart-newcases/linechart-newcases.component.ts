@@ -20,14 +20,14 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     this.initialTransform = d3.zoomIdentity.translate(-200, 123).scale(1.13);
     this.width = $(this.divKey).width()
     this.height = $(document).height()*3/5;
-    this.data = this.dm.getLastWeekDataByCountryList(null);
+    this.current_curve_data = this.dm.getLastWeekDataByCountryList(null);
     this.axis_y_label = "log(cases last week)";
     this.axis_x_label = "log(total cases)";
     this.scaleYType = "log";
   }
   
   loadCountriesByArray(countries:Array<string>){
-    this.data = this.dm.getLastWeekDataByCountryList(countries);
+    this.current_curve_data = this.dm.getLastWeekDataByCountryList(countries);
     this.cleanCanvas();
     this.createChart();
   }
@@ -37,16 +37,16 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     this.scale_y = d3.scaleLog().range([this.height, 0]);
   }
   createLines(){
-    this.valueLine = d3.line()
+    this.lineRules = d3.line()
                        .x((d) => { return this.scale_x(d.total_confirmed); })
                        .y((d) => { return this.scale_y(d.confirmed_last_week); });
   }
   scaleXYDomains() {
-    this.scale_x.domain(d3.extent(this.data, (d) => { 
+    this.scale_x.domain(d3.extent(this.current_curve_data, (d) => { 
       return d.total_confirmed; 
     }));
-    this.scale_y.domain([d3.min(this.data, (d) => { return +d.confirmed_last_week; }),
-                         d3.max(this.data, (d) => { return +d.confirmed_last_week; })]);
+    this.scale_y.domain([d3.min(this.current_curve_data, (d) => { return +d.confirmed_last_week; }),
+                         d3.max(this.current_curve_data, (d) => { return +d.confirmed_last_week; })]);
   }
   //////////////////////////////////////////////// Part 3
   drawAxisY(){
@@ -77,7 +77,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
   }
   drawDots() {
     this.dots = this.gCanvas.selectAll("circle")
-                    .data(this.data)
+                    .data(this.current_curve_data)
                     .enter()
                       .append("circle")
                       .attr("r", 2.5)
@@ -91,7 +91,6 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                       .attr("cy", (d) => { return this.scale_y(d.confirmed_last_week); });
     this.addTooltipBehaviorToDots();
   }
-  
   getDotsTooltipText(d){
     let day = d.date.getDate();
     let month = d.date.getMonth() + 1;
