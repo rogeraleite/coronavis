@@ -203,6 +203,25 @@ export class DataManagerComponent implements OnInit {
         let country = this._current_data_groupedByCountry.get(country_name);
         return country[country.length-1].confirmed;
     }
+    getExpectedInfectionsByComparingWithCurrent(country_name){
+        let cur_infections = this.getCurrentInfections(country_name);        
+        let prediction_datamap = this.getPredictionDataMap();
+        let info = prediction_datamap[country_name];
+        let exp_infections = info.infected_number.toFixed(0);
+        if(cur_infections>exp_infections){//"fix" concluded cases prediction issue
+          exp_infections = cur_infections;
+        }
+        return exp_infections
+    }
+    getExpectedEndDateByComparingWithCurrent(country_name){
+        let cur_date = this.getLastDate(country_name);       
+        let prediction_datamap = this.getPredictionDataMap();
+        let predicted_date = prediction_datamap[country_name].end_day_date;
+        if(cur_date>predicted_date){//"fix" concluded cases prediction issue
+          return cur_date;
+        }
+        return predicted_date;
+    }
     getCountriesSelection() {
         return this.countries_selection;
     }
@@ -306,7 +325,7 @@ export class DataManagerComponent implements OnInit {
         if(number<10) return "0"+number;
         return number;
       }
-      parseDateObjToDateString(date_num){
+      pipeDateObjToDateString(date_num){
         let date = new Date(date_num);
         let day = this.addZeroToDateStringNumberIfNeeded(date.getDate());
         let month = this.addZeroToDateStringNumberIfNeeded(date.getMonth()+1);

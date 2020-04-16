@@ -36,7 +36,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     this.scale_x = d3.scaleLog().range([0, this.width]);
     this.scale_y = d3.scaleLog().range([this.height, 0]);
   }
-  createLines(){
+  createLinesRules(){
     this.lineRules = d3.line()
                        .x((d) => { return this.scale_x(d.total_confirmed); })
                        .y((d) => { return this.scale_y(d.confirmed_last_week); });
@@ -75,7 +75,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                               .attr("transform", "translate(-1," + (this.height-1) + ")")
                               .call(this.axis_x);        
   }
-  drawDots() {
+  drawCurrentLineDots() {
     this.dots = this.gCanvas.selectAll("circle")
                     .data(this.current_curve_data)
                     .enter()
@@ -148,7 +148,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
           this.gAxis_y.call(this.axis_y.scale(curTransform.rescaleY(this.scale_y)));
       }
   }
-  drawPrediction() {}
+  drawPredictionDot() {}
 
 
 

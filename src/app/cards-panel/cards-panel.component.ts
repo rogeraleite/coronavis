@@ -196,20 +196,16 @@ export class CardsPanelComponent implements OnInit {
     else if(infoId=="current_infections"){
       result = this.dm.pipeNumberToString(this.dm.getCurrentInfections(country));
     }
-    else if(infoId=="exp_infected_number"){
-      let cur_infections = this.dm.getCurrentInfections(country);
-      let exp_infections = info.infected_number.toFixed(0);
-      if(cur_infections>exp_infections){//"fix" concluded cases prediction issue
-        exp_infections = cur_infections;
-      }
-      let number = this.dm.pipeNumberToString(exp_infections);
-      result = number
+    else if(infoId=="exp_infected_number"){    
+      let exp_infected_number = this.dm.getExpectedInfectionsByComparingWithCurrent(country);
+      result = this.dm.pipeNumberToString(exp_infected_number);
     }
     else if(infoId=="infected_number_error"){
       result = info.infected_number_error.toFixed(2)      
     }
     else if(infoId=="end_day_date"){
-      result = this.dm.parseDateObjToDateString(info.end_day_date);
+      let end_date = this.dm.getExpectedEndDateByComparingWithCurrent(country)
+      result = this.dm.pipeDateObjToDateString(end_date);
     }
     return result;
   }

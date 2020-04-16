@@ -25,7 +25,7 @@ export class LinechartsParent implements OnInit {
     // protected curTransform: any;
     protected zoom: any;
     protected dots: any;
-    protected predictionRects: any;
+    protected predictionDot: any;
     protected tooltip: any;
     protected initialTransform: any;
   
@@ -64,14 +64,15 @@ export class LinechartsParent implements OnInit {
       this.getGroupedData()
       /////////////////////// Part2
       this.setXYScales();
-      this.createLines();
+      this.createLinesRules();
+      this.calculateColors();
       this.scaleXYDomains();
       /////////////////////// Part3
       this.drawToolTip();
+      this.drawPredictionLines();    
+      this.drawPredictionDot();  
       this.drawCurrentLines();
-      this.drawPredictionLines();
-      this.drawDots();
-      this.drawPrediction();
+      this.drawCurrentLineDots();
       this.drawAxis();  
       this.applyZoomFeature(); 
       // this.addResetFeatureToButton();
@@ -139,10 +140,16 @@ export class LinechartsParent implements OnInit {
     setYScale_asLog(){      
       this.scale_y = d3.scaleLog().range([this.height, 0]);
     }
-    createLines(){
+    createLinesRules(){
         this.lineRules = d3.line()
                            .x((d) => { return this.scale_x(d.date); })
                            .y((d) => { return this.scale_y(+d.confirmed); });
+    }
+    calculateColors(){
+      let map_result = this.grouped_current_data.map(function(d){ return d.key }) // list of group names      
+      this.color_scale = d3.scaleOrdinal()
+                            .domain(map_result)
+                            .range(this.dm.getColorsArray())
     }
     scaleXYDomains() {
       // this.scale_x.domain(d3.extent(this.data, function(d) { return d.date; }));
@@ -167,11 +174,6 @@ export class LinechartsParent implements OnInit {
                       .style("visibility", "hidden");
     }
     drawCurrentLines() {
-      let map_result = this.grouped_current_data.map(function(d){ return d.key }) // list of group names
-      this.color_scale = d3.scaleOrdinal()
-                            .domain(map_result)
-                            .range(this.dm.getColorsArray())
-  
       this.gCanvas.selectAll(".line-current")
                   .data(this.grouped_current_data)
                   .enter()
@@ -203,7 +205,7 @@ export class LinechartsParent implements OnInit {
       }      
     }
 
-    drawDots() {
+    drawCurrentLineDots() {
       this.dots = this.gCanvas.selectAll("circle")
                       .data(this.current_curve_data)
                       .enter()
@@ -234,23 +236,22 @@ export class LinechartsParent implements OnInit {
                 });
     }
     
-    drawPrediction() {
+    drawPredictionDot() {
       let prediction_data = this.dm.getPredictionDataMap();  
-      this.predictionRects = this.gCanvas.selectAll(".predictor")
+      this.predictionDot = this.gCanvas.selectAll(".predictor")
                                       .data(this.grouped_current_data)
                                       .enter()
                                         .append("g")
                                         .attr("class","predictor")
                                         .attr("transform", (d)=>{
                                           let country = d.key;
-                                          let prediction = prediction_data[country];
-                                          let end_date = new Date(prediction.end_day_date);
-                                          let infected = prediction.infected_number;
-                                          let in_scaleX = this.scale_x(end_date);
-                                          let in_scaleY = this.scale_y(infected);
+                                          let exp_end_date = new Date(this.dm.getExpectedEndDateByComparingWithCurrent(country));
+                                          let exp_infected = +this.dm.getExpectedInfectionsByComparingWithCurrent(country);
+                                          let in_scaleX = this.scale_x(exp_end_date);
+                                          let in_scaleY = this.scale_y(exp_infected);
                                           return "translate("+in_scaleX+","+in_scaleY+")";
                                         });
-      this.predictionRects.append("circle")
+      this.predictionDot.append("circle")
                           .attr("r", (d) => { 
                             let country = d.key;
                             let prediction = prediction_data[country];
@@ -274,15 +275,17 @@ export class LinechartsParent implements OnInit {
       let country = d.key;
       let prediction = this.dm.getPredictionDataMap();
       let info = prediction[country];
-      let end_date = this.dm.parseDateObjToDateString(info.end_day_date);
-      let infections = this.dm.pipeNumberToString(info.infected_number.toFixed(0));
       let infections_error = this.dm.pipeNumberToString(info.infected_number_error.toFixed(0));
+
+      let exp_end_date = new Date(this.dm.getExpectedEndDateByComparingWithCurrent(country));
+      let exp_infected = +this.dm.getExpectedInfectionsByComparingWithCurrent(country);
+
       return  country+" <small>prediction</small>"+
-              "<br>"+infections+" <small>(+-"+infections_error+") cases</small>"+
-              "<br> <small>end at </small> "+end_date;
+              "<br>"+this.dm.pipeNumberToString(exp_infected)+" <small>(+-"+infections_error+") cases</small>"+
+              "<br> <small>end at </small> "+this.dm.pipeDateObjToDateString(exp_end_date);
     }
     addTooltipBehaviorToPrediction() {
-      this.predictionRects.on("mouseover", ()=>{
+      this.predictionDot.on("mouseover", ()=>{
                             return this.tooltip.style("visibility", "visible");
                           })
                           .on("mousemove", (d)=>{
