@@ -83,7 +83,7 @@ export class TotalOverviewComponent implements OnInit {
   calculateDisplayedVariables() {
     this.date = this.dm.pipeDateObjToDateString(this.dm.getLastDate("US"));
     this.total = this.dm.pipeNumberToString(this.total_data.confirmed);
-    this.deaths = this.dm.pipeNumberToString(this.total_data.death);
+    this.deaths = this.dm.pipeNumberToString(this.total_data.deaths);
     this.recovered = this.dm.pipeNumberToString(this.total_data.recovered);
   }
 
