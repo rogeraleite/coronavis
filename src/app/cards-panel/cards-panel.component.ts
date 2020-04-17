@@ -154,7 +154,7 @@ export class CardsPanelComponent implements OnInit {
     let left_margin = 10;
     let font_size = 15;
 
-    let info = ["infection_speed","current_infections","exp_infected_number","end_day_date"];
+    let info = ["cases_speed","current_cases","exp_cases_number","end_day_date"];
     info.forEach((e,i)=>{
       let top_info_margin = top_margin + i*font_size*2
       //HEADER
@@ -181,30 +181,30 @@ export class CardsPanelComponent implements OnInit {
   }
   getInfoHeaderByInfoId(infoId){
     let result = "Error:";
-    if(infoId=="infection_speed"){ result = "Speed:" }
-    else if(infoId=="current_infections"){ result = "Cur. infections (people):" }
-    else if(infoId=="exp_infected_number"){ result = "Exp. infections (people):" }
-    else if(infoId=="end_day_date"){ result = "Exp. end date:" }
+    if(infoId=="cases_speed"){ result = "Speed:" }
+    else if(infoId=="current_cases"){ result = "Current cases (people):" }
+    else if(infoId=="exp_cases_number"){ result = "Expected cases (people):" }
+    else if(infoId=="end_day_date"){ result = "Expected end date:" }
     return result;
   }
   getInfoByInfoId(infoId, country){
     let info = this.prediction_datamap[country];
     let result = "error";
-    if(infoId=="infection_speed"){
-      result = info.infection_speed.toFixed(2)
+    if(infoId=="cases_speed"){
+      result = info.cases_speed.toFixed(2)
     }
-    else if(infoId=="current_infections"){
-      result = this.dm.pipeNumberToString(this.dm.getCurrentInfections(country));
+    else if(infoId=="current_cases"){
+      result = this.dm.pipeNumberToString(this.dm.getCurrentCases(country));
     }
-    else if(infoId=="exp_infected_number"){    
-      let exp_infected_number = this.dm.getExpectedInfectionsByComparingWithCurrent(country);
-      result = this.dm.pipeNumberToString(exp_infected_number);
+    else if(infoId=="exp_cases_number"){    
+      let exp_cases_number = this.dm.getExpectedCasesByComparingWithCurrent(country);
+      result = this.dm.pipeNumberToString(exp_cases_number) + "(+-"+this.dm.pipeNumberToString(info.cases_number_error.toFixed(0))+")";
     }
-    else if(infoId=="infected_number_error"){
-      result = info.infected_number_error.toFixed(2)      
+    else if(infoId=="cases_number_error"){
+      result = info.cases_number_error.toFixed(2)      
     }
     else if(infoId=="end_day_date"){
-      let end_date = this.dm.getExpectedEndDateByComparingWithCurrent(country)
+      let end_date = this.dm.getExpectedEndCasesDateByComparingWithCurrent(country)
       result = this.dm.pipeDateObjToDateString(end_date);
     }
     return result;

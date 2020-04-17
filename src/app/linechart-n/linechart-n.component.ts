@@ -19,10 +19,11 @@ export class LinechartNComponent extends LinechartsParent {
     this.divKey = ".linechart-n";
     this.initialTransform = d3.zoomIdentity.translate(25, 10).scale(0.88);
     this.width = $(this.divKey).width()
-    this.height = ($(document).height()*3/5) + this.margin.top/2;    
-    this.axis_y_label = "confirmed cases";
-    this.axis_x_label = "date";
+    this.height = ($(document).height()*3/5) + this.margin.top/2;  
     this.scaleYType = "linear";
+    this.yDimension = "cases";  
+    this.axis_y_label = "confirmed "+this.yDimension;
+    this.axis_x_label = "date";
     this.current_curve_data = this.dm.getCurrentDataByCountryList(null);
     this.prediction_curve_data = this.dm.getPredictionDataByCountryList(null);
   }

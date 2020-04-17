@@ -3,6 +3,7 @@ import { DataManagerComponent } from '../_datamanager/datamanager.component';
 
 import * as d3 from "d3";
 import * as $ from 'jquery';
+import { conditionallyCreateMapObjectLiteral } from '@angular/compiler/src/render3/view/util';
 
 export class LinechartsParent implements OnInit {
 
@@ -20,7 +21,9 @@ export class LinechartsParent implements OnInit {
     protected gAxis_y: any;
     protected axis_x_label: any;
     protected axis_y_label: any;
+
     protected scaleYType: string;
+    protected yDimension: string;
     
     // protected curTransform: any;
     protected zoom: any;
@@ -54,7 +57,6 @@ export class LinechartsParent implements OnInit {
     getInitialSelection(){
         this.current_curve_data = this.dm.getCurrentDataByCountryList(null);
         this.prediction_curve_data = this.dm.getPredictionDataByCountryList(null);
-        console.log(this.prediction_curve_data)
     }
     
     createChart(){
@@ -141,9 +143,28 @@ export class LinechartsParent implements OnInit {
       this.scale_y = d3.scaleLog().range([this.height, 0]);
     }
     createLinesRules(){
-        this.lineRules = d3.line()
-                           .x((d) => { return this.scale_x(d.date); })
-                           .y((d) => { return this.scale_y(+d.confirmed); });
+      if(this.isDeathsDimension()) this.setYDimension_asDeaths();
+      else this.setYDimension_asCases();         
+    }
+    setYDimension_asCases(){
+      this.lineRules = d3.line()
+                          .x((d) => { return this.scale_x(d.date); })
+                          .y((d) => { return this.scale_y(+d.confirmed); });
+    }
+    setYDimension_asDeaths(){
+      let last_x = 0;
+      let last_y = 0;
+      this.lineRules = d3.line()
+                          .x((d) => { 
+                            if(+d.deaths==-1){ return last_x; } //d.deaths==-1 idicates the end of the deaths prediction path
+                            last_x = this.scale_x(d.date)
+                            return last_x; 
+                          })
+                          .y((d) => { 
+                              if(+d.deaths==-1){ return last_y; }//d.deaths==-1 idicates the end of the deaths prediction path
+                              last_y = this.scale_y(+d.deaths)
+                              return last_y; 
+                          });
     }
     calculateColors(){
       let map_result = this.grouped_current_data.map(function(d){ return d.key }) // list of group names      
@@ -151,19 +172,29 @@ export class LinechartsParent implements OnInit {
                             .domain(map_result)
                             .range(this.dm.getColorsArray())
     }
-    scaleXYDomains() {
-      // this.scale_x.domain(d3.extent(this.data, function(d) { return d.date; }));
-      // this.scale_y.domain([d3.min(this.data, function(d) { return +d.confirmed; }),
-      //                     d3.max(this.data, function(d) { return +d.confirmed; })]);
-
+    scaleXYDomains() {                           
+      if(this.isDeathsDimension()){ this.setDeathsXYDomain(); }
+      else{ this.setCasesXYDomain(); }
+    }
+    setDeathsXYDomain(){
       let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
-      let biggest_predicted_infections = this.dm.getBiggestPredictedInfectedNumber();
+      let biggest_predicted_amount = this.dm.getBiggestPredictedDeathsNumberOverall();
 
-      this.scale_x.domain([d3.min(this.current_curve_data, function(d) { return d.date; }),
+      this.scale_x.domain([d3.min(this.current_curve_data, (d) => { return d.date; }),
                            latest_predicted_date]);
       
       this.scale_y.domain([d3.min(this.current_curve_data, function(d) { return +d.confirmed; }),
-                           biggest_predicted_infections]);
+                           biggest_predicted_amount]);
+    }
+    setCasesXYDomain(){      
+      let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
+      let biggest_predicted_amount = this.dm.getBiggestPredictedCasesNumberOverall();
+
+      this.scale_x.domain([d3.min(this.current_curve_data, (d) => { return d.date; }),
+                           latest_predicted_date]);
+      
+      this.scale_y.domain([d3.min(this.current_curve_data, function(d) { return +d.confirmed; }),
+                           biggest_predicted_amount]);
     }
     //////////////////////////////////////////////// Part3
     drawToolTip() {
@@ -189,9 +220,7 @@ export class LinechartsParent implements OnInit {
     }
     
     drawPredictionLines() {
-      if(this.grouped_prediction_data){
-        let map_result = this.grouped_prediction_data.map((d)=>{ return d.key }) // list of group names
-            
+      if(this.grouped_prediction_data){            
         this.gCanvas.selectAll(".line-prediction")
                     .data(this.grouped_prediction_data)
                     .enter()
@@ -199,8 +228,8 @@ export class LinechartsParent implements OnInit {
                       .attr("fill", "none")
                       .attr("stroke", "gray")
                       .attr("stroke-width", 2)
-                      .attr("d", (d)=>{
-                        return this.lineRules(d.values)
+                      .attr("d", (d)=>{                  
+                          return this.lineRules(d.values)
                       })
       }      
     }
@@ -213,7 +242,12 @@ export class LinechartsParent implements OnInit {
                         .attr("r", 2.5)
                         .style("fill", (d) => { return this.color_scale(d.country) })
                         .attr("cx", (d) => { return this.scale_x(d.date); })
-                        .attr("cy", (d) => { return this.scale_y(d.confirmed); });
+                        .attr("cy", (d) => { 
+                          if(this.isDeathsDimension()){
+                            return this.scale_y(d.deaths); 
+                          }
+                          return this.scale_y(d.confirmed); 
+                        });
       this.addTooltipBehaviorToDots();
     }
     getDotsTooltipText(d){
@@ -237,7 +271,6 @@ export class LinechartsParent implements OnInit {
     }
     
     drawPredictionDot() {
-      let prediction_data = this.dm.getPredictionDataMap();  
       this.predictionDot = this.gCanvas.selectAll(".predictor")
                                       .data(this.grouped_current_data)
                                       .enter()
@@ -245,17 +278,18 @@ export class LinechartsParent implements OnInit {
                                         .attr("class","predictor")
                                         .attr("transform", (d)=>{
                                           let country = d.key;
-                                          let exp_end_date = new Date(this.dm.getExpectedEndDateByComparingWithCurrent(country));
-                                          let exp_infected = +this.dm.getExpectedInfectionsByComparingWithCurrent(country);
+                                          let prediction = this.getPredictionInfoBasedOnDimensionByCountry(country);
+                                          let exp_end_date = prediction.end_date;
+                                          let exp_cases = prediction.exp_amount;
                                           let in_scaleX = this.scale_x(exp_end_date);
-                                          let in_scaleY = this.scale_y(exp_infected);
+                                          let in_scaleY = this.scale_y(exp_cases);
                                           return "translate("+in_scaleX+","+in_scaleY+")";
                                         });
       this.predictionDot.append("circle")
                           .attr("r", (d) => { 
                             let country = d.key;
-                            let prediction = prediction_data[country];
-                            let error = prediction.infected_number_error;
+                            let prediction = this.getPredictionInfoBasedOnDimensionByCountry(country);
+                            let error = prediction.exp_amount_error;
                             let size = this.height - this.scale_y(error);
                             
                             if(size<3) size=3;
@@ -271,17 +305,33 @@ export class LinechartsParent implements OnInit {
                           .style("stroke-dasharray", ("10,5")) // make the stroke dashed
       this.addTooltipBehaviorToPrediction();
     }
+    getPredictionInfoBasedOnDimensionByCountry(country){
+      let prediction_data = this.dm.getPredictionDataMap();  
+      let prediction = prediction_data[country];
+      
+      let result = {
+        end_date: new Date(this.dm.getExpectedEndCasesDateByComparingWithCurrent(country)),
+        exp_amount: +this.dm.getExpectedCasesByComparingWithCurrent(country),
+        exp_amount_error: prediction.cases_number_error
+      }
+      if(this.isDeathsDimension()){
+        result.end_date =  new Date(this.dm.getExpectedEndDeathsDateByComparingWithCurrent(country));
+        result.exp_amount = +this.dm.getExpectedDeathsByComparingWithCurrent(country);
+        result.exp_amount_error = prediction.deaths_number_error;
+      }
+
+      return result;
+    }
     getPredictionTooltipText(d){      
       let country = d.key;
-      let prediction = this.dm.getPredictionDataMap();
-      let info = prediction[country];
-      let infections_error = this.dm.pipeNumberToString(info.infected_number_error.toFixed(0));
+      let info = this.getPredictionInfoBasedOnDimensionByCountry(country);
+      let error = this.dm.pipeNumberToString(info.exp_amount_error.toFixed(0));
 
-      let exp_end_date = new Date(this.dm.getExpectedEndDateByComparingWithCurrent(country));
-      let exp_infected = +this.dm.getExpectedInfectionsByComparingWithCurrent(country);
+      let exp_end_date = info.end_date;
+      let exp_amount = info.exp_amount;
 
       return  country+" <small>prediction</small>"+
-              "<br>"+this.dm.pipeNumberToString(exp_infected)+" <small>(+-"+infections_error+") cases</small>"+
+              "<br>"+this.dm.pipeNumberToString(exp_amount)+" <small>(+-"+error+") "+this.yDimension+"</small>"+
               "<br> <small>end at </small> "+this.dm.pipeDateObjToDateString(exp_end_date);
     }
     addTooltipBehaviorToPrediction() {
@@ -402,12 +452,20 @@ export class LinechartsParent implements OnInit {
       if(this.isLinearScaled()) this.scaleYType = "log";
       else this.scaleYType = "linear";
       this.updateAxisYLegend();
-
       this.refreshChart();
     }
+    switchYDimension(){      
+      if(this.isDeathsDimension()) this.yDimension = "cases";
+      else this.yDimension = "deaths";
+      this.updateAxisYLegend();
+      this.refreshChart();
+    }
+    isDeathsDimension(){
+      return this.yDimension == "deaths"
+    }
     updateAxisYLegend(){
-      if(this.isLogScaled()) this.axis_y_label = "log(confirmed cases)";
-      else this.axis_y_label = "confirmed cases";    
+      if(this.isLogScaled()) this.axis_y_label = "log(confirmed "+this.yDimension+")";
+      else this.axis_y_label = "confirmed "+this.yDimension+"";    
     }
     isLogScaled(){
       return this.scaleYType=="log"
@@ -415,6 +473,9 @@ export class LinechartsParent implements OnInit {
     isLinearScaled(){
       return this.scaleYType=="linear"
     }
-    
+    getOpositeDimension(){
+      if(this.isDeathsDimension()) return "cases";
+      return "deaths"
+    }
 
 }

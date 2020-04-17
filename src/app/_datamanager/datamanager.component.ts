@@ -105,22 +105,36 @@ export class DataManagerComponent implements OnInit {
     getLatestPredictedDate(){
         let latest = 0
         this._predictionSummary_data.forEach(e => {
-            if(e.end_day_date>latest &&
+            if(e.cases_end_day_date>latest &&
                this.countries_selection.includes(e.country)){
-                   latest = e.end_day_date;
+                   latest = e.cases_end_day_date;
                }
         });
         return latest;
     }
-    getBiggestPredictedInfectedNumber(){
+    getBiggestPredictedCasesNumberOverall(){
         let biggest = 0;
         let error = 0;
         
         this._predictionSummary_data.forEach(e => {
-            if(e.infected_number>biggest &&
+            if(e.cases_number>biggest &&
                this.countries_selection.includes(e.country)) {
-                biggest = e.infected_number;
-                error = e.infected_number_error;
+                biggest = e.cases_number;
+                error = e.cases_number_error;
+            }
+        });
+        return biggest+error;
+    }
+    
+    getBiggestPredictedDeathsNumberOverall(){
+        let biggest = 0;
+        let error = 0;
+        
+        this._predictionSummary_data.forEach(e => {
+            if(e.deaths_number>biggest &&
+               this.countries_selection.includes(e.country)) {
+                biggest = e.deaths_number;
+                error = e.deaths_number_error;
             }
         });
         return biggest+error;
@@ -199,24 +213,54 @@ export class DataManagerComponent implements OnInit {
         let country = this._lastweek_data_groupedByCountry.get(country_name);
         return country[country.length-1].date;
     }
-    getCurrentInfections(country_name){
+    getCurrentCases(country_name){
         let country = this._current_data_groupedByCountry.get(country_name);
         return country[country.length-1].confirmed;
     }
-    getExpectedInfectionsByComparingWithCurrent(country_name){
-        let cur_infections = this.getCurrentInfections(country_name);        
+    getCurrentDeaths(country_name){
+        let country = this._current_data_groupedByCountry.get(country_name);
+        let result = 0;
+        for(let i=country.length-1; i>=0; i--){
+            if(country[i].deaths>0) {
+                result = country[i].deaths; 
+                i=-1;
+            }
+        }
+        return result;
+    }
+    getExpectedCasesByComparingWithCurrent(country_name){
+        let cur_cases = this.getCurrentCases(country_name);        
         let prediction_datamap = this.getPredictionDataMap();
         let info = prediction_datamap[country_name];
-        let exp_infections = info.infected_number.toFixed(0);
-        if(cur_infections>exp_infections){//"fix" concluded cases prediction issue
-          exp_infections = cur_infections;
+        let exp_cases = info.cases_number.toFixed(0);
+        if(cur_cases>exp_cases){//"fix" concluded cases prediction issue
+          exp_cases = cur_cases;
         }
-        return exp_infections
+        return exp_cases
     }
-    getExpectedEndDateByComparingWithCurrent(country_name){
+    getExpectedDeathsByComparingWithCurrent(country_name){
+        let cur_deaths = this.getCurrentDeaths(country_name);        
+        let prediction_datamap = this.getPredictionDataMap();
+        let info = prediction_datamap[country_name];
+        let exp_deaths = info.deaths_number.toFixed(0);
+        if(cur_deaths>exp_deaths){//"fix" concluded cases prediction issue
+          exp_deaths = cur_deaths;
+        }
+        return exp_deaths
+    }
+    getExpectedEndCasesDateByComparingWithCurrent(country_name){
         let cur_date = this.getLastDate(country_name);       
         let prediction_datamap = this.getPredictionDataMap();
-        let predicted_date = prediction_datamap[country_name].end_day_date;
+        let predicted_date = prediction_datamap[country_name].cases_end_day_date;
+        if(cur_date>predicted_date){//"fix" concluded cases prediction issue
+          return cur_date;
+        }
+        return predicted_date;
+    }
+    getExpectedEndDeathsDateByComparingWithCurrent(country_name){
+        let cur_date = this.getLastDate(country_name);       
+        let prediction_datamap = this.getPredictionDataMap();
+        let predicted_date = prediction_datamap[country_name].deaths_end_day_date;
         if(cur_date>predicted_date){//"fix" concluded cases prediction issue
           return cur_date;
         }

@@ -1,6 +1,12 @@
-button {
+button.yScale {
   position: absolute;
   top: 20px;
+  left: 55px;
+  z-index:999999;
+}
+button.yDimension {
+  position: absolute;
+  top: 55px;
   left: 55px;
   z-index:999999;
 }
