@@ -250,18 +250,30 @@ export class LinechartsParent implements OnInit {
                         });
       this.addTooltipBehaviorToDots();
     }
-    getDotsTooltipText(d){
+    getCurrentDotsTooltipText(d){
       let confirmed = this.dm.pipeNumberToString(d.confirmed);
+      let deaths = this.dm.pipeNumberToString(d.deaths);      
+      let date_str = this.dm.pipeDateObjToDateString(d.date);
+
+      let result_amount = confirmed;
+      let result_percentage = d.confirmed_percentage_growth;
+      if(this.isDeathsDimension()){ 
+        result_amount == deaths;
+        result_percentage = d.deaths_percentage_growth;
+      }
+
       return  d.country+
-              "<br>"+confirmed+" cases"+
-              "<br> +"+Number(d.percentage_growth).toFixed(2)+"%";
+              "<br>"+date_str+
+              "<br>"+result_amount+" "+this.yDimension+
+              "<br> +"+Number(result_percentage).toFixed(2)+"%"+
+              "<br>"+this.scale_y(result_amount);
     }
     addTooltipBehaviorToDots(){
       this.dots.on("mouseover", ()=>{
                   return this.tooltip.style("visibility", "visible");
                 })
                 .on("mousemove", (d)=>{
-                  this.tooltip.html(this.getDotsTooltipText(d))
+                  this.tooltip.html(this.getCurrentDotsTooltipText(d))
                   return this.tooltip.style("top", (d3.event.pageY-10)+"px")
                                      .style("left",(d3.event.pageX+10)+"px");
                 })
@@ -430,7 +442,7 @@ export class LinechartsParent implements OnInit {
       } 
       this.zoom = d3.zoom()
                     .scaleExtent([0.7, 5])
-                    .translateExtent([[-100, -100], [this.width + 90, this.height + 100]])
+                    .translateExtent([[-150, -150], [this.width + 150, this.height + 150]])
                     .on('zoom', zoomed);
       this.zoom(this.svg);
                     

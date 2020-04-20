@@ -91,18 +91,12 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                       .attr("cy", (d) => { return this.scale_y(d.confirmed_last_week); });
     this.addTooltipBehaviorToDots();
   }
-  getDotsTooltipText(d){
-    let day = d.date.getDate();
-    let month = d.date.getMonth() + 1;
-    //pipe
-    if(day<10) day = "0"+day;
-    if(month<10) month = "0"+month;
-    let date_str = day + "/" + month;
+  getCurrentDotsTooltipText(d){
 
     let last_week = d.confirmed_last_week;
     let total = d.total_confirmed;
     let percentage_growth = last_week*100/total;
-
+    let date_str = this.dm.pipeDateObjToDateString(d.date);
 
     return "Last week growth:"+
            "<br> +"+Number(percentage_growth).toFixed(2)+"%"+
@@ -113,7 +107,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                 return this.tooltip.style("visibility", "visible");
               })
               .on("mousemove", (d)=>{
-                this.tooltip.html(this.getDotsTooltipText(d))
+                this.tooltip.html(this.getCurrentDotsTooltipText(d))
                 return this.tooltip.style("top", (d3.event.pageY-10)+"px")
                                    .style("left",(d3.event.pageX+10)+"px");
               })
