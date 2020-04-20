@@ -161,7 +161,10 @@ export class LinechartsParent implements OnInit {
                             return last_x; 
                           })
                           .y((d) => { 
-                              if(+d.deaths==-1){ return last_y; }//d.deaths==-1 idicates the end of the deaths prediction path
+                              if(this.isLogScaled() && +d.deaths==0){ 
+                                return  this.scale_y(1); //fix log(0) error, log(1)=0
+                              } 
+                              else if(+d.deaths==-1){ return last_y; }//d.deaths==-1 idicates the end of the deaths prediction path
                               last_y = this.scale_y(+d.deaths)
                               return last_y; 
                           });
@@ -244,6 +247,7 @@ export class LinechartsParent implements OnInit {
                         .attr("cx", (d) => { return this.scale_x(d.date); })
                         .attr("cy", (d) => { 
                           if(this.isDeathsDimension()){
+                            if(d.deaths==0) return this.scale_y(1)
                             return this.scale_y(d.deaths); 
                           }
                           return this.scale_y(d.confirmed); 
@@ -251,20 +255,18 @@ export class LinechartsParent implements OnInit {
       this.addTooltipBehaviorToDots();
     }
     getCurrentDotsTooltipText(d){
-      let confirmed = this.dm.pipeNumberToString(d.confirmed);
-      let deaths = this.dm.pipeNumberToString(d.deaths);      
       let date_str = this.dm.pipeDateObjToDateString(d.date);
 
-      let result_amount = confirmed;
+      let result_amount = d.confirmed;
       let result_percentage = d.confirmed_percentage_growth;
       if(this.isDeathsDimension()){ 
-        result_amount == deaths;
+        result_amount = d.deaths;
         result_percentage = d.deaths_percentage_growth;
       }
 
       return  d.country+
               "<br>"+date_str+
-              "<br>"+result_amount+" "+this.yDimension+
+              "<br>"+this.dm.pipeNumberToString(result_amount)+" "+this.yDimension+
               "<br> +"+Number(result_percentage).toFixed(2)+"%"+
               "<br>"+this.scale_y(result_amount);
     }
