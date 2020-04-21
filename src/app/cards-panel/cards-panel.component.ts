@@ -54,10 +54,9 @@ export class CardsPanelComponent implements OnInit {
     /////////////////////// Part2
     this.drawCardsStructure();
     this.drawCardsBackground();
-    this.writeCardsTitle();
     
+    this.writeCardsTitle();    
     this.writeCardsBody();
-
     this.writeCardsFootnote();
   }
 
@@ -132,7 +131,8 @@ export class CardsPanelComponent implements OnInit {
     let top_margin = 15;
     this.gCards.append("text")
                 .text((d) => { return d.key; })
-                .attr("transform", "translate("+this.left_margin+","+top_margin*1.5+")"); 
+                .attr("transform", "translate("+this.left_margin+","+top_margin*1.5+")")                
+                .attr("font-weight", 500); 
   }
   writeCardsFootnote() {    
     this.writeCardsExpectedEndDay();
@@ -155,6 +155,7 @@ export class CardsPanelComponent implements OnInit {
                   return amount_samples + " samples"; 
                 })
                 .style("font-size", font_size+"px")
+                .attr("font-weight", 500)
                 .attr("transform", "translate("+
                         (this.cards_width+right_margin)+","+ //x
                         (this.cards_height+bottom_margin*1.5)+")");//y
@@ -194,7 +195,7 @@ export class CardsPanelComponent implements OnInit {
   }
 
   writeCardsTableInfo(header: string[], rows: string[], cell_width, cell_height) {    
-    let info_font_size = 11;
+    let info_font_size = 14;
     let pos0_x = this.left_margin+cell_width;
     let pos0_y = this.body_top_margin+cell_height;
 
@@ -205,6 +206,7 @@ export class CardsPanelComponent implements OnInit {
                       return this.getInfoByInfoId(infoId, d.key)
                     })
                     .style("font-size", info_font_size+"px")
+                    .attr("font-weight", 500)
                     .attr("transform", "translate("+
                                                   ((pos0_x)+i*cell_width)+","+ //x
                                                   ((pos0_y)+j*cell_height)+")"); //y
@@ -226,6 +228,7 @@ export class CardsPanelComponent implements OnInit {
     this.gCards.append("text")
                 .text((d) => { return this.getInfoByInfoId("end_day_date", d.key); })
                 .style("font-size", font_size+"px")
+                .attr("font-weight", 500)
                 .attr("transform", "translate("+
                         (this.left_margin)+","+ //x
                         (this.cards_height+bottom_margin*1.5)+")");//y
