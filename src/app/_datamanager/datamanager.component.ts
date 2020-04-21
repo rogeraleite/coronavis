@@ -228,6 +228,18 @@ export class DataManagerComponent implements OnInit {
         }
         return result;
     }
+    getCurrentLastDayCases(country_name){
+        let country = this._current_data_groupedByCountry.get(country_name);
+        let sampleA = country[country.length-1].confirmed;
+        let sampleB = country[country.length-2].confirmed;
+        return sampleA-sampleB
+    }
+    getCurrentLastDayDeaths(country_name){
+        let country = this._current_data_groupedByCountry.get(country_name);
+        let sampleA = country[country.length-1].deaths;
+        let sampleB = country[country.length-2].deaths;
+        return sampleA-sampleB
+    }
     getExpectedCasesByComparingWithCurrent(country_name){
         let cur_cases = this.getCurrentCases(country_name);        
         let prediction_datamap = this.getPredictionDataMap();
@@ -248,24 +260,48 @@ export class DataManagerComponent implements OnInit {
         }
         return exp_deaths
     }
-    getExpectedEndCasesDateByComparingWithCurrent(country_name){
+
+    getExpectedEndCasesDateString(country_name){
         let cur_date = this.getLastDate(country_name);       
         let prediction_datamap = this.getPredictionDataMap();
         let predicted_date = prediction_datamap[country_name].cases_end_day_date;
         if(cur_date>predicted_date){//"fix" concluded cases prediction issue
-          return cur_date;
+          return "Controlled";
         }
-        return predicted_date;
+        let p_data = new Date(predicted_date);
+        return this.pipeDateObjToDateString(p_data);
     }
-    getExpectedEndDeathsDateByComparingWithCurrent(country_name){
+    getExpectedEndDeathsDateString(country_name){
         let cur_date = this.getLastDate(country_name);       
         let prediction_datamap = this.getPredictionDataMap();
         let predicted_date = prediction_datamap[country_name].deaths_end_day_date;
         if(cur_date>predicted_date){//"fix" concluded cases prediction issue
-          return cur_date;
+          return "Controlled";
         }
-        return predicted_date;
+        let p_data = new Date(predicted_date);
+        return this.pipeDateObjToDateString(p_data);
     }
+    getExpectedEndCasesDate(country_name){
+        let cur_date = this.getLastDate(country_name);       
+        let prediction_datamap = this.getPredictionDataMap();
+        let predicted_date = prediction_datamap[country_name].cases_end_day_date;
+        if(cur_date>predicted_date){//"fix" concluded cases prediction issue
+          predicted_date = cur_date;
+        }
+        let p_data = new Date(predicted_date);
+        return p_data;
+    }
+    getExpectedEndDeathsDate(country_name){
+        let cur_date = this.getLastDate(country_name);       
+        let prediction_datamap = this.getPredictionDataMap();
+        let predicted_date = prediction_datamap[country_name].deaths_end_day_date;
+        if(cur_date>predicted_date){//"fix" concluded cases prediction issue
+          predicted_date = cur_date;
+        }
+        let p_data = new Date(predicted_date);
+        return p_data;
+    }
+
     getCountriesSelection() {
         return this.countries_selection;
     }

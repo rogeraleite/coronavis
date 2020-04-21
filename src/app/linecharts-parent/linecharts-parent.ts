@@ -267,8 +267,7 @@ export class LinechartsParent implements OnInit {
       return  d.country+
               "<br>"+date_str+
               "<br>"+this.dm.pipeNumberToString(result_amount)+" "+this.yDimension+
-              "<br> +"+Number(result_percentage).toFixed(2)+"%"+
-              "<br>"+this.scale_y(result_amount);
+              "<br> +"+Number(result_percentage).toFixed(2)+"%"
     }
     addTooltipBehaviorToDots(){
       this.dots.on("mouseover", ()=>{
@@ -324,12 +323,14 @@ export class LinechartsParent implements OnInit {
       let prediction = prediction_data[country];
       
       let result = {
-        end_date: new Date(this.dm.getExpectedEndCasesDateByComparingWithCurrent(country)),
+        end_date: this.dm.getExpectedEndCasesDate(country),
+        end_date_str: this.dm.getExpectedEndCasesDateString(country),
         exp_amount: +this.dm.getExpectedCasesByComparingWithCurrent(country),
         exp_amount_error: prediction.cases_number_error
       }
       if(this.isDeathsDimension()){
-        result.end_date =  new Date(this.dm.getExpectedEndDeathsDateByComparingWithCurrent(country));
+        result.end_date =  this.dm.getExpectedEndDeathsDate(country);
+        result.end_date_str =  this.dm.getExpectedEndDeathsDateString(country);
         result.exp_amount = +this.dm.getExpectedDeathsByComparingWithCurrent(country);
         result.exp_amount_error = prediction.deaths_number_error;
       }
@@ -346,7 +347,7 @@ export class LinechartsParent implements OnInit {
 
       return  country+" <small>prediction</small>"+
               "<br>"+this.dm.pipeNumberToString(exp_amount)+" <small>(+-"+error+") "+this.yDimension+"</small>"+
-              "<br> <small>end at </small> "+this.dm.pipeDateObjToDateString(exp_end_date);
+              "<br> <small>end at </small> "+exp_end_date;
     }
     addTooltipBehaviorToPrediction() {
       this.predictionDot.on("mouseover", ()=>{

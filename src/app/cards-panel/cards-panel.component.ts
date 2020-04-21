@@ -31,6 +31,9 @@ export class CardsPanelComponent implements OnInit {
   protected grouped_data;
   protected prediction_datamap;
 
+  private left_margin = 6;
+  private body_top_margin = 40;
+
   constructor() { }
 
   ngOnInit() {
@@ -52,9 +55,13 @@ export class CardsPanelComponent implements OnInit {
     this.drawCardsStructure();
     this.drawCardsBackground();
     this.writeCardsTitle();
-    this.writeCardsInfo();
+    
+    this.writeCardsBody();
+
     this.writeCardsFootnote();
   }
+
+
 
   loadCountriesGroupsByArray(countries){
     console.log(countries)
@@ -114,6 +121,7 @@ export class CardsPanelComponent implements OnInit {
   }
   drawCardsBackground() {
     this.gCards.append("rect")
+                .attr("id", (d) => { return "card-"+d.key })
                 .attr("fill", (d) => { return this.color_scale(d.key); })
                 .attr("width", this.cards_width - this.margin)
                 .attr("height", this.cards_height - this.margin)
@@ -122,12 +130,15 @@ export class CardsPanelComponent implements OnInit {
   }
   writeCardsTitle() {
     let top_margin = 15;
-    let left_margin = 10;
     this.gCards.append("text")
                 .text((d) => { return d.key; })
-                .attr("transform", "translate("+left_margin+","+top_margin*1.5+")"); 
+                .attr("transform", "translate("+this.left_margin+","+top_margin*1.5+")"); 
   }
-  writeCardsFootnote() {
+  writeCardsFootnote() {    
+    this.writeCardsExpectedEndDay();
+    this.writeAmountSamples();    
+  }
+  writeAmountSamples(){
     let bottom_margin = -8;
     let right_margin = -65;
     let font_size = 11;
@@ -148,66 +159,120 @@ export class CardsPanelComponent implements OnInit {
                         (this.cards_width+right_margin)+","+ //x
                         (this.cards_height+bottom_margin*1.5)+")");//y
   }
-  writeCardsInfo() {
-    //TODO
-    let top_margin = 35;
-    let left_margin = 10;
-    let font_size = 15;
 
-    let info = ["cases_speed","current_cases","exp_cases_number","end_day_date"];
-    info.forEach((e,i)=>{
-      let top_info_margin = top_margin + i*font_size*2
-      //HEADER
-      this.gCards.append("text")
-                .text(this.getInfoHeaderByInfoId(e))
-                .style("font-size", font_size*2/3+"px")
-                .attr("transform", "translate("+
-                        (left_margin)+","+      //x
-                        (top_info_margin)+")"); //y
-      //INFO
-      this.gCards.append("text")
-                .text((d) => { 
-                  let country = d.key;
-                  let info = this.getInfoByInfoId(e,country);
-                  return info; 
-                })
+  writeCardsBody() {
+    this.writeCardsTable();
+  }
+  writeCardsTable(){
+    let header = ["cases", "deaths"]
+    let rows = ["current", "expected", "yesterday"]
+    
+    let labels_font_size = 11;
+
+    let cell_width = this.cards_width/3;
+    let cell_height = this.cards_height/7;
+
+    //HEADER
+    header.forEach((element,i)=>{
+        this.gCards.append("text").text(element)
+                    .style("font-size", labels_font_size+"px")
+                    .attr("transform", "translate("+
+                                                  ((this.left_margin+cell_width)+i*cell_width)+","+ //x
+                                                  (this.body_top_margin)+")"); //y
+    });
+    //ROWS
+    rows.forEach((element,i)=>{
+      this.gCards.append("text").text(element)
+                  .style("font-size", labels_font_size+"px")
+                  .attr("transform", "translate("+
+                                                (this.left_margin)+","+ //x
+                                                ((this.body_top_margin+cell_height)+i*cell_height)+")"); //y
+    });
+
+    this.writeCardsTableInfo(header,rows,cell_width,cell_height);
+
+  }
+
+  writeCardsTableInfo(header: string[], rows: string[], cell_width, cell_height) {    
+    let info_font_size = 11;
+    let pos0_x = this.left_margin+cell_width;
+    let pos0_y = this.body_top_margin+cell_height;
+
+    header.forEach((header_element,i)=>{
+      rows.forEach((row_element,j)=>{
+        let infoId = header_element+"_"+row_element;
+        this.gCards.append("text").text((d)=>{
+                      return this.getInfoByInfoId(infoId, d.key)
+                    })
+                    .style("font-size", info_font_size+"px")
+                    .attr("transform", "translate("+
+                                                  ((pos0_x)+i*cell_width)+","+ //x
+                                                  ((pos0_y)+j*cell_height)+")"); //y
+      })
+    });
+
+  }
+
+  writeCardsExpectedEndDay(){
+    let bottom_margin = -8;
+    let font_size = 11;
+
+    this.gCards.append("text")
+                .text("expected end:")
                 .style("font-size", font_size+"px")
                 .attr("transform", "translate("+
-                        (left_margin*2)+","+                //x
-                        (top_info_margin + font_size)+")"); //y      
-    })
-
-    
-  }
-  getInfoHeaderByInfoId(infoId){
-    let result = "Error:";
-    if(infoId=="cases_speed"){ result = "Speed:" }
-    else if(infoId=="current_cases"){ result = "Current cases (people):" }
-    else if(infoId=="exp_cases_number"){ result = "Expected cases (people):" }
-    else if(infoId=="end_day_date"){ result = "Expected end date:" }
-    return result;
+                        (this.left_margin)+","+ //x
+                        (this.cards_height+(bottom_margin*1.5)-font_size)+")");//y
+    this.gCards.append("text")
+                .text((d) => { return this.getInfoByInfoId("end_day_date", d.key); })
+                .style("font-size", font_size+"px")
+                .attr("transform", "translate("+
+                        (this.left_margin)+","+ //x
+                        (this.cards_height+bottom_margin*1.5)+")");//y
   }
   getInfoByInfoId(infoId, country){
     let info = this.prediction_datamap[country];
     let result = "error";
-    if(infoId=="cases_speed"){
-      result = info.cases_speed.toFixed(2)
+    switch(infoId){
+      case "cases_speed": {
+        result = info.cases_speed.toFixed(2)
+        break;
+      }
+      case "end_day_date":{
+        result = this.dm.getExpectedEndCasesDateString(country);
+        break;
+      }
+      case "cases_current":{        
+        result = this.dm.pipeNumberToString(this.dm.getCurrentCases(country));
+        break;
+      }
+      case "cases_expected":{        
+        let exp_cases_number = this.dm.getExpectedCasesByComparingWithCurrent(country);
+        result = this.dm.pipeNumberToString(exp_cases_number) // + "(+-"+this.dm.pipeNumberToString((info.cases_number_error.toFixed(0))/1000)+"k)";
+        break;
+      }
+      case "cases_yesterday":{
+        result = this.dm.pipeNumberToString(this.dm.getCurrentLastDayCases(country));
+        break;
+      }
+      case "deaths_current":{
+        result = this.dm.pipeNumberToString(this.dm.getCurrentDeaths(country))
+        break;
+      }
+      case "deaths_expected":{
+        let exp_deaths_number = this.dm.getExpectedDeathsByComparingWithCurrent(country);
+        result = this.dm.pipeNumberToString(exp_deaths_number);
+        break;
+      }
+      case "deaths_yesterday":{
+        result = this.dm.pipeNumberToString(this.dm.getCurrentLastDayDeaths(country));        
+        break;
+      }
     }
-    else if(infoId=="current_cases"){
-      result = this.dm.pipeNumberToString(this.dm.getCurrentCases(country));
-    }
-    else if(infoId=="exp_cases_number"){    
-      let exp_cases_number = this.dm.getExpectedCasesByComparingWithCurrent(country);
-      result = this.dm.pipeNumberToString(exp_cases_number) + "(+-"+this.dm.pipeNumberToString(info.cases_number_error.toFixed(0))+")";
-    }
-    else if(infoId=="cases_number_error"){
-      result = info.cases_number_error.toFixed(2)      
-    }
-    else if(infoId=="end_day_date"){
-      let end_date = this.dm.getExpectedEndCasesDateByComparingWithCurrent(country)
-      result = this.dm.pipeDateObjToDateString(end_date);
-    }
+    
     return result;
   }
+
+  
 
 }
