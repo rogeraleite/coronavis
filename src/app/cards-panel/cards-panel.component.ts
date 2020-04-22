@@ -160,17 +160,16 @@ export class CardsPanelComponent implements OnInit {
                         (this.cards_width+right_margin)+","+ //x
                         (this.cards_height+bottom_margin*1.5)+")");//y
   }
-
   writeCardsBody() {
     this.writeCardsTable();
   }
   writeCardsTable(){
-    let header = ["cases", "deaths"]
-    let rows = ["current", "expected", "yesterday"]
+    let header = ["cases", "deaths", "tests"]
+    let rows = ["current", "yesterday", "expected"]
     
-    let labels_font_size = 11;
+    let labels_font_size = 10;
 
-    let cell_width = this.cards_width/3;
+    let cell_width = this.cards_width/(header.length+1);
     let cell_height = this.cards_height/7;
 
     //HEADER
@@ -195,7 +194,7 @@ export class CardsPanelComponent implements OnInit {
   }
 
   writeCardsTableInfo(header: string[], rows: string[], cell_width, cell_height) {    
-    let info_font_size = 14;
+    let info_font_size = 11;
     let pos0_x = this.left_margin+cell_width;
     let pos0_y = this.body_top_margin+cell_height;
 
@@ -255,7 +254,7 @@ export class CardsPanelComponent implements OnInit {
         break;
       }
       case "cases_yesterday":{
-        result = this.dm.pipeNumberToString(this.dm.getCurrentLastDayCases(country));
+        result = this.dm.pipeNumberToString(this.dm.getCurrentYesterdayCases(country));
         break;
       }
       case "deaths_current":{
@@ -268,7 +267,21 @@ export class CardsPanelComponent implements OnInit {
         break;
       }
       case "deaths_yesterday":{
-        result = this.dm.pipeNumberToString(this.dm.getCurrentLastDayDeaths(country));        
+        result = this.dm.pipeNumberToString(this.dm.getCurrentYesterdayDeaths(country));        
+        break;
+      }
+      case "tests_current":{
+        result = this.dm.pipeNumberToAbbreviationStr(this.dm.getCurrentTests(country));   
+        if(+result == -1) result = "miss";
+        break;
+      }
+      case "tests_yesterday":{
+        result = this.dm.pipeNumberToAbbreviationStr(this.dm.getCurrentYesterdayTests(country));        
+        if(+result == -1) result = "miss";
+        break;
+      }
+      case "tests_expected":{
+        result = "";        
         break;
       }
     }

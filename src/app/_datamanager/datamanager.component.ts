@@ -17,6 +17,8 @@ export class DataManagerComponent implements OnInit {
     private _predictionSummary_data: Array<any>;
     private _prediction_data: Array<any>;
     private _prediction_data_groupedByCountry: any;
+    private _tests_data: Array<any>;
+    private _tests_data_groupedByCountry: any;
 
     private _data_ids: Array<any>;
     private _data_map: Map<any, any>;
@@ -55,6 +57,7 @@ export class DataManagerComponent implements OnInit {
     groupBasicData(){
         this._current_data_groupedByCountry = this.groupCurrentDataByCountry();           
         this._prediction_data_groupedByCountry = this.groupPredictionDataByCountry();
+        this._tests_data_groupedByCountry = this.groupTestsDataByCountry();
         this._lastweek_data_groupedByCountry = this.groupLastWeekDataByCountry();
     }
     ngOnInit(): void {
@@ -75,6 +78,7 @@ export class DataManagerComponent implements OnInit {
         this._current_data = this.fetchCurrentData();
         this._prediction_data = this.fetchPredictionData();
         this._lastweek_data = this.fetchLastWeekData();
+        this._tests_data = this.fetchTestsData();
         this._predictionSummary_data = this.fetchPredictionSummaryData();
     }
     fetchCurrentData(): any[] {
@@ -86,7 +90,7 @@ export class DataManagerComponent implements OnInit {
         let d = Data.getLastWeekData();  
         d = this.parseDateStringObjToDateObj(d);
         return d;
-    }
+    }    
     fetchPredictionSummaryData(): any[] {
         let d = Data.getPredictionData();  
         d = this.parseDateStringObjToDateObj(d);
@@ -94,6 +98,11 @@ export class DataManagerComponent implements OnInit {
     }
     fetchPredictionData(): any[] {
         let d = Data.getPredictionCurveData();  
+        d = this.parseDateStringObjToDateObj(d);
+        return d;
+    }
+    fetchTestsData(): any[] {
+        let d = Data.getTestsData();  
         d = this.parseDateStringObjToDateObj(d);
         return d;
     }
@@ -166,6 +175,10 @@ export class DataManagerComponent implements OnInit {
         let grouped = this.groupBy(this._prediction_data, sample => sample.country);
         return grouped;
     }
+    groupTestsDataByCountry(): any{
+        let grouped = this.groupBy(this._tests_data, sample => sample.country);
+        return grouped;
+    }
     groupLastWeekDataByCountry(): any{
         let grouped = this.groupBy(this._lastweek_data, sample => sample.country);
         return grouped;
@@ -185,6 +198,17 @@ export class DataManagerComponent implements OnInit {
         let result = [];
         countries.forEach(c => {
             let country = this._prediction_data_groupedByCountry.get(c);
+            country.forEach(sample => {
+                result.push(sample)             
+            });            
+        });
+        return result;  
+    }
+    getTestsDataByCountryList(countries: Array<string>){
+        if(!countries) countries = this.getCountriesSelection()
+        let result = [];
+        countries.forEach(c => {
+            let country = this._tests_data_groupedByCountry.get(c);
             country.forEach(sample => {
                 result.push(sample)             
             });            
@@ -217,6 +241,14 @@ export class DataManagerComponent implements OnInit {
         let country = this._lastweek_data_groupedByCountry.get(country_name);
         return country[country.length-1].date;
     }
+    getCurrentTests(country_name){
+        let result = -1;
+        let country = this._tests_data_groupedByCountry.get(country_name);
+        if(country){
+            result = country[country.length-1].tests;
+        }
+        return result;
+    }
     getCurrentCases(country_name){
         let country = this._current_data_groupedByCountry.get(country_name);
         return country[country.length-1].confirmed;
@@ -232,13 +264,25 @@ export class DataManagerComponent implements OnInit {
         }
         return result;
     }
-    getCurrentLastDayCases(country_name){
+    getCurrentYesterdayTests(country_name){     
+        console.log(country_name)   
+        let result = -1;
+        let country = this._tests_data_groupedByCountry.get(country_name);
+        if(country){
+            let sampleA = country[country.length-1].tests;
+            let sampleB = country[country.length-2].tests;
+            result = sampleA-sampleB
+        }
+        console.log(result)
+        return result;        
+    }
+    getCurrentYesterdayCases(country_name){
         let country = this._current_data_groupedByCountry.get(country_name);
         let sampleA = country[country.length-1].confirmed;
         let sampleB = country[country.length-2].confirmed;
         return sampleA-sampleB
     }
-    getCurrentLastDayDeaths(country_name){
+    getCurrentYesterdayDeaths(country_name){
         let country = this._current_data_groupedByCountry.get(country_name);
         let sampleA = country[country.length-1].deaths;
         let sampleB = country[country.length-2].deaths;
@@ -319,7 +363,9 @@ export class DataManagerComponent implements OnInit {
     get dataMap(): Map<any, any> {
         return this._data_map;
     }
-
+    getTestsData(): Array<any> {
+        return this._tests_data;
+    }
     getCurrentData(): Array<any> {
         return this._current_data;
     }
@@ -415,6 +461,24 @@ export class DataManagerComponent implements OnInit {
         let month = this.addZeroToDateStringNumberIfNeeded(date.getMonth()+1);
         let year = date.getFullYear()
         let result = day+"/"+month+"/"+year;
+        return result;
+      }
+      pipeNumberToAbbreviationStr(number){
+        let k = ""
+        let result = number+""
+        if(number<1000) return result
+        else if(number>1000000) result = (number/1000000).toFixed(1) + "kk"        
+        else result = (number/1000).toFixed(1)+"k"
+
+        //check right zeros
+        if(result.includes("0")){
+            let result_split = result.split(".")
+            let second_half = result_split[1];
+            if(second_half.includes("0")){
+                result = result_split[0]+result_split[1].replace('0','');
+            }
+        }
+
         return result;
       }
 }//end class
