@@ -1,5 +1,6 @@
 
 <div class="linechart">
     <button class="switch-scale btn btn-sm btn-outline-dark yScale" (click)="switchYScale()">switch y <b>scale</b></button>
-    <button class="switch-scale btn btn-sm btn-outline-dark yDimension" (click)="switchYDimension()">switch to <b>{{getOpositeDimension()}}</b></button>
+    <button class="switch-scale btn btn-sm btn-outline-dark yDimension" (click)="switchYDimension()">switch to <b>{{getOpositeDimension()}}</b></button>    
+    <information-button [key]="'linechart-n'"></information-button>
 </div>

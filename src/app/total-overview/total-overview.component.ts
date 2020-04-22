@@ -91,7 +91,6 @@ export class TotalOverviewComponent implements OnInit {
   addCountry(content){    
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
-      console.log("aaaaa")
     }, 
     (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;

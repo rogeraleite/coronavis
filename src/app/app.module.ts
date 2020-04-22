@@ -12,6 +12,7 @@ import { DataManagerComponent } from './_datamanager/datamanager.component';
 import { TotalOverviewComponent } from './total-overview/total-overview.component'
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { InformationButtonComponent } from './information-button/information-button.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     LinechartLognComponent,
     LinechartNewcasesComponent,
     CardsPanelComponent,
-    TotalOverviewComponent
+    TotalOverviewComponent,
+    InformationButtonComponent
   ],
   imports: [
     BrowserModule,

@@ -32,13 +32,12 @@
 </div>
 
 
-
-<ng-template #content let-modal>
+<ng-template #content let-modal>    
+        <div class="modal-header">
+            <h5>Countries</h5>
+        </div>
         <div class="modal-body">
         <form>
-            <div class="modal-header">
-                <h5>Countries</h5>
-            </div>
             <div class="form-group">
                 <form [formGroup]="form" (ngSubmit)="submit()">
                     <div *ngIf="!form.valid">At least one order must be selected</div>

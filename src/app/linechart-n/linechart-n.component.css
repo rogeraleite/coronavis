@@ -1,15 +1,18 @@
 button.yScale {
   position: absolute;
-  top: 20px;
-  left: 55px;
+  top: 3%;
+  left: 13%;
   z-index:999999;
 }
 button.yDimension {
   position: absolute;
-  top: 55px;
-  left: 55px;
+  top: 12%;
+  left: 13%;
   z-index:999999;
 }
-#tooltip {
-  background-color: coral;
+information-button{
+  position: absolute;
+  top: 3%;
+  left: 90%;
+  z-index:1;
 }
