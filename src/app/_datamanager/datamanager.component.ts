@@ -31,11 +31,15 @@ export class DataManagerComponent implements OnInit {
     private countries_selection = ["Austria","Brazil","Netherlands","Italy","US"];
 
     private _colors: D3.ScaleOrdinal<string, string>;
+    // private _colors_array = [
+    //     '#e6194b', '#f58231', '#ffe119', '#bfef45', '#3cb44b',
+    //     '#808000', '#42d4f4', '#4363d8', '#911eb4', '#f032e6',
+    //     '#fabebe', '#ffd8b1', '#9a6324', '#800000', '#e6beff',
+    //     '#aaffc3', '#469990', '#000075', '#808080', '#000000',
+    // ];
     private _colors_array = [
-        '#e6194b', '#f58231', '#ffe119', '#bfef45', '#3cb44b',
-        '#808000', '#42d4f4', '#4363d8', '#911eb4', '#f032e6',
-        '#fabebe', '#ffd8b1', '#9a6324', '#800000', '#e6beff',
-        '#aaffc3', '#469990', '#000075', '#808080', '#000000',
+        '#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3',
+        '#fdb462', '#b3de69','#fccde5'
     ]
 
     constructor() {

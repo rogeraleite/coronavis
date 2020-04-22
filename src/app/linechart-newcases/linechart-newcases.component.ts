@@ -125,7 +125,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     } 
     this.zoom = d3.zoom()
                   .scaleExtent([0.7, 5])
-                  .translateExtent([[-100, -100], [this.width + 90, this.height + 100]])
+                  .translateExtent([[-150, -150], [this.width + 200, this.height + 200]])
                   .on('zoom', zoomed);
     this.zoom(this.svg);
                   
