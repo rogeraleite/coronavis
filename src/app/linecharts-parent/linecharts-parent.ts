@@ -264,10 +264,10 @@ export class LinechartsParent implements OnInit {
         result_percentage = d.deaths_percentage_growth;
       }
 
-      return  d.country+
-              "<br>"+date_str+
-              "<br>"+this.dm.pipeNumberToString(result_amount)+" "+this.yDimension+
-              "<br> +"+Number(result_percentage).toFixed(2)+"%"
+      return  d.country+" <small>cases</small>"+
+              "<br>"+this.dm.pipeNumberToString(result_amount)+" <small>"+this.yDimension+" (+"+Number(result_percentage).toFixed(2)+"%)</small></div>"+              
+              "<br><small>"+date_str+"</br>";
+              
     }
     addTooltipBehaviorToDots(){
       this.dots.on("mouseover", ()=>{
@@ -275,12 +275,17 @@ export class LinechartsParent implements OnInit {
                 })
                 .on("mousemove", (d)=>{
                   this.tooltip.html(this.getCurrentDotsTooltipText(d))
-                  return this.tooltip.style("top", (d3.event.pageY-10)+"px")
-                                     .style("left",(d3.event.pageX+10)+"px");
+                  return this.getTooltip();
                 })
                 .on("mouseout", ()=>{
                   return this.tooltip.style("visibility", "hidden");                
                 });
+    }
+
+    getTooltip(){
+      return this.tooltip.style("top", (d3.event.pageY-10)+"px")
+                          .style("left",(d3.event.pageX+10)+"px")                                     
+                          .style("background-color","rgba(255,255,255,.8)");
     }
     
     drawPredictionDot() {
@@ -342,12 +347,12 @@ export class LinechartsParent implements OnInit {
       let info = this.getPredictionInfoBasedOnDimensionByCountry(country);
       let error = this.dm.pipeNumberToString(info.exp_amount_error.toFixed(0));
 
-      let exp_end_date = info.end_date;
+      let exp_end_date = info.end_date_str;
       let exp_amount = info.exp_amount;
 
       return  country+" <small>prediction</small>"+
               "<br>"+this.dm.pipeNumberToString(exp_amount)+" <small>(+-"+error+") "+this.yDimension+"</small>"+
-              "<br> <small>end at </small> "+exp_end_date;
+              "<br> <small>end at "+exp_end_date+"</small>";
     }
     addTooltipBehaviorToPrediction() {
       this.predictionDot.on("mouseover", ()=>{
@@ -355,8 +360,7 @@ export class LinechartsParent implements OnInit {
                           })
                           .on("mousemove", (d)=>{
                             this.tooltip.html(this.getPredictionTooltipText(d))
-                            return this.tooltip.style("top", (d3.event.pageY-10)+"px")
-                                              .style("left",(d3.event.pageX+10)+"px");
+                            return this.getTooltip();
                           })
                           .on("mouseout", ()=>{
                             return this.tooltip.style("visibility", "hidden");                

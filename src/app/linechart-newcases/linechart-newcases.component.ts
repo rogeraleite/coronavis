@@ -100,7 +100,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
 
     return "Last week growth:"+
            "<br> +"+Number(percentage_growth).toFixed(2)+"%"+
-           "<br> date: "+date_str;
+           "<br> <small> date: "+date_str+" </small>";
   }
   addTooltipBehaviorToDots(){
     this.dots.on("mouseover", (d)=>{
@@ -108,8 +108,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
               })
               .on("mousemove", (d)=>{
                 this.tooltip.html(this.getCurrentDotsTooltipText(d))
-                return this.tooltip.style("top", (d3.event.pageY-10)+"px")
-                                   .style("left",(d3.event.pageX+10)+"px");
+                return this.getTooltip();
               })
               .on("mouseout", ()=>{
                 return this.tooltip.style("visibility", "hidden");                
