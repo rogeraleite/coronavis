@@ -272,12 +272,12 @@ export class CardsPanelComponent implements OnInit {
       }
       case "tests_current":{
         result = this.dm.pipeNumberToAbbreviationStr(this.dm.getCurrentTests(country));   
-        if(+result == -1) result = "miss";
+        if(+result == -1) result = "N/A";
         break;
       }
       case "tests_yesterday":{
         result = this.dm.pipeNumberToAbbreviationStr(this.dm.getCurrentYesterdayTests(country));        
-        if(+result == -1) result = "miss";
+        if(+result == -1) result = "N/A";
         break;
       }
       case "tests_expected":{
