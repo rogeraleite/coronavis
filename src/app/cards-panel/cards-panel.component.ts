@@ -165,7 +165,7 @@ export class CardsPanelComponent implements OnInit {
   }
   writeCardsTable(){
     let header = ["cases", "deaths", "tests"]
-    let rows = ["current", "yesterday", "expected"]
+    let rows = ["total", "today", "today %", "expected"]
     
     let labels_font_size = 10;
 
@@ -202,7 +202,8 @@ export class CardsPanelComponent implements OnInit {
       rows.forEach((row_element,j)=>{
         let infoId = header_element+"_"+row_element;
         this.gCards.append("text").text((d)=>{
-                      return this.getInfoByInfoId(infoId, d.key)
+                      let text = this.getInfoByInfoId(infoId, d.key);
+                      return text;
                     })
                     .style("font-size", info_font_size+"px")
                     .attr("font-weight", 500)
@@ -244,8 +245,8 @@ export class CardsPanelComponent implements OnInit {
         result = this.dm.getExpectedEndCasesDateString(country);
         break;
       }
-      case "cases_current":{        
-        result = this.dm.pipeNumberToString(this.dm.getCurrentCases(country));
+      case "cases_total":{        
+        result = this.dm.pipeNumberToString(this.dm.getTotalCases(country));
         break;
       }
       case "cases_expected":{        
@@ -253,12 +254,20 @@ export class CardsPanelComponent implements OnInit {
         result = this.dm.pipeNumberToString(exp_cases_number) // + "(+-"+this.dm.pipeNumberToString((info.cases_number_error.toFixed(0))/1000)+"k)";
         break;
       }
-      case "cases_yesterday":{
-        result = this.dm.pipeNumberToString(this.dm.getCurrentYesterdayCases(country));
+      case "cases_today":{
+        let yesterday = this.dm.getTodayCases(country);
+        result = this.dm.pipeNumberToString(yesterday);
         break;
       }
-      case "deaths_current":{
-        result = this.dm.pipeNumberToString(this.dm.getCurrentDeaths(country))
+      case "cases_today %":{
+        let yesterday = this.dm.getTodayCases(country);
+        let total = this.dm.getTotalCases(country);
+        let percentage = (yesterday*100/total).toFixed(1);
+        result = "+"+percentage+"%";
+        break;
+      }
+      case "deaths_total":{
+        result = this.dm.pipeNumberToString(this.dm.getTotalDeaths(country))
         break;
       }
       case "deaths_expected":{
@@ -266,26 +275,41 @@ export class CardsPanelComponent implements OnInit {
         result = this.dm.pipeNumberToString(exp_deaths_number);
         break;
       }
-      case "deaths_yesterday":{
-        result = this.dm.pipeNumberToString(this.dm.getCurrentYesterdayDeaths(country));        
+      case "deaths_today":{
+        let yesterday = this.dm.getTodayDeaths(country);
+        result = this.dm.pipeNumberToString(yesterday);        
         break;
       }
-      case "tests_current":{
-        result = this.dm.pipeNumberToAbbreviationStr(this.dm.getCurrentTests(country));   
+      case "deaths_today %":{
+        let yesterday = this.dm.getTodayDeaths(country);
+        let total = this.dm.getTotalDeaths(country);
+        let percentage = (yesterday*100/total).toFixed(1);
+        result = "+"+percentage+"%";        
+        break;
+      }
+      case "tests_total":{
+        result = this.dm.pipeNumberToAbbreviationStr(this.dm.getTotalTests(country));   
         if(+result == -1) result = "N/A";
         break;
       }
-      case "tests_yesterday":{
-        result = this.dm.pipeNumberToAbbreviationStr(this.dm.getCurrentYesterdayTests(country));        
+      case "tests_today":{
+        result = this.dm.pipeNumberToAbbreviationStr(this.dm.getTodayTests(country));        
         if(+result == -1) result = "N/A";
+        break;
+      }
+      case "tests_today %":{        
+        let yesterday = this.dm.getTodayTests(country);
+        let total = this.dm.getTotalTests(country);
+        let percentage = (yesterday*100/total).toFixed(1);
+        result = "+"+percentage+"%";        
+        if(+yesterday == -1) result = "N/A";
         break;
       }
       case "tests_expected":{
         result = "";        
         break;
       }
-    }
-    
+    }    
     return result;
   }
 

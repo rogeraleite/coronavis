@@ -241,7 +241,7 @@ export class DataManagerComponent implements OnInit {
         let country = this._lastweek_data_groupedByCountry.get(country_name);
         return country[country.length-1].date;
     }
-    getCurrentTests(country_name){
+    getTotalTests(country_name){
         let result = -1;
         let country = this._tests_data_groupedByCountry.get(country_name);
         if(country){
@@ -249,11 +249,11 @@ export class DataManagerComponent implements OnInit {
         }
         return result;
     }
-    getCurrentCases(country_name){
+    getTotalCases(country_name){
         let country = this._current_data_groupedByCountry.get(country_name);
         return country[country.length-1].confirmed;
     }
-    getCurrentDeaths(country_name){
+    getTotalDeaths(country_name){
         let country = this._current_data_groupedByCountry.get(country_name);
         let result = 0;
         for(let i=country.length-1; i>=0; i--){
@@ -263,8 +263,8 @@ export class DataManagerComponent implements OnInit {
             }
         }
         return result;
-    }
-    getCurrentYesterdayTests(country_name){     
+    }    
+    getTodayTests(country_name){     
         console.log(country_name)   
         let result = -1;
         let country = this._tests_data_groupedByCountry.get(country_name);
@@ -276,20 +276,20 @@ export class DataManagerComponent implements OnInit {
         console.log(result)
         return result;        
     }
-    getCurrentYesterdayCases(country_name){
+    getTodayCases(country_name){
         let country = this._current_data_groupedByCountry.get(country_name);
         let sampleA = country[country.length-1].confirmed;
         let sampleB = country[country.length-2].confirmed;
         return sampleA-sampleB
     }
-    getCurrentYesterdayDeaths(country_name){
+    getTodayDeaths(country_name){
         let country = this._current_data_groupedByCountry.get(country_name);
         let sampleA = country[country.length-1].deaths;
         let sampleB = country[country.length-2].deaths;
         return sampleA-sampleB
     }
     getExpectedCasesByComparingWithCurrent(country_name){
-        let cur_cases = this.getCurrentCases(country_name);        
+        let cur_cases = this.getTotalCases(country_name);        
         let prediction_datamap = this.getPredictionDataMap();
         let info = prediction_datamap[country_name];
         let exp_cases = info.cases_number.toFixed(0);
@@ -299,7 +299,7 @@ export class DataManagerComponent implements OnInit {
         return exp_cases
     }
     getExpectedDeathsByComparingWithCurrent(country_name){
-        let cur_deaths = this.getCurrentDeaths(country_name);        
+        let cur_deaths = this.getTotalDeaths(country_name);        
         let prediction_datamap = this.getPredictionDataMap();
         let info = prediction_datamap[country_name];
         let exp_deaths = info.deaths_number.toFixed(0);
@@ -481,4 +481,5 @@ export class DataManagerComponent implements OnInit {
 
         return result;
       }
+
 }//end class
