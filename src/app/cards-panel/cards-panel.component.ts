@@ -312,7 +312,6 @@ export class CardsPanelComponent implements OnInit {
     }    
     return result;
   }
-
   
 
 }
