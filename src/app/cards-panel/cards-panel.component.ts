@@ -289,12 +289,12 @@ export class CardsPanelComponent implements OnInit {
       }
       case "tests_total":{
         result = this.dm.pipeNumberToAbbreviationStr(this.dm.getTotalTests(country));   
-        if(+result == -1) result = "N/A";
+        if(+result < 1 ) result = "N/A";
         break;
       }
       case "tests_today":{
         result = this.dm.pipeNumberToAbbreviationStr(this.dm.getTodayTests(country));        
-        if(+result == -1) result = "N/A";
+        if(+result < 1 ) result = "N/A";
         break;
       }
       case "tests_today %":{        
@@ -302,7 +302,7 @@ export class CardsPanelComponent implements OnInit {
         let total = this.dm.getTotalTests(country);
         let percentage = (yesterday*100/total).toFixed(1);
         result = "+"+percentage+"%";        
-        if(+yesterday == -1) result = "N/A";
+        if(+total < 1 ) result = "N/A";
         break;
       }
       case "tests_expected":{

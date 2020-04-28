@@ -8,7 +8,7 @@ import { Data } from '../../assets/data/Data';
     templateUrl: './datamanager.component.html',
 })
 export class DataManagerComponent implements OnInit {
-    
+   
     private _current_data: Array<any>;
     private _current_data_groupedByCountry: any;
     private _lastweek_data: Array<any>;
@@ -17,8 +17,6 @@ export class DataManagerComponent implements OnInit {
     private _predictionSummary_data: Array<any>;
     private _prediction_data: Array<any>;
     private _prediction_data_groupedByCountry: any;
-    private _tests_data: Array<any>;
-    private _tests_data_groupedByCountry: any;
 
     private _data_ids: Array<any>;
     private _data_map: Map<any, any>;
@@ -30,7 +28,7 @@ export class DataManagerComponent implements OnInit {
     ]
 
     private _timeRange: Array<Date>;
-    private countries_selection = ["Austria","Brazil","Netherlands","Italy","US"];
+    private countries_selection = ["Austria","Brazil","Switzerland","Italy","US"];
 
     private _colors: D3.ScaleOrdinal<string, string>;
     // private _colors_array = [
@@ -56,7 +54,6 @@ export class DataManagerComponent implements OnInit {
     groupBasicData(){
         this._current_data_groupedByCountry = this.groupCurrentDataByCountry();           
         this._prediction_data_groupedByCountry = this.groupPredictionDataByCountry();
-        this._tests_data_groupedByCountry = this.groupTestsDataByCountry();
         this._lastweek_data_groupedByCountry = this.groupLastWeekDataByCountry();
     }
     ngOnInit(): void {
@@ -77,7 +74,6 @@ export class DataManagerComponent implements OnInit {
         this._current_data = this.fetchCurrentData();
         this._prediction_data = this.fetchPredictionData();
         this._lastweek_data = this.fetchLastWeekData();
-        this._tests_data = this.fetchTestsData();
         this._predictionSummary_data = this.fetchPredictionSummaryData();
     }
     fetchCurrentData(): any[] {
@@ -97,11 +93,6 @@ export class DataManagerComponent implements OnInit {
     }
     fetchPredictionData(): any[] {
         let d = Data.getPredictionCurveData();  
-        d = this.parseDateStringObjToDateObj(d);
-        return d;
-    }
-    fetchTestsData(): any[] {
-        let d = Data.getTestsData();  
         d = this.parseDateStringObjToDateObj(d);
         return d;
     }
@@ -174,10 +165,6 @@ export class DataManagerComponent implements OnInit {
         let grouped = this.groupBy(this._prediction_data, sample => sample.country);
         return grouped;
     }
-    groupTestsDataByCountry(): any{
-        let grouped = this.groupBy(this._tests_data, sample => sample.country);
-        return grouped;
-    }
     groupLastWeekDataByCountry(): any{
         let grouped = this.groupBy(this._lastweek_data, sample => sample.country);
         return grouped;
@@ -197,17 +184,6 @@ export class DataManagerComponent implements OnInit {
         let result = [];
         countries.forEach(c => {
             let country = this._prediction_data_groupedByCountry.get(c);
-            country.forEach(sample => {
-                result.push(sample)             
-            });            
-        });
-        return result;  
-    }
-    getTestsDataByCountryList(countries: Array<string>){
-        if(!countries) countries = this.getCountriesSelection()
-        let result = [];
-        countries.forEach(c => {
-            let country = this._tests_data_groupedByCountry.get(c);
             country.forEach(sample => {
                 result.push(sample)             
             });            
@@ -240,14 +216,6 @@ export class DataManagerComponent implements OnInit {
         let country = this._lastweek_data_groupedByCountry.get(country_name);
         return country[country.length-1].date;
     }
-    getTotalTests(country_name){
-        let result = -1;
-        let country = this._tests_data_groupedByCountry.get(country_name);
-        if(country){
-            result = country[country.length-1].tests;
-        }
-        return result;
-    }
     getTotalCases(country_name){
         let country = this._current_data_groupedByCountry.get(country_name);
         return country[country.length-1].confirmed;
@@ -263,17 +231,15 @@ export class DataManagerComponent implements OnInit {
         }
         return result;
     }    
-    getTodayTests(country_name){     
-        console.log(country_name)   
-        let result = -1;
-        let country = this._tests_data_groupedByCountry.get(country_name);
-        if(country){
-            let sampleA = country[country.length-1].tests;
-            let sampleB = country[country.length-2].tests;
-            result = sampleA-sampleB
-        }
-        console.log(result)
-        return result;        
+    getTotalTests(country_name) {
+        let country = this._current_data_groupedByCountry.get(country_name);
+        return country[country.length-1].tests;
+    }
+    getTodayTests(country_name) {
+        let country = this._current_data_groupedByCountry.get(country_name);
+        let sampleA = country[country.length-1].tests;
+        let sampleB = country[country.length-2].tests;
+        return sampleA-sampleB
     }
     getTodayCases(country_name){
         let country = this._current_data_groupedByCountry.get(country_name);
@@ -361,9 +327,6 @@ export class DataManagerComponent implements OnInit {
 
     get dataMap(): Map<any, any> {
         return this._data_map;
-    }
-    getTestsData(): Array<any> {
-        return this._tests_data;
     }
     getCurrentData(): Array<any> {
         return this._current_data;
