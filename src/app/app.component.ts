@@ -43,7 +43,7 @@ export class AppComponent {
   changeScale(scale){//linear/log
     this.lineChartNComponent_child.changeScale(scale);
   }
-  changeFeature(feature){//cases/deaths/tests  
+  changeFeature(feature){//cases/deaths/tests/pCases/pDeaths
     this.lineChartNComponent_child.changeFeature(feature);
   }
   changeUnit(unit){//absolute/populationRatio    

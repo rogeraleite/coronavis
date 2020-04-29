@@ -81,7 +81,9 @@ export class LinechartsParent implements OnInit {
     }
 
     drawPrediction() {
-      if(!this.isTestsDimension()){
+      if(!this.isTestsDimension() &&
+         !this.isPredictionCasesDimension( )&&
+         !this.isPredictionDeathsDimension()){
         this.drawPredictionLines();    
         this.drawPredictionDot();  
       }
@@ -152,6 +154,8 @@ export class LinechartsParent implements OnInit {
     createLinesRules(){
       if(this.isDeathsDimension()) { this.setYDimension_asDeaths(); }
       else if(this.isTestsDimension()) { this.setYDimension_asTests();}
+      else if(this.isPredictionCasesDimension()) { this.setYDimension_asPredictionCases();}
+      else if(this.isPredictionDeathsDimension()) { this.setYDimension_asPredictionDeaths();}
       else this.setYDimension_asCases();         
     }
     setYDimension_asCases(){
@@ -160,9 +164,19 @@ export class LinechartsParent implements OnInit {
                           .y((d) => { return this.scale_y(+d.confirmed); });
     }
     setYDimension_asTests(){
-        this.lineRules = d3.line()
+      this.lineRules = d3.line()
                           .x((d) => { return this.scale_x(d.date); })
                           .y((d) => { return this.scale_y(d.tests); });
+    }
+    setYDimension_asPredictionCases(){
+      this.lineRules = d3.line()
+                        .x((d) => { return this.scale_x(d.date); })
+                        .y((d) => { return this.scale_y(d.prediction_cases_length); });
+    }
+    setYDimension_asPredictionDeaths(){
+      this.lineRules = d3.line()
+                        .x((d) => { return this.scale_x(d.date); })
+                        .y((d) => { return this.scale_y(d.prediction_deaths_length); });
     }
     setYDimension_asDeaths(){
       let last_x = 0;
@@ -193,38 +207,39 @@ export class LinechartsParent implements OnInit {
                             .domain(map_result)
                             .range(this.dm.getColorsArray())
     }
-    scaleXYDomains() {                           
+    scaleXYDomains() {   
+      //X Domain
+      this.setXDomain_asDate();        
+      
+      //Y Domain
       if(this.isDeathsDimension()){ this.setDeathsXYDomain(); }
       else if(this.isTestsDimension()) { this.setTestsXYDomain(); }
+      else if(this.isPredictionCasesDimension()) { this.setPredictionCasesXYDomain(); }
+      else if(this.isPredictionDeathsDimension()) { this.setPredictionDeathsXYDomain(); }
       else{ this.setCasesXYDomain(); }
-
          
     }
-    setDeathsXYDomain(){
+    setXDomain_asDate() {
       let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
-      let biggest_predicted_amount = this.dm.getBiggestPredictedDeathsNumberOverall();
-
       this.scale_x.domain([d3.min(this.current_curve_data, (d) => { return d.date; }),
-                           latest_predicted_date]);
-      
+                          latest_predicted_date]);
+    }
+    setDeathsXYDomain(){      
+      let biggest_predicted_amount = this.dm.getBiggestPredictedDeathsNumberOverall();      
       this.scale_y.domain([d3.min(this.current_curve_data, function(d) { return +d.confirmed; }),
                            biggest_predicted_amount]);
     }
-    setTestsXYDomain(){
-      let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
-      
-      this.scale_x.domain([d3.min(this.current_curve_data, (d) => { return d.date; }),
-                           latest_predicted_date]);
-      
+    setTestsXYDomain(){            
       this.scale_y.domain([0, d3.max(this.current_curve_data, function(d) { return +d.tests; })]);
     }
+    setPredictionCasesXYDomain(){      
+      this.scale_y.domain([0, d3.max(this.current_curve_data, function(d) { return +d.prediction_cases_length; })]);
+    }
+    setPredictionDeathsXYDomain(){      
+      this.scale_y.domain([0, d3.max(this.current_curve_data, function(d) { return +d.prediction_deaths_length; })]);
+    }
     setCasesXYDomain(){      
-      let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
-      let biggest_predicted_amount = this.dm.getBiggestPredictedCasesNumberOverall();
-
-      this.scale_x.domain([d3.min(this.current_curve_data, (d) => { return d.date; }),
-                           latest_predicted_date]);
-      
+      let biggest_predicted_amount = this.dm.getBiggestPredictedCasesNumberOverall();      
       this.scale_y.domain([d3.min(this.current_curve_data, function(d) { return +d.confirmed; }),
                            biggest_predicted_amount]);
     }
@@ -276,12 +291,16 @@ export class LinechartsParent implements OnInit {
                         .attr("cx", (d) => { return this.scale_x(d.date); })
                         .attr("cy", (d) => { 
                           if(this.isDeathsDimension()){
-                            if(d.deaths==0) return this.scale_y(1)
                             return this.scale_y(d.deaths); 
                           }
                           else if(this.isTestsDimension()){
-                            if(d.tests==0) return this.scale_y(1)
                             return this.scale_y(d.tests); 
+                          }
+                          else if(this.isPredictionCasesDimension()){
+                            return this.scale_y(d.prediction_cases_length); 
+                          }
+                          else if(this.isPredictionDeathsDimension()){
+                            return this.scale_y(d.prediction_deaths_length); 
                           }
                           return this.scale_y(d.confirmed); 
                         });
@@ -291,14 +310,19 @@ export class LinechartsParent implements OnInit {
       let date_str = this.dm.pipeDateObjToDateString(d.date);
 
       let result_amount = d.confirmed;
-      let result_percentage = d.confirmed_percentage_growth;
+      let result_percentage = "<small> (+"+Number(d.confirmed_percentage_growth).toFixed(2)+"%)</small></div>"
       if(this.isDeathsDimension()){ 
         result_amount = d.deaths;
-        result_percentage = d.deaths_percentage_growth;
+        result_percentage = "<small> (+"+Number(d.deaths_percentage_growth).toFixed(2)+"%)</small></div>"
+      }
+      else if(this.isTestsDimension()){ 
+        result_amount = d.tests;
+        result_percentage = "";
       }
 
-      return  d.country+" <small>cases</small>"+
-              "<br>"+this.dm.pipeNumberToString(result_amount)+" <small>"+this.yDimension+" (+"+Number(result_percentage).toFixed(2)+"%)</small></div>"+              
+      return  d.country+" <small>"+this.yDimension+"</small>"+
+              "<br>"+this.dm.pipeNumberToString(result_amount)+" <small>"+this.yDimension+"</small>"+
+              result_percentage+              
               "<br><small>"+date_str+"</br>";
               
     }
@@ -520,6 +544,12 @@ export class LinechartsParent implements OnInit {
     }
     isTestsDimension(){
       return this.yDimension == "tests"
+    }    
+    isPredictionCasesDimension(){
+      return this.yDimension == "pCases"
+    }
+    isPredictionDeathsDimension(){
+      return this.yDimension == "pDeaths"
     }
     updateAxisYLegend(){
       if(this.isLogScaled()) this.axis_y_label = "log(confirmed "+this.yDimension+")";
