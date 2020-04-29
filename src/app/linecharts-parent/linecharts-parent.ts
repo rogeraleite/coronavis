@@ -23,8 +23,9 @@ export class LinechartsParent implements OnInit {
     protected axis_y_label: any;
 
     protected scaleYType: string;
-    protected yDimension: string;
-    
+    protected yDimension: string;    
+    protected yUnit: string;
+
     // protected curTransform: any;
     protected zoom: any;
     protected dots: any;
@@ -467,15 +468,18 @@ export class LinechartsParent implements OnInit {
         }
     }
 
-    switchYScale(){
-      if(this.isLinearScaled()) this.scaleYType = "log";
-      else this.scaleYType = "linear";
+    changeScale(scale){
+      this.scaleYType = scale;
       this.updateAxisYLegend();
       this.refreshChart();
     }
-    switchYDimension(){      
-      if(this.isDeathsDimension()) this.yDimension = "cases";
-      else this.yDimension = "deaths";
+    changeFeature(feature){      
+      this.yDimension = feature;
+      this.updateAxisYLegend();
+      this.refreshChart();
+    }
+    changeUnit(unit){          
+      this.yUnit = unit;
       this.updateAxisYLegend();
       this.refreshChart();
     }

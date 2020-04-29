@@ -5,18 +5,36 @@
   
   <div class="row">
     <div class="col-sm-12">
-      <app-total-overview [dm]="_dm"
-                          (countriesOutput)="receiveCountriesSelection($event)"></app-total-overview>
+      <app-total-overview [dm]="_dm"></app-total-overview>
     </div>   
   </div>
   <div class="row">
       
       <div class="col-sm-12">  
           <div class="row">
-              <div class="col-sm-6 linechart-n">
-                  <app-linechart-n [dm]="_dm"></app-linechart-n>
-              </div>
-              <div class="col-sm-6">
+            <div class="col-sm-7">                
+              <div class="row">  
+                    <div class="col-sm-3">                
+                      <h5>Scale:</h5>                
+                      <label class="radio-inline"><input type="radio" name="scaleradio" (click)="changeScale('linear')" checked>Linear</label><br>
+                      <label class="radio-inline"><input type="radio" name="scaleradio" (click)="changeScale('log')">Log</label><br>
+                      <h5>Feature:</h5>
+                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('cases')" checked>Cases</label><br>
+                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('deaths')">Deaths</label><br>
+                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('tests')">Tests</label><br>
+                      <h5>Unit:</h5>                
+                      <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('absolute')" checked>Absolute</label><br>
+                      <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('populationRatio')">Population Ratio</label><br>
+                      <br>
+                      <br>
+                      <button class="btn btn-sm btn-outline-dark add-country" (click)="addCountry(content)">Add Country</button>
+                    </div>
+                    <div class="col-sm-9 linechart-n">
+                        <app-linechart-n [dm]="_dm"></app-linechart-n>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5">
                   <div class="linechart-newcases">
                     <app-linechart-newcases [dm]="_dm"></app-linechart-newcases>
                   </div>
@@ -28,5 +46,31 @@
       </div>
   </div>
 
-
 </div>
+
+
+<ng-template #content let-modal>    
+  <div class="modal-header">
+      <h5>Countries</h5>
+  </div>
+  <div class="modal-body">
+  <form>
+      <div class="form-group">
+          <form [formGroup]="form" (ngSubmit)="submit()">
+              <div *ngIf="!form.valid">At least one order must be selected</div>
+              <ng-container
+              formArrayName="countries"
+              *ngFor="let order of getControls(); let i = index"
+              >
+              <input type="checkbox" [formControlName]="i" />
+              {{country_list_data[i]}}
+              <br />
+              </ng-container>
+          </form>
+      </div>
+  </form>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="submit()">Save</button>
+  </div>
+</ng-template>

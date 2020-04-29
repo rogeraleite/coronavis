@@ -4,7 +4,11 @@ import { LinechartNewcasesComponent } from './linechart-newcases/linechart-newca
 import { CardsPanelComponent } from './cards-panel/cards-panel.component';
 import { DataManagerComponent } from './_datamanager/datamanager.component'
 import { TotalOverviewComponent } from './total-overview/total-overview.component'
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 
+
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-root',
@@ -19,16 +23,85 @@ export class AppComponent {
   @ViewChild(LinechartNewcasesComponent) lineChartNewCases_child;  
   @ViewChild(CardsPanelComponent) cardsPanelComponent_child;
   @ViewChild(TotalOverviewComponent) totalOverviewComponent_child;
-
-  constructor() { 
+  
+  protected closeResult = '';
+  protected country_list_data;
+  protected selectedCountries;
+  public form: FormGroup;
+  
+  constructor(private modalService: NgbModal,
+              private formBuilder: FormBuilder) { 
     this._dm = new DataManagerComponent(); 
   }
 
-  async receiveCountriesSelection($event){
+  ngOnInit(){    
+    this.createForm();
+    this.getCountries();
+    this.addCheckboxes();  
+  }
+
+  changeScale(scale){    
+    this.lineChartNComponent_child.changeScale(scale);
+  }
+  changeFeature(feature){    
+    this.lineChartNComponent_child.changeFeature(feature);
+  }
+  changeUnit(unit){    
+    this.lineChartNComponent_child.changeUnit(unit);
+  }
+
+  async updateCountriesSelection($event){
     let countries = $event;
     countries = this._dm.updateSelectedCountries(countries);
     this.lineChartNComponent_child.loadCountriesByArray(countries);
     this.lineChartNewCases_child.loadCountriesByArray(countries);
     this.cardsPanelComponent_child.loadCountriesGroupsByArray(countries);
   }
+
+  addCountry(content){    
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, 
+    (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+  getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
+  }
+  getCountries() {
+    this.country_list_data = this._dm.getDataCountriesIds();
+  }
+  submit() { 
+    this.selectedCountries = this.form.value.countries
+                                  .map((v, i) => (v ? this.country_list_data[i] : null))
+                                  .filter(v => v !== null);
+    this.updateCountriesSelection(this.selectedCountries);
+    this.modalService.dismissAll();
+  }
+  addCheckboxes() {
+    let initial_selection = this._dm.getCountriesSelection();
+    this.country_list_data.forEach((country, i) => {
+      let control = new FormControl() // if first item set to true, else false
+      if(initial_selection.includes(country)){
+        control.setValue(true)
+      }
+      (this.form.controls.countries as FormArray).push(control);
+    });
+  }
+  createForm(){
+    this.form = this.formBuilder.group({
+      countries: new FormArray([])
+    });
+  }
+  getControls() {
+    return (this.form.get('countries') as FormArray).controls;
+  }
+  
 }

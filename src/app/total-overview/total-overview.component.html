@@ -1,73 +1,30 @@
 
 <div class="container header">    
     <div class="row">
-        <div class="col-sm-2">
-            <button class="btn btn-lg btn-outline-dark" (click)="addCountry(content)">Add Country</button>
-        </div>   
         <div class="col-sm-1">
+            <a href="https://www.cvast.tuwien.ac.at/" target="_blank">
+                <img border="0" src="./assets/cvast.png" width="65" height="55">
+            </a>
+        </div>
+        <div class="col-sm-2">
             <h5>Updated:</h5><h6>{{date}}</h6>
         </div>   
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <h5>Total:</h5><h6>{{total}}</h6>
         </div>  
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <h5>Tests:</h5><h6>{{tests}}</h6>
         </div> 
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <h5>Deaths: </h5><h6>{{deaths}}</h6>
         </div>  
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <h5>Recovered: </h5><h6>{{recovered}}</h6>
         </div>   
         <div class="col-sm-1">
-        </div>   
-        <div class="col-sm-1">
-            <a href="https://www.cvast.tuwien.ac.at/" target="_blank">
-                <img border="0" src="./assets/cvast.png" width="75" height="65">
+            <a href="https://www.tuwien.at/en/" class="logo" target="_blank">
+                <img  border="0" src="./assets/tuwien.png" width="50" height="50">
             </a>
-        </div> 
-        <div class="col-sm-1">
-            <a href="https://www.tuwien.at/en/" target="_blank">
-                <img  border="0" src="./assets/tuwien.png" width="60" height="60">
-            </a>
-        </div> 
-        <!-- <div class="col-sm-2 logos">            
-            <div class="row">
-                
-                
-                
-            </div>  
-        </div>   -->
-        
+        </div>        
     </div>
 </div>
-
-
-<ng-template #content let-modal>    
-        <div class="modal-header">
-            <h5>Countries</h5>
-        </div>
-        <div class="modal-body">
-        <form>
-            <div class="form-group">
-                <form [formGroup]="form" (ngSubmit)="submit()">
-                    <div *ngIf="!form.valid">At least one order must be selected</div>
-                    <ng-container
-                    formArrayName="countries"
-                    *ngFor="let order of getControls(); let i = index"
-                    >
-                    <input type="checkbox" [formControlName]="i" />
-                    {{country_list_data[i]}}
-                    <br />
-                    </ng-container>
-                </form>
-            </div>
-        </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-outline-dark" (click)="submit()">Save</button>
-        </div>
-</ng-template>
-
-
-
