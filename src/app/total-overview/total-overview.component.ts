@@ -37,6 +37,7 @@ export class TotalOverviewComponent implements OnInit {
   public total;
   public deaths;
   public recovered;
+  public tests;
 
   public form: FormGroup;
 
@@ -85,6 +86,7 @@ export class TotalOverviewComponent implements OnInit {
     this.total = this.dm.pipeNumberToString(this.total_data.confirmed);
     this.deaths = this.dm.pipeNumberToString(this.total_data.deaths);
     this.recovered = this.dm.pipeNumberToString(this.total_data.recovered);
+    this.tests = this.dm.pipeNumberToString(this.total_data.tests);
   }
 
 

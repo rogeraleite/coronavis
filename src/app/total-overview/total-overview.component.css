@@ -5,3 +5,11 @@ div.container.header{
     margin: 0px;
     max-width: 100%;
 }
+.col-sm-1{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+/* .logos{
+    padding-left: 3%;
+} */
