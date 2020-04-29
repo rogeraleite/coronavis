@@ -21,14 +21,15 @@ export class DataManagerComponent implements OnInit {
     private _data_ids: Array<any>;
     private _data_map: Map<any, any>;
     private countries_id: Array<any> = [
-        "Switzerland","Belgium","Netherlands","Turkey","South Korea",
-        "Austria","Canada","Portugal","Norway","Australia",
-        "Sweden","Brazil","US","China","Italy","Spain","Germany","France",
-        "United Kingdom","Netherlands","Poland"
+        // "Switzerland","Belgium","Netherlands","Turkey","South Korea",
+        // "Austria","Canada","Portugal","Norway","Australia",
+        // "Sweden","Brazil","US","China","Italy","Spain","Germany","France",
+        // "United Kingdom","Netherlands","Poland"
+        "Austria","Brazil","US","China","Italy","Spain","Germany","France","United Kingdom"
     ]
 
     private _timeRange: Array<Date>;
-    private countries_selection = ["Austria","Brazil","Switzerland","Italy","US"];
+    private countries_selection = ["Austria","Brazil","Germany","Italy","US"];
 
     private _colors: D3.ScaleOrdinal<string, string>;
     // private _colors_array = [
