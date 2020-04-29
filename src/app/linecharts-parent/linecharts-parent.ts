@@ -39,8 +39,8 @@ export class LinechartsParent implements OnInit {
     protected grouped_prediction_data;
   
     protected margin = {top: 5, right: 0, bottom: 0, left: 0};
-    protected width;// = 800 - this.margin.left - this.margin.right;
-    protected height;// = 600 - this.margin.top - this.margin.bottom;
+    protected width;
+    protected height;
     
     protected current_curve_data;
     protected prediction_curve_data;
@@ -67,18 +67,24 @@ export class LinechartsParent implements OnInit {
       this.getGroupedData()
       /////////////////////// Part2
       this.setXYScales();
+      this.scaleXYDomains();
       this.createLinesRules();
       this.calculateColors();
-      this.scaleXYDomains();
       /////////////////////// Part3
       this.drawToolTip();
-      this.drawPredictionLines();    
-      this.drawPredictionDot();  
+      this.drawPrediction();
       this.drawCurrentLines();
       this.drawCurrentLineDots();
       this.drawAxis();  
       this.applyZoomFeature(); 
       // this.addResetFeatureToButton();
+    }
+
+    drawPrediction() {
+      if(!this.isTestsDimension()){
+        this.drawPredictionLines();    
+        this.drawPredictionDot();  
+      }
     }
 
     refreshChart(){
@@ -129,7 +135,7 @@ export class LinechartsParent implements OnInit {
 
     //////////////////////////////////////////////// Part2
     setXYScales(){    
-      if(this.isLogScaled()) this.setYScale_asLog();
+      if(this.isLogScaled()) { this.setYScale_asLog(); }
       else this.setYScale_asLinear();     
       
       this.setXScale();   
@@ -141,10 +147,11 @@ export class LinechartsParent implements OnInit {
       this.scale_y = d3.scaleLinear().range([this.height, 0]);
     }
     setYScale_asLog(){      
-      this.scale_y = d3.scaleLog().range([this.height, 0]);
+      this.scale_y = d3.scaleSymlog().range([this.height, 0]);
     }
     createLinesRules(){
-      if(this.isDeathsDimension()) this.setYDimension_asDeaths();
+      if(this.isDeathsDimension()) { this.setYDimension_asDeaths(); }
+      else if(this.isTestsDimension()) { this.setYDimension_asTests();}
       else this.setYDimension_asCases();         
     }
     setYDimension_asCases(){
@@ -152,23 +159,33 @@ export class LinechartsParent implements OnInit {
                           .x((d) => { return this.scale_x(d.date); })
                           .y((d) => { return this.scale_y(+d.confirmed); });
     }
+    setYDimension_asTests(){
+        this.lineRules = d3.line()
+                          .x((d) => { return this.scale_x(d.date); })
+                          .y((d) => { return this.scale_y(d.tests); });
+    }
     setYDimension_asDeaths(){
       let last_x = 0;
       let last_y = 0;
       this.lineRules = d3.line()
                           .x((d) => { 
-                            if(+d.deaths==-1){ return last_x; } //d.deaths==-1 idicates the end of the deaths prediction path
-                            last_x = this.scale_x(d.date)
+                            last_x = this.fixXScaleDeathsDataIssue(last_x,d.deaths,d.date)
                             return last_x; 
                           })
                           .y((d) => { 
-                              if(this.isLogScaled() && +d.deaths==0){ 
-                                return  this.scale_y(1); //fix log(0) error, log(1)=0
-                              } 
-                              else if(+d.deaths==-1){ return last_y; }//d.deaths==-1 idicates the end of the deaths prediction path
-                              last_y = this.scale_y(+d.deaths)
-                              return last_y; 
+                            last_y = this.fixYScaleDeathsDataIssue(last_y, d.deaths)
+                            return last_y; 
                           });
+    }
+    fixXScaleDeathsDataIssue(last_x, value, date){
+      if(value==-1){ return last_x; } //d.deaths==-1 idicates the end of the deaths prediction path
+      return this.scale_x(date)
+    }
+    fixYScaleDeathsDataIssue(last_y, value){
+      if (+value == -1) {//==-1 idicates the end of the deaths prediction path
+        return last_y;
+      }
+      return this.scale_y(+value)
     }
     calculateColors(){
       let map_result = this.grouped_current_data.map(function(d){ return d.key }) // list of group names      
@@ -178,7 +195,10 @@ export class LinechartsParent implements OnInit {
     }
     scaleXYDomains() {                           
       if(this.isDeathsDimension()){ this.setDeathsXYDomain(); }
+      else if(this.isTestsDimension()) { this.setTestsXYDomain(); }
       else{ this.setCasesXYDomain(); }
+
+         
     }
     setDeathsXYDomain(){
       let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
@@ -189,6 +209,14 @@ export class LinechartsParent implements OnInit {
       
       this.scale_y.domain([d3.min(this.current_curve_data, function(d) { return +d.confirmed; }),
                            biggest_predicted_amount]);
+    }
+    setTestsXYDomain(){
+      let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
+      
+      this.scale_x.domain([d3.min(this.current_curve_data, (d) => { return d.date; }),
+                           latest_predicted_date]);
+      
+      this.scale_y.domain([0, d3.max(this.current_curve_data, function(d) { return +d.tests; })]);
     }
     setCasesXYDomain(){      
       let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
@@ -250,6 +278,10 @@ export class LinechartsParent implements OnInit {
                           if(this.isDeathsDimension()){
                             if(d.deaths==0) return this.scale_y(1)
                             return this.scale_y(d.deaths); 
+                          }
+                          else if(this.isTestsDimension()){
+                            if(d.tests==0) return this.scale_y(1)
+                            return this.scale_y(d.tests); 
                           }
                           return this.scale_y(d.confirmed); 
                         });
@@ -351,7 +383,7 @@ export class LinechartsParent implements OnInit {
       let exp_end_date = info.end_date_str;
       let exp_amount = info.exp_amount;
 
-      return  country+" <small>prediction</small>"+
+      return country+" <small>prediction</small>"+
               "<br>"+this.dm.pipeNumberToString(exp_amount)+" <small>(+-"+error+") "+this.yDimension+"</small>"+
               "<br> <small>end at "+exp_end_date+"</small>";
     }
@@ -486,6 +518,9 @@ export class LinechartsParent implements OnInit {
     isDeathsDimension(){
       return this.yDimension == "deaths"
     }
+    isTestsDimension(){
+      return this.yDimension == "tests"
+    }
     updateAxisYLegend(){
       if(this.isLogScaled()) this.axis_y_label = "log(confirmed "+this.yDimension+")";
       else this.axis_y_label = "confirmed "+this.yDimension+"";    
@@ -495,6 +530,9 @@ export class LinechartsParent implements OnInit {
     }
     isLinearScaled(){
       return this.scaleYType=="linear"
+    }
+    isPopulationRatioUnit(){
+      return this.yUnit == "populationRatio"
     }
     getOpositeDimension(){
       if(this.isDeathsDimension()) return "cases";

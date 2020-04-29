@@ -40,13 +40,13 @@ export class AppComponent {
     this.addCheckboxes();  
   }
 
-  changeScale(scale){    
+  changeScale(scale){//linear/log
     this.lineChartNComponent_child.changeScale(scale);
   }
-  changeFeature(feature){    
+  changeFeature(feature){//cases/deaths/tests  
     this.lineChartNComponent_child.changeFeature(feature);
   }
-  changeUnit(unit){    
+  changeUnit(unit){//absolute/populationRatio    
     this.lineChartNComponent_child.changeUnit(unit);
   }
 
