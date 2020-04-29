@@ -551,9 +551,18 @@ export class LinechartsParent implements OnInit {
     isPredictionDeathsDimension(){
       return this.yDimension == "pDeaths"
     }
+    isPredictionDimension(){
+      return this.isPredictionCasesDimension() || this.isPredictionDeathsDimension()
+    }
     updateAxisYLegend(){
-      if(this.isLogScaled()) this.axis_y_label = "log(confirmed "+this.yDimension+")";
-      else this.axis_y_label = "confirmed "+this.yDimension+"";    
+      let dimension_text = this.pipeYDimensionText();
+      if(this.isLogScaled()) this.axis_y_label = "log("+dimension_text+")";
+      else this.axis_y_label = dimension_text;    
+    }
+    pipeYDimensionText() {
+      if(this.yDimension == "pDeaths") return "Predicted Deaths Event Days"
+      else if(this.yDimension == "pCases") return "Predicted Cases Event Days"
+      return this.yDimension;
     }
     isLogScaled(){
       return this.scaleYType=="log"
