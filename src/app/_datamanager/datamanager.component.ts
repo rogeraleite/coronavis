@@ -117,8 +117,12 @@ export class DataManagerComponent implements OnInit {
         return latest;
     }
     getFirstDate(){
-        let latest = this._current_data[0].date
-        return latest;
+        let first = this._current_data[0].date
+        return first;
+    }
+    getLastDate(){
+        let last = this._current_data[this._current_data.length-1].date
+        return last;
     }
     getBiggestPredictedCasesNumberOverall(){
         let biggest = 0;
@@ -217,7 +221,7 @@ export class DataManagerComponent implements OnInit {
         });
         return result;        
     }
-    getLastDate(country_name){
+    getLastDateByCountry(country_name){
         let country = this._lastweek_data_groupedByCountry.get(country_name);
         return country[country.length-1].date;
     }
@@ -280,7 +284,7 @@ export class DataManagerComponent implements OnInit {
     }
 
     getExpectedEndCasesDateString(country_name){
-        let cur_date = this.getLastDate(country_name);       
+        let cur_date = this.getLastDateByCountry(country_name);       
         let prediction_datamap = this.getPredictionDataMap();
         let predicted_date = prediction_datamap[country_name].cases_end_day_date;
         if(cur_date>predicted_date){//"fix" concluded cases prediction issue
@@ -290,7 +294,7 @@ export class DataManagerComponent implements OnInit {
         return this.pipeDateObjToDateString(p_data);
     }
     getExpectedEndDeathsDateString(country_name){
-        let cur_date = this.getLastDate(country_name);       
+        let cur_date = this.getLastDateByCountry(country_name);       
         let prediction_datamap = this.getPredictionDataMap();
         let predicted_date = prediction_datamap[country_name].deaths_end_day_date;
         if(cur_date>predicted_date){//"fix" concluded cases prediction issue
@@ -300,7 +304,7 @@ export class DataManagerComponent implements OnInit {
         return this.pipeDateObjToDateString(p_data);
     }
     getExpectedEndCasesDate(country_name){
-        let cur_date = this.getLastDate(country_name);       
+        let cur_date = this.getLastDateByCountry(country_name);       
         let prediction_datamap = this.getPredictionDataMap();
         let predicted_date = prediction_datamap[country_name].cases_end_day_date;
         if(cur_date>predicted_date){//"fix" concluded cases prediction issue
@@ -310,7 +314,7 @@ export class DataManagerComponent implements OnInit {
         return p_data;
     }
     getExpectedEndDeathsDate(country_name){
-        let cur_date = this.getLastDate(country_name);       
+        let cur_date = this.getLastDateByCountry(country_name);       
         let prediction_datamap = this.getPredictionDataMap();
         let predicted_date = prediction_datamap[country_name].deaths_end_day_date;
         if(cur_date>predicted_date){//"fix" concluded cases prediction issue

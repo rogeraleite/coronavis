@@ -242,8 +242,12 @@ export class LinechartsParent implements OnInit {
       else{ this.setCasesXYDomain(); }
          
     }
+    getLastDateAccordingToDimension(){
+      if(this.isDeathsDimension() || this.isCasesDimension()) return new Date(this.dm.getLatestPredictedDate());
+      return this.dm.getLastDate();
+    }
     setXDomain_asDate() {
-      let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
+      let latest_predicted_date = this.getLastDateAccordingToDimension();
       let first_date = this.dm.getFirstDate();
       this.scale_x.domain([first_date,
                           latest_predicted_date]);
@@ -574,6 +578,9 @@ export class LinechartsParent implements OnInit {
     }
     isDeathsDimension(){
       return this.yDimension == "deaths"
+    }
+    isCasesDimension(){
+      return this.yDimension == "cases"
     }
     isTestsDimension(){
       return this.yDimension == "tests"

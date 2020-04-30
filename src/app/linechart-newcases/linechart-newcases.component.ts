@@ -82,7 +82,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                       .append("circle")
                       .attr("r", 2.5)
                       .style("visibility",(d)=>{
-                        let lastDate = this.dm.getLastDate(d.country);
+                        let lastDate = this.dm.getLastDateByCountry(d.country);
                         return (d.date === lastDate) ? "visible" : "hidden";
                       })
                       .style("fill", (d) => { return this.color_scale(d.country); })                      
