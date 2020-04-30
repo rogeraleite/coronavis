@@ -73,11 +73,15 @@ export class LinechartsParent implements OnInit {
       /////////////////////// Part3
       this.drawToolTip();
       this.drawPrediction();
-      this.drawCurrentLines();
-      this.drawCurrentLineDots();
+      this.drawCurrentData();
       this.drawAxis();  
       this.applyZoomFeature(); 
       // this.addResetFeatureToButton();
+    }
+
+    drawCurrentData() {
+      this.drawCurrentLines();
+      this.drawCurrentLineDots();
     }
 
     drawPrediction() {
@@ -123,9 +127,28 @@ export class LinechartsParent implements OnInit {
       this.getPredictionDataGroup();      
     }
     getCurrentDataGroup(){
+      this.current_curve_data = this.cleanDataAccordingToDimension();
       this.grouped_current_data = d3.nest() // nest function allows to group the calculation per level of a factor
                                     .key((d) => { return d.country;})
                                     .entries(this.current_curve_data);
+    }
+    cleanDataAccordingToDimension() {      
+      let clean_data = [];
+      if(this.isPredictionCasesDimension()) { 
+        this.current_curve_data.forEach(e => {
+          let days = e.prediction_cases_length;
+          if(days>0 && days<1000){ clean_data.push(e); }
+        });
+        return clean_data;
+      }
+      else if(this.isPredictionDeathsDimension()) { 
+        this.current_curve_data.forEach(e => {
+          let days = e.prediction_deaths_length;
+          if(days>0 && days<1000){ clean_data.push(e); }
+        });
+        return clean_data;
+      }
+      return this.current_curve_data
     }
     getPredictionDataGroup(){
       if(this.prediction_curve_data){
@@ -221,7 +244,8 @@ export class LinechartsParent implements OnInit {
     }
     setXDomain_asDate() {
       let latest_predicted_date = new Date(this.dm.getLatestPredictedDate());
-      this.scale_x.domain([d3.min(this.current_curve_data, (d) => { return d.date; }),
+      let first_date = this.dm.getFirstDate();
+      this.scale_x.domain([first_date,
                           latest_predicted_date]);
     }
     setDeathsXYDomain(){      
@@ -309,20 +333,29 @@ export class LinechartsParent implements OnInit {
     getCurrentDotsTooltipText(d){
       let date_str = this.dm.pipeDateObjToDateString(d.date);
 
-      let result_amount = d.confirmed;
-      let result_percentage = "<small> (+"+Number(d.confirmed_percentage_growth).toFixed(2)+"%)</small></div>"
+      let text_value = this.dm.pipeNumberToString(d.confirmed);
+      let aux_text = "<small> "+this.yDimension+" (+"+Number(d.confirmed_percentage_growth).toFixed(2)+"%)</small></div>"
+
       if(this.isDeathsDimension()){ 
-        result_amount = d.deaths;
-        result_percentage = "<small> (+"+Number(d.deaths_percentage_growth).toFixed(2)+"%)</small></div>"
+        text_value = this.dm.pipeNumberToString(d.deaths);
+        aux_text = "<small> "+this.yDimension+" (+"+Number(d.deaths_percentage_growth).toFixed(2)+"%)</small></div>"
       }
       else if(this.isTestsDimension()){ 
-        result_amount = d.tests;
-        result_percentage = "";
+        text_value = d.tests;
+        if(text_value=="0") text_value = "N/A";
+        aux_text = " <small> "+this.yDimension+"</small>";
+      }
+      else if(this.isPredictionCasesDimension()){ 
+        text_value = d.prediction_cases_length;
+        aux_text = " days";
+      }
+      else if(this.isPredictionDeathsDimension()){ 
+        text_value = d.prediction_deaths_length;
+        aux_text = " days";
       }
 
       return  d.country+" <small>"+this.yDimension+"</small>"+
-              "<br>"+this.dm.pipeNumberToString(result_amount)+" <small>"+this.yDimension+"</small>"+
-              result_percentage+              
+              "<br>"+text_value+aux_text+              
               "<br><small>"+date_str+"</br>";
               
     }

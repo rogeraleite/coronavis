@@ -13,3 +13,14 @@
 label.radio-inline{
     font-size: 10px;
 } */
+div.cards{
+    padding-left: 5%;
+}
+div.button button{
+    position: absolute;
+    top: 6%;
+    left: 5%;    
+    width: 152%;
+    height: 94%;
+    /* padding: 81% 32%; */ 
+}

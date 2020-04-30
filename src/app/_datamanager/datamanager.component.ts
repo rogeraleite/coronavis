@@ -116,6 +116,10 @@ export class DataManagerComponent implements OnInit {
         });
         return latest;
     }
+    getFirstDate(){
+        let latest = this._current_data[0].date
+        return latest;
+    }
     getBiggestPredictedCasesNumberOverall(){
         let biggest = 0;
         let error = 0;

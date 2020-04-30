@@ -12,9 +12,9 @@
       
       <div class="col-sm-12">  
           <div class="row">
-            <div class="col-sm-7">                
+            <div class="col-sm-9">                
               <div class="row">  
-                    <div class="col-sm-3">                
+                    <div class="col-sm-2">                
                       <h6>Scale:</h6>                
                       <label class="radio-inline"><input type="radio" name="scaleradio" (click)="changeScale('linear')" checked>Linear</label><br>
                       <label class="radio-inline"><input type="radio" name="scaleradio" (click)="changeScale('log')">Log</label><br>
@@ -30,14 +30,13 @@
                       <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('populationRatio')">Population Ratio</label><br>
                       <br>
                       <br> -->
-                      <button class="btn btn-sm btn-outline-dark add-country" (click)="addCountry(content)">Add Country</button>
                     </div>
-                    <div class="col-sm-9 linechart-n">
+                    <div class="col-sm-10 linechart-n">
                         <app-linechart-n [dm]="_dm"></app-linechart-n>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-5">
+            <div class="col-sm-3">
                   <div class="linechart-newcases">
                     <app-linechart-newcases [dm]="_dm"></app-linechart-newcases>
                   </div>
@@ -45,7 +44,14 @@
           </div>
       </div>   
       <div class="col-sm-12">
-        <app-cards-panel [dm]="_dm"></app-cards-panel>
+        <div class="row">
+          <div class="col-sm-1 button">   
+            <button class="btn btn-sm btn-outline-dark add-country" (click)="addCountry(content)">Add Country</button>
+          </div>           
+          <div class="col-sm-11 cards"> 
+            <app-cards-panel [dm]="_dm"></app-cards-panel>
+          </div>
+        </div> 
       </div>
   </div>
 
