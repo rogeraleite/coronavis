@@ -17,7 +17,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
 
   setup(){
     this.divKey = ".linechart-newcases";    
-    this.initialTransform = d3.zoomIdentity.translate(-200, 123).scale(1.13);
+    this.initialTransform = d3.zoomIdentity.translate(-80, 123).scale(1.13);
     this.width = $(this.divKey).width()
     this.height = $(document).height()*3/5;
     this.current_curve_data = this.dm.getLastWeekDataByCountryList(null);
