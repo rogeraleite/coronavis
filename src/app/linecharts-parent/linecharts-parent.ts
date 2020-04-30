@@ -543,7 +543,7 @@ export class LinechartsParent implements OnInit {
       } 
       this.zoom = d3.zoom()
                     .scaleExtent([0.7, 5])
-                    .translateExtent([[-150, -150], [this.width + 150, this.height + 150]])
+                    .translateExtent([[-300, -150], [this.width + 150, this.height + 150]])
                     .on('zoom', zoomed);
       this.zoom(this.svg);
                     
