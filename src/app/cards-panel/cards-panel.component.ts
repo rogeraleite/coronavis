@@ -63,7 +63,6 @@ export class CardsPanelComponent implements OnInit {
 
 
   loadCountriesGroupsByArray(countries){
-    console.log(countries)
     this.getDataByCountries(countries);
     this.cleanCanvas();
     this.createChart();
@@ -124,8 +123,8 @@ export class CardsPanelComponent implements OnInit {
                 .attr("fill", (d) => { return this.color_scale(d.key); })
                 .attr("width", this.cards_width - this.margin)
                 .attr("height", this.cards_height - this.margin)
-                .attr("rx", 8)
-                .attr("ry", 8);
+                .attr("rx", 3)
+                .attr("ry", 3);
   }
   writeCardsTitle() {
     let top_margin = 15;
