@@ -18,6 +18,9 @@ export class DataManagerComponent implements OnInit {
     private _prediction_data: Array<any>;
     private _prediction_data_groupedByCountry: any;
 
+    private _world_data: any;
+    private _world_data_groupedByCountry: any;
+
     private _data_ids: Array<any>;
     private _data_map: Map<any, any>;
     private countries_id: Array<any> = [
@@ -56,6 +59,7 @@ export class DataManagerComponent implements OnInit {
         this._current_data_groupedByCountry = this.groupCurrentDataByCountry();           
         this._prediction_data_groupedByCountry = this.groupPredictionDataByCountry();
         this._lastweek_data_groupedByCountry = this.groupLastWeekDataByCountry();
+        this._world_data_groupedByCountry = this.groupWorldDataByCountry();
     }
     ngOnInit(): void {
         throw new Error("Method not implemented.");
@@ -76,6 +80,7 @@ export class DataManagerComponent implements OnInit {
         this._prediction_data = this.fetchPredictionData();
         this._lastweek_data = this.fetchLastWeekData();
         this._predictionSummary_data = this.fetchPredictionSummaryData();
+        this._world_data = this.fetchWorldData();
     }
     fetchCurrentData(): any[] {
         let d = Data.getCurrentData();  
@@ -90,6 +95,10 @@ export class DataManagerComponent implements OnInit {
     fetchPredictionSummaryData(): any[] {
         let d = Data.getPredictionData();  
         d = this.parseDateStringObjToDateObj(d);
+        return d;
+    }
+    fetchWorldData(): any{
+        let d = Data.getWorldPopulationData();  
         return d;
     }
     fetchPredictionData(): any[] {
@@ -124,32 +133,93 @@ export class DataManagerComponent implements OnInit {
         let last = this._current_data[this._current_data.length-1].date
         return last;
     }
-    getBiggestPredictedCasesNumberOverall(){
-        let biggest = 0;
-        let error = 0;
-        
+    getMaxCases(perMiFlag){
+        let max_cases = 0;
+        let max_cases_error = 0;
+        let max_country = "";        
         this._predictionSummary_data.forEach(e => {
-            if(e.cases_number>biggest &&
-               this.countries_selection.includes(e.country)) {
-                biggest = e.cases_number;
-                error = e.cases_number_error;
+            let country = e.country;
+            if(this.countries_selection.includes(country)){
+                let cases = this.applyUnitInValue(country, e.cases_number, perMiFlag);
+                let error = this.applyUnitInValue(country, e.cases_number_error, perMiFlag);
+                
+                if(cases>max_cases) {
+                    max_cases = cases;
+                    max_cases_error = error;
+                    max_country = country;
+                }
             }
         });
-        return biggest+error;
+        return {country: max_country, max_cases: max_cases+max_cases_error};
+    }    
+    getMaxDeaths(perMiFlag){
+        let max_deaths = 0;
+        let max_deaths_error = 0;
+        let max_country = "";
+        this._predictionSummary_data.forEach(e => {
+            let country = e.country;
+            if(this.countries_selection.includes(country)){
+                let deaths = this.applyUnitInValue(country, e.deaths_number, perMiFlag);
+                let error = this.applyUnitInValue(country, e.deaths_number_error, perMiFlag);
+                if(deaths>max_deaths) {
+                    max_deaths = deaths;
+                    max_deaths_error = error;
+                    max_country = country;
+                }
+            }
+        });
+        return {country: max_country, max_deaths: max_deaths+max_deaths_error};
     }
-    
-    getBiggestPredictedDeathsNumberOverall(){
-        let biggest = 0;
-        let error = 0;
-        
+    getMaxTests(perMiFlag){
+        let max_tests = 0;
+        let max_country = "";
         this._predictionSummary_data.forEach(e => {
-            if(e.deaths_number>biggest &&
-               this.countries_selection.includes(e.country)) {
-                biggest = e.deaths_number;
-                error = e.deaths_number_error;
+            let country = e.country;
+            if(this.countries_selection.includes(country)){
+                let tests = this.applyUnitInValue(country, e.max_tests, perMiFlag);
+                if(tests>max_tests) {                    
+                    max_tests = tests;
+                    max_country = country;
+                }
             }
         });
-        return biggest+error;
+        return {country: max_country, max_tests: max_tests};
+    }
+    getMaxPredictionCases(perMiFlag){
+        let biggest = 0;
+        let country = "";
+        this._predictionSummary_data.forEach(e => {
+            if(e.cases_end_day_number>biggest &&
+               this.countries_selection.includes(e.country)) {
+                country = e.country;
+                let value = e.cases_end_day_number;
+                biggest = this.applyUnitInValue(country, value, perMiFlag);
+            }
+        });
+        return {country: country, max_prediction_cases: biggest};
+    }
+    applyUnitInValue(country, value, perMiFlag){
+        if(perMiFlag){
+          value = this.applyPerMillion(country, value);
+        }
+        return value; 
+    }
+    applyPerMillion(country, value): number{
+        let population = this.getPopulationByCountry(country);
+        let result = (value/population)*1000;
+        return result;
+    }
+    getMaxPredictionDeaths(perMillionFlag){
+        let biggest = 0;
+        let country = "";
+        this._predictionSummary_data.forEach(e => {
+            if(e.deaths_end_day_number>biggest &&
+               this.countries_selection.includes(e.country)) {
+                biggest = e.deaths_end_day_number;
+                country = e.country;
+            }
+        });
+        return {country: country, max_prediction_deaths: biggest};
     }
     parseDateStringObjToDateObj(data){
         let result = [];
@@ -176,6 +246,10 @@ export class DataManagerComponent implements OnInit {
     }
     groupLastWeekDataByCountry(): any{
         let grouped = this.groupBy(this._lastweek_data, sample => sample.country);
+        return grouped;
+    }
+    groupWorldDataByCountry(): any{
+        let grouped = this.groupBy(this._world_data, sample => sample.country);
         return grouped;
     }
     getUniqueCountriesId():Array<any>{
@@ -220,6 +294,10 @@ export class DataManagerComponent implements OnInit {
             });            
         });
         return result;        
+    }
+    getPopulationByCountry(country_name){
+        let country = this._world_data_groupedByCountry.get(country_name);
+        return country[0].population;
     }
     getLastDateByCountry(country_name){
         let country = this._lastweek_data_groupedByCountry.get(country_name);

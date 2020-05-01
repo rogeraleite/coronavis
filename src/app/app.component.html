@@ -18,18 +18,16 @@
                       <h6>Scale:</h6>                
                       <label class="radio-inline"><input type="radio" name="scaleradio" (click)="changeScale('linear')" checked>Linear</label><br>
                       <label class="radio-inline"><input type="radio" name="scaleradio" (click)="changeScale('log')">Log</label><br>
-                      <h6>Feature:</h6>
-                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('cases')" checked>Cases</label><br>
-                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('tests')">Tests</label><br>                   
-                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('deaths')">Deaths</label><br>
-                      <h6>Prediction Change:</h6>
-                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('pCases')">Cases</label><br>
-                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('pDeaths')">Deaths</label><br>
-                      <!-- <h5>Unit:</h5>                
+                      <h6>Unit:</h6>                
                       <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('absolute')" checked>Absolute</label><br>
-                      <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('populationRatio')">Population Ratio</label><br>
-                      <br>
-                      <br> -->
+                      <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('perMillion')">per Million</label><br>
+                      <h6>Feature:</h6>
+                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('cases')" checked>Cases</label><br>             
+                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('deaths')">Deaths</label><br>
+                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('tests')">Tests</label><br>      
+                      <!-- <h6>Prediction Change:</h6>
+                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('pCases')">Cases length</label><br>
+                      <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('pDeaths')">Deaths length</label><br> -->
                     </div>
                     <div class="col-sm-10 linechart-n">
                         <app-linechart-n [dm]="_dm"></app-linechart-n>
