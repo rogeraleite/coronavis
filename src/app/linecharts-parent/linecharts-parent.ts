@@ -120,7 +120,6 @@ export class LinechartsParent implements OnInit {
     setCanvas(){
       this.gCanvas = this.svg.append("g")
                              .attr("class", "canvas");
-      // if (this.curTransform) this.gCanvas.attr('transform', this.curTransform);
     }
     getGroupedData() {
       this.getCurrentDataGroup();

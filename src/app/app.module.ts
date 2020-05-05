@@ -13,6 +13,7 @@ import { TotalOverviewComponent } from './total-overview/total-overview.componen
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { InformationButtonComponent } from './information-button/information-button.component';
+import { TimelineComponent } from './timeline/timeline.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { InformationButtonComponent } from './information-button/information-but
     LinechartNewcasesComponent,
     CardsPanelComponent,
     TotalOverviewComponent,
-    InformationButtonComponent
+    InformationButtonComponent,
+    TimelineComponent
   ],
   imports: [
     BrowserModule,
