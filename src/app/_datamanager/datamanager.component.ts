@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import * as D3 from 'd3';
+import * as d3 from 'd3';
 
 import { Data } from '../../assets/data/Data';
 
@@ -8,15 +8,17 @@ import { Data } from '../../assets/data/Data';
     templateUrl: './datamanager.component.html',
 })
 export class DataManagerComponent implements OnInit {
+
    
     private _current_data: Array<any>;
     private _current_data_groupedByCountry: any;
     private _lastweek_data: Array<any>;
     private _lastweek_data_groupedByCountry: any;
-    
+    private _events_data;
+
     private _predictionSummary_data: Array<any>;
     private _prediction_data: Array<any>;
-    private _prediction_data_groupedByCountry: any;
+    private _prediction_data_groupedByCountry: any;    
 
     private _world_data: any;
     private _world_data_groupedByCountry: any;
@@ -34,7 +36,7 @@ export class DataManagerComponent implements OnInit {
     private _timeRange: Array<Date>;
     private countries_selection = ["Austria","Brazil","Germany","Italy","US"];
 
-    private _colors: D3.ScaleOrdinal<string, string>;
+    private _colors: d3.ScaleOrdinal<string, string>;
     // private _colors_array = [
     //     '#e6194b', '#f58231', '#ffe119', '#bfef45', '#3cb44b',
     //     '#808000', '#42d4f4', '#4363d8', '#911eb4', '#f032e6',
@@ -53,7 +55,7 @@ export class DataManagerComponent implements OnInit {
         this._data_map = new Map();
         this._timeRange = new Array<Date>();
 
-        this._colors = D3.scaleOrdinal(this._colors_array);
+        this._colors = d3.scaleOrdinal(this._colors_array);
     }
     groupBasicData(){
         this._current_data_groupedByCountry = this.groupCurrentDataByCountry();           
@@ -80,6 +82,7 @@ export class DataManagerComponent implements OnInit {
         this._prediction_data = this.fetchPredictionData();
         this._lastweek_data = this.fetchLastWeekData();
         this._predictionSummary_data = this.fetchPredictionSummaryData();
+        this._events_data = this.fetchEventsData();
         this._world_data = this.fetchWorldData();
     }
     fetchCurrentData(): any[] {
@@ -103,6 +106,11 @@ export class DataManagerComponent implements OnInit {
     }
     fetchPredictionData(): any[] {
         let d = Data.getPredictionCurveData();  
+        d = this.parseDateStringObjToDateObj(d);
+        return d;
+    }
+    fetchEventsData(): any[] {
+        let d = Data.getEventsData();  
         d = this.parseDateStringObjToDateObj(d);
         return d;
     }
@@ -248,6 +256,10 @@ export class DataManagerComponent implements OnInit {
         let grouped = this.groupBy(this._lastweek_data, sample => sample.country);
         return grouped;
     }
+    groupEventDataByCountry(): any{
+        let grouped = this.groupBy(this._events_data, sample => sample.country);
+        return grouped;
+    }
     groupWorldDataByCountry(): any{
         let grouped = this.groupBy(this._world_data, sample => sample.country);
         return grouped;
@@ -278,6 +290,18 @@ export class DataManagerComponent implements OnInit {
         let result = [];
         countries.forEach(c => {
             let country = this._current_data_groupedByCountry.get(c);
+            country.forEach(sample => {
+                result.push(sample)             
+            });            
+        });
+        return result;        
+    }
+    getEventsDataByCountryList(countries: Array<string>){
+        if(!countries) countries = this.getCountriesSelection()
+        let result = [];
+        let grouped = this.groupEventDataByCountry();
+        countries.forEach(c => {
+            let country = grouped.get(c);
             country.forEach(sample => {
                 result.push(sample)             
             });            
@@ -415,6 +439,9 @@ export class DataManagerComponent implements OnInit {
     get dataMap(): Map<any, any> {
         return this._data_map;
     }
+    getEventsData(): Array<any> {
+        return this._events_data;
+    }
     getCurrentData(): Array<any> {
         return this._current_data;
     }
@@ -426,7 +453,7 @@ export class DataManagerComponent implements OnInit {
         return this._timeRange;
     }
 
-    get colors(): D3.ScaleOrdinal<string, string> {
+    get colors(): d3.ScaleOrdinal<string, string> {
         return this._colors;
     }
 
@@ -446,7 +473,7 @@ export class DataManagerComponent implements OnInit {
     }
     
     private getTimeExtentAsDate(): Array<Date> {
-        return D3.extent(this._current_data, (d: any) => {
+        return d3.extent(this._current_data, (d: any) => {
             return d.date_time;
         });
     }
@@ -529,6 +556,11 @@ export class DataManagerComponent implements OnInit {
         }
 
         return result;
+      }
+
+     
+      getInitialTransform(){
+        return d3.zoomIdentity.translate(25, 10).scale(0.85);
       }
 
 }//end class

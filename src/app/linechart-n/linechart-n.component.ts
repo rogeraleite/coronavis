@@ -17,7 +17,7 @@ export class LinechartNComponent extends LinechartsParent {
   
   setup(){
     this.divKey = ".linechart-n";
-    this.initialTransform = d3.zoomIdentity.translate(25, 10).scale(0.85);
+    this.initialTransform = this.dm.getInitialTransform();
     this.width = $(this.divKey).width()
     this.height = ($(document).height()*8/15) + this.margin.top/2;  
     this.scaleYType = "linear";

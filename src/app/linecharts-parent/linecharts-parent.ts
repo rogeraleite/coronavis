@@ -653,4 +653,5 @@ export class LinechartsParent implements OnInit {
       return "deaths"
     }
 
+
 }

@@ -9,6 +9,7 @@ import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 
 
 import * as $ from 'jquery';
+import { TimelineComponent } from './timeline/timeline.component';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,8 @@ export class AppComponent {
   public _dm: DataManagerComponent;
 
   @ViewChild(LinechartNComponent) lineChartNComponent_child;
+  @ViewChild(TimelineComponent) timelineComponent_child;
+
   @ViewChild(LinechartNewcasesComponent) lineChartNewCases_child;  
   @ViewChild(CardsPanelComponent) cardsPanelComponent_child;
   @ViewChild(TotalOverviewComponent) totalOverviewComponent_child;
@@ -45,6 +48,7 @@ export class AppComponent {
   }
   changeFeature(feature){//cases/deaths/tests/pCases/pDeaths
     this.lineChartNComponent_child.changeFeature(feature);
+    this.timelineComponent_child.changeFeature(feature);
   }
   changeUnit(unit){//absolute/populationRatio    
     this.lineChartNComponent_child.changeUnit(unit);
