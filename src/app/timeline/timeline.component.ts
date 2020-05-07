@@ -53,7 +53,8 @@ export class TimelineComponent implements OnInit {
   }
   setDimensionsVariables(){
     this.divKey = ".timeline-chart";
-    this.width = $(this.divKey).width()
+    this.width = $(this.divKey).width()*1.05;
+    this.margin.right = - $(this.divKey).width()*0.05;
     this.height = ($(document).height()/15) + this.margin.top/2;         
     this.initialTransform = this.dm.getInitialTransform();
   }
@@ -85,7 +86,7 @@ export class TimelineComponent implements OnInit {
                     .append("svg")
                     .attr("width", this.width)
                     .attr("height", this.height)
-                    .attr("transform", "translate(0," + this.margin.top + ")");
+                    .attr("transform", "translate("+this.margin.right+"," + this.margin.top + ")");
   }
   setCanvas() {
     this.gCanvas = this.svg.append("g")

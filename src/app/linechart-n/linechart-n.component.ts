@@ -18,7 +18,8 @@ export class LinechartNComponent extends LinechartsParent {
   setup(){
     this.divKey = ".linechart-n";
     this.initialTransform = this.dm.getInitialTransform();
-    this.width = $(this.divKey).width()
+    this.width = $(this.divKey).width()*1.05;
+    this.margin.right = - $(this.divKey).width()*0.05;
     this.height = ($(document).height()*8/15) + this.margin.top/2;  
     this.scaleYType = "linear";
     this.yDimension = "cases";  

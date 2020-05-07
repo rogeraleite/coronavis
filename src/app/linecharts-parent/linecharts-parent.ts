@@ -115,7 +115,7 @@ export class LinechartsParent implements OnInit {
                     .append("svg")
                     .attr("width", this.width)
                     .attr("height", this.height)
-                    .attr("transform", "translate(0," + this.margin.top + ")");
+                    .attr("transform", "translate("+this.margin.right+"," + this.margin.top + ")");
     }  
     setCanvas(){
       this.gCanvas = this.svg.append("g")
@@ -152,7 +152,7 @@ export class LinechartsParent implements OnInit {
     getPredictionDataGroup(){
       if(this.prediction_curve_data){
         this.grouped_prediction_data = d3.nest() // nest function allows to group the calculation per level of a factor
-                                      .key((d) => { return d.country;})
+                                      .key((d) => { return d.country; })
                                       .entries(this.prediction_curve_data);
       }
     }
