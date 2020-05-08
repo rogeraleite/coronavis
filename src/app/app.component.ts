@@ -54,12 +54,22 @@ export class AppComponent {
     this.lineChartNComponent_child.changeUnit(unit);
   }
 
+  async applyZoomToTimeline($event){
+    let zoom_transform = $event;
+    this.timelineComponent_child.receiveZoom(zoom_transform);
+  }
+  async applyZoomToLineChart($event){
+    let zoom_transform = $event;
+    this.lineChartNComponent_child.receiveZoom(zoom_transform)
+  }
+
   async updateCountriesSelection($event){
     let countries = $event;
     countries = this._dm.updateSelectedCountries(countries);
     this.lineChartNComponent_child.loadCountriesByArray(countries);
-    this.lineChartNewCases_child.loadCountriesByArray(countries);
+    // this.lineChartNewCases_child.loadCountriesByArray(countries);
     this.cardsPanelComponent_child.loadCountriesGroupsByArray(countries);
+    this.timelineComponent_child.loadCountriesByArray(countries);
   }
 
   addCountry(content){    

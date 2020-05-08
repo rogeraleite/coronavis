@@ -114,7 +114,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                 return this.tooltip.style("visibility", "hidden");                
               });
   }
-  applyZoomFeature() {          
+  defineZoomFeature() {          
     let zoomed = () => {
       let curTransform = d3.event.transform;    
       this.gCanvas.attr("transform", curTransform);

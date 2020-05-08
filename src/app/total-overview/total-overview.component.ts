@@ -1,8 +1,7 @@
-import { Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { DataManagerComponent } from '../_datamanager/datamanager.component';
 
 import * as $ from 'jquery';
-import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-total-overview',

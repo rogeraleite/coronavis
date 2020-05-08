@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DataManagerComponent } from '../_datamanager/datamanager.component';
 
 import * as d3 from "d3";
@@ -12,6 +12,7 @@ import * as $ from 'jquery';
 export class TimelineComponent implements OnInit {
 
   @Input() dm: DataManagerComponent;
+  @Output() zoomOutput = new EventEmitter<any>();
 
   protected svg: any;
   protected gCanvas: any;
@@ -20,8 +21,10 @@ export class TimelineComponent implements OnInit {
   protected width;
   protected height;
   protected margin = {top: 5, right: 0, bottom: 0, left: 0};
+  protected newTransform: any;
 
   protected zoom: any;
+  protected received_zoom_flag: boolean = true;
   protected initialTransform;
 
   protected current_data;
@@ -37,9 +40,6 @@ export class TimelineComponent implements OnInit {
   protected gAxis_y: any;
 
   protected event_elements: any;
-
-   
-  
   
   constructor() { }
 
@@ -90,11 +90,11 @@ export class TimelineComponent implements OnInit {
   }
   setCanvas() {
     this.gCanvas = this.svg.append("g")
-                           .attr("class", "canvas");
+                           .attr("class", "canvas-timeline");
   }
   setXYScales() {
     this.scale_x = d3.scaleTime().range([0, this.width]);
-    this.scale_y = d3.scalePoint().range([this.height, 0]);
+    this.scale_y = d3.scalePoint().range([this.height*0.8, 0]);
   }
   scaleXYDomains() {
     this.setXDomain_asDate();
@@ -102,7 +102,6 @@ export class TimelineComponent implements OnInit {
   }
   setYDomain_asCountries() {
     let domain = this.dm.getCountriesSelection();
-    console.log(domain);
     this.scale_y.domain(domain);
   }
   setXDomain_asDate(){
@@ -135,15 +134,9 @@ export class TimelineComponent implements OnInit {
   drawAxis() {    
     this.drawAxisX();
     this.drawAxisY(); 
-    // this.paintAxis();
-    // this.addAxisLabels(); 
   }
   drawAxisX(){
     this.axis_x = d3.axisTop(this.scale_x)
-                    // .tickFormat(d3.timeFormat("%d\/%m"))
-                    // .ticks((this.width + 2) / (this.height + 2) * 10)
-                    // .tickSize(this.height)
-                    // .tickPadding(8 - this.height);
     this.gAxis_x = this.svg.append("g")
                               .attr("class", "axis axis-x")
                               .attr("transform", "translate(-1," + (this.height-1) + ")")
@@ -161,11 +154,9 @@ export class TimelineComponent implements OnInit {
 
   applyZoomFeature() {          
       let zoomed = () => {
-        let curTransform = d3.event.transform;    
-        this.gCanvas.attr("transform", curTransform);
-        this.zoomAxisX(curTransform);
-        this.zoomAxisY(curTransform);        
-        // this.paintAxis();
+        this.newTransform = d3.event.transform;    
+        this.applyZoom(this.newTransform);
+        this.emitZoomOutput(this.newTransform);
       } 
       this.zoom = d3.zoom()
                     .scaleExtent([0.7, 5])
@@ -174,31 +165,57 @@ export class TimelineComponent implements OnInit {
       this.zoom(this.svg);
                     
       this.svg.call(this.zoom)    
-              .call(this.zoom.transform, this.initialTransform)    
+              .call(this.zoom.transform, this.initialTransform);
   }
 
-  paintAxis(){        
-    let axis_color = "gray";
-    let axis_opacity = .1;  
-    this.gAxis_x.selectAll(".tick line")
-                .attr("stroke",axis_color)
-                .attr("opacity",axis_opacity);
-    this.gAxis_x.selectAll(".tick text")
-                .attr("transform", "translate(-8,-15) rotate(90)");
-    this.gAxis_y.selectAll(".tick line")
-                .attr("stroke",axis_color)
-                .attr("opacity",axis_opacity);
+  transformCanvas(transform){
+    if(this.gCanvas){      
+      let change_transform = d3.zoomIdentity.translate(transform.x, 0).scale(transform.k);
+      this.gCanvas.attr("transform", change_transform);
+    }    
+  }
+  receiveZoom(transform){
+    if(this.svg){
+        let t = d3.zoomIdentity
+                  .translate(transform.x, transform.y)                  
+                  .scale(transform.k);        
+        this.activeReceivedZoomFlag();
+        this.svg.call(this.zoom.transform, t);
+    }
+  }
+  applyZoom(transform){
+    if(transform){      
+      this.zoomAxisX(transform);     
+      this.transformCanvas(transform);
+      this.paintAxis();   
+    }
+  }
+  emitZoomOutput(transform){
+    if(!this.hasJustReceivedZoom()){  
+      this.zoomOutput.emit(transform);
+    }
+    this.deactivateReceivedZoomFlag();          
+  }
+
+  paintAxis(){     
+    if(this.gAxis_x){
+      let axis_color = "gray";
+      let axis_opacity = .1;  
+      this.gAxis_x.selectAll(".tick line")
+                  .attr("stroke",axis_color)
+                  .attr("opacity",axis_opacity);
+      this.gAxis_x.selectAll(".tick text")
+                  .attr("transform", "translate(-8,-15) rotate(90)");
+      this.gAxis_y.selectAll(".tick line")
+                  .attr("stroke",axis_color)
+                  .attr("opacity",axis_opacity);
+    }
   }
 
   zoomAxisX(curTransform){        
-    if(curTransform){
+    if(curTransform && this.gAxis_x){
         this.gAxis_x.call(this.axis_x.scale(curTransform.rescaleX(this.scale_x)));
     }
-  }
-  zoomAxisY(curTransform){     
-      if(curTransform){
-          this.gAxis_y.call(this.axis_y.scale(curTransform.rescaleY(this.scale_y)));
-      }
   }
   refreshChart(){
     this.cleanCanvas();
@@ -216,6 +233,20 @@ export class TimelineComponent implements OnInit {
   }
   isCasesDimension(){
     return this.yDimension == "cases"
+  }
+  hasJustReceivedZoom(){
+    return this.received_zoom_flag;
+  }
+  deactivateReceivedZoomFlag(){
+    this.received_zoom_flag = false;
+  }
+  activeReceivedZoomFlag(){
+    this.received_zoom_flag = true;
+  }
+  loadCountriesByArray(countries:Array<string>){
+    this.current_data = this.dm.getCurrentDataByCountryList(countries);       
+    this.events_data = this.dm.getEventsDataByCountryList(countries);
+    this.refreshChart();
   }
   // timeline-chart
 }

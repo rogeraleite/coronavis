@@ -1,14 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DataManagerComponent } from '../_datamanager/datamanager.component';
 
 import * as d3 from "d3";
 import * as $ from 'jquery';
-import { conditionallyCreateMapObjectLiteral } from '@angular/compiler/src/render3/view/util';
 
 export class LinechartsParent implements OnInit {
 
-    @Input() dm: DataManagerComponent;
-  
+    @Input() dm: DataManagerComponent;  
+    @Output() zoomOutput = new EventEmitter<any>();
+    
     protected divKey;
     protected svg: any;
     protected gCanvas: any;
@@ -28,10 +28,13 @@ export class LinechartsParent implements OnInit {
 
     // protected curTransform: any;
     protected zoom: any;
+    protected zoom_y: any;
+    protected received_zoom_flag: boolean = true;
+    protected initialTransform: any;
+
     protected dots: any;
     protected predictionDot: any;
     protected tooltip: any;
-    protected initialTransform: any;
   
     protected lineRules;
     protected predictionLine;
@@ -75,7 +78,7 @@ export class LinechartsParent implements OnInit {
       this.drawPrediction();
       this.drawCurrentData();
       this.drawAxis();  
-      this.applyZoomFeature(); 
+      this.defineZoomFeature(); 
       // this.addResetFeatureToButton();
     }
 
@@ -119,7 +122,7 @@ export class LinechartsParent implements OnInit {
     }  
     setCanvas(){
       this.gCanvas = this.svg.append("g")
-                             .attr("class", "canvas");
+                             .attr("class", "canvas-linechart");
     }
     getGroupedData() {
       this.getCurrentDataGroup();
@@ -460,9 +463,6 @@ export class LinechartsParent implements OnInit {
         result.p_amount_error = prediction.deaths_number_error;
       }
 
-      // result.p_amount = this.applyUnitInValue(country, result.p_amount);
-      // result.p_amount_error = this.applyUnitInValue(country, result.p_amount_error);
-
       return result;
     }
     getPredictionTooltipText(d){      
@@ -568,13 +568,11 @@ export class LinechartsParent implements OnInit {
                   .style("text-anchor", "middle")
                   .text(this.axis_x_label); 
     }
-    applyZoomFeature() {          
+    defineZoomFeature() { 
       let zoomed = () => {
-        let curTransform = d3.event.transform;    
-        this.gCanvas.attr("transform", curTransform);
-        this.zoomAxisX(curTransform);
-        this.zoomAxisY(curTransform);        
-        this.paintAxis();
+          let newTransform = d3.event.transform;  
+          this.applyZoom(newTransform);
+          this.emitZoomOutput(newTransform);        
       } 
       this.zoom = d3.zoom()
                     .scaleExtent([0.7, 5])
@@ -584,16 +582,63 @@ export class LinechartsParent implements OnInit {
                     
       this.svg.call(this.zoom)    
               .call(this.zoom.transform, this.initialTransform)    
+      this.zoom_y = this.initialTransform.y;
     }
-    zoomAxisX(curTransform){        
-        if(curTransform){
-            this.gAxis_x.call(this.axis_x.scale(curTransform.rescaleX(this.scale_x)));
+    
+    emitZoomOutput(transform){
+      if(!this.hasJustReceivedZoom()){
+        this.zoomOutput.emit(transform);
+      }
+      this.deactivateReceivedZoomFlag();          
+    }
+    receiveZoom(transform){
+      if(this.svg){
+        let y = d3.zoomTransform(this.svg).y;
+        let t = d3.zoomIdentity
+                  .translate(transform.x, this.zoom_y)                  
+                  .scale(transform.k);
+        this.activeReceivedZoomFlag();
+        this.svg.call(this.zoom.transform, t);
+      }      
+    }
+
+    applyZoom(transform){
+      if(transform){         
+        this.zoomAxisX(transform);   
+        this.zoomAxisY(transform); 
+        this.transformCanvas(transform);
+        this.paintAxis();
+        this.zoom_y = transform.y;
+      }      
+    }
+
+    getTransformFromCanvas(){
+      if(this.svg.attr("transform")){
+        let split = this.svg.attr("transform").split(",");
+        let x = +~~split[0].split("(")[1];
+        let y = +~~split[1].split(")")[0];
+        let k = +split[1].split("(")[1].split(")")[0];
+        // return d3.zoomIdentity.translate(x, y).scale(k);
+        return {x: x, y: y, k: k};
+      }
+      return null;
+    } 
+    zoomAxisX(transform){        
+        if(transform){
+            this.gAxis_x.call(this.axis_x.scale(transform.rescaleX(this.scale_x)));
         }
     }
-    zoomAxisY(curTransform){     
-        if(curTransform){
-            this.gAxis_y.call(this.axis_y.scale(curTransform.rescaleY(this.scale_y)));
+    zoomAxisY(transform){     
+        if(transform){
+            this.gAxis_y.call(this.axis_y.scale(transform.rescaleY(this.scale_y)));
         }
+    }
+    transformCanvas(transform){
+      if(this.gCanvas){
+        let change_transform = d3.zoomIdentity.translate(transform.x, transform.y).scale(transform.k);
+        //this.gCanvas.call(this.zoom.transform, change_transform)
+        this.gCanvas.attr("transform", change_transform);
+      }    
     }
 
     changeScale(scale){
@@ -651,6 +696,15 @@ export class LinechartsParent implements OnInit {
     getOpositeDimension(){
       if(this.isDeathsDimension()) return "cases";
       return "deaths"
+    }
+    hasJustReceivedZoom(){
+      return this.received_zoom_flag;
+    }
+    deactivateReceivedZoomFlag(){
+      this.received_zoom_flag = false;
+    }
+    activeReceivedZoomFlag(){
+      this.received_zoom_flag = true;
     }
 
 
