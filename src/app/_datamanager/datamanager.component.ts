@@ -30,11 +30,12 @@ export class DataManagerComponent implements OnInit {
         // "Austria","Canada","Portugal","Norway","Australia",
         // "Sweden","Brazil","US","China","Italy","Spain","Germany","France",
         // "United Kingdom","Netherlands","Poland"
-        "Austria","Brazil","US","China","Italy","Spain","Germany","France","United Kingdom"
+        "Austria","Brazil","US","China","Italy","Spain","Germany","France","United Kingdom","South Korea"
     ]
 
     private _timeRange: Array<Date>;
     private countries_selection = ["Austria","Brazil","Germany","Italy","US"];
+    private selected_country = "Austria";
 
     private _colors: d3.ScaleOrdinal<string, string>;
     // private _colors_array = [
@@ -561,6 +562,14 @@ export class DataManagerComponent implements OnInit {
      
       getInitialTransform(){
         return d3.zoomIdentity.translate(25,15).scale(0.85);
+      }
+
+      getSelectedCountry(){
+        return this.selected_country;
+      }
+
+      setSelectedCountry(country){
+          this.selected_country = country;
       }
 
 }//end class

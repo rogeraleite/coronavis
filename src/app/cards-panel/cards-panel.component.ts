@@ -64,6 +64,9 @@ export class CardsPanelComponent implements OnInit {
 
   loadCountriesGroupsByArray(countries){
     this.getDataByCountries(countries);
+    this.updateChart();
+  }
+  updateChart(){
     this.cleanCanvas();
     this.createChart();
   }
@@ -112,6 +115,10 @@ export class CardsPanelComponent implements OnInit {
                                 .enter()
                                   .append("g")
                                   .attr("class","cards")
+                                  .on("click", (d) => {
+                                    this.dm.setSelectedCountry(d.key);
+                                    this.updateChart();
+                                  })
                                   .attr("transform", (d,i) => {
                                           return "translate(" + ((i*this.cards_width)+this.margin) + ","
                                                               + this.margin +")";
@@ -123,8 +130,16 @@ export class CardsPanelComponent implements OnInit {
                 .attr("fill", (d) => { return this.color_scale(d.key); })
                 .attr("width", this.cards_width - this.margin)
                 .attr("height", this.cards_height - this.margin)
+                .attr("stroke-width", 2)
+                .attr("stroke", (d)=>{
+                  if(this.isSelectedCountry(d.key)){ return "black" }
+                  return "none"
+                })                
                 .attr("rx", 3)
                 .attr("ry", 3);
+  }
+  isSelectedCountry(country){
+    return this.dm.getSelectedCountry() == country
   }
   writeCardsTitle() {
     let top_margin = 15;
