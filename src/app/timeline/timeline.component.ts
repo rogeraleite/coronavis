@@ -20,7 +20,7 @@ export class TimelineComponent implements OnInit {
   protected divKey;
   protected width;
   protected height;
-  protected margin = {top: 5, right: 0, bottom: 0, left: 0};
+  protected margin = {top: 0, right: 0, bottom: 0, left: 0};
   protected newTransform: any;
 
   protected zoom: any;
@@ -53,9 +53,9 @@ export class TimelineComponent implements OnInit {
   }
   setDimensionsVariables(){
     this.divKey = ".timeline-chart";
-    this.width = $(this.divKey).width()*1.05;
-    this.margin.right = - $(this.divKey).width()*0.05;
-    this.height = ($(document).height()/15) + this.margin.top/2;         
+    this.width = $(this.divKey).width();//*1.05;
+    this.margin.right = 0;//- $(this.divKey).width()*0.05;
+    this.height = ($(document).height()/20) + this.margin.top/2;         
     this.initialTransform = this.dm.getInitialTransform();
   }
   getData() {    
@@ -107,7 +107,8 @@ export class TimelineComponent implements OnInit {
   setXDomain_asDate(){
     let latest_predicted_date = this.getLastDateAccordingToDimension();
     let first_date = this.dm.getFirstDate();
-    this.scale_x.domain([first_date, latest_predicted_date]);
+    let last_date = this.dm.getLastDate();
+    this.scale_x.domain([first_date, last_date]);
   }
   getLastDateAccordingToDimension(){
     if(this.isDeathsDimension() || this.isCasesDimension()) return new Date(this.dm.getLatestPredictedDate());

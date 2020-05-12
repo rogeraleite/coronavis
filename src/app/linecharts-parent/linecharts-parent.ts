@@ -41,7 +41,7 @@ export class LinechartsParent implements OnInit {
     protected grouped_current_data;
     protected grouped_prediction_data;
   
-    protected margin = {top: 5, right: 0, bottom: 0, left: 0};
+    protected margin = {top: 1, right: 0, bottom: 0, left: 0};
     protected width;
     protected height;
     

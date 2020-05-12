@@ -15,6 +15,7 @@ export class DataManagerComponent implements OnInit {
     private _lastweek_data: Array<any>;
     private _lastweek_data_groupedByCountry: any;
     private _events_data;
+    private _graph_height_proportion = 0.265;
 
     private _predictionSummary_data: Array<any>;
     private _prediction_data: Array<any>;
@@ -570,6 +571,10 @@ export class DataManagerComponent implements OnInit {
 
       setSelectedCountry(country){
           this.selected_country = country;
+      }
+
+      getGraphHeightProportion(){
+        return this._graph_height_proportion;
       }
 
 }//end class

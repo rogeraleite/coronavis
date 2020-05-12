@@ -14,6 +14,8 @@ import { TotalOverviewComponent } from './total-overview/total-overview.componen
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { InformationButtonComponent } from './information-button/information-button.component';
 import { TimelineComponent } from './timeline/timeline.component';
+import { LinechartTestsComponent } from './linechart-tests/linechart-tests.component';
+import { LinechartPredictionComponent } from './linechart-prediction/linechart-prediction.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { TimelineComponent } from './timeline/timeline.component';
     CardsPanelComponent,
     TotalOverviewComponent,
     InformationButtonComponent,
-    TimelineComponent
+    TimelineComponent,
+    LinechartTestsComponent,
+    LinechartPredictionComponent
   ],
   imports: [
     BrowserModule,

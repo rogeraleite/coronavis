@@ -20,7 +20,7 @@ export class CardsPanelComponent implements OnInit {
   protected gCards: any;
   protected color_scale: any;
 
-  protected margin = 5;  
+  protected margin = 2;  
   protected width;
   protected cards_width;
   protected height;
@@ -44,7 +44,7 @@ export class CardsPanelComponent implements OnInit {
   }
   calculateOverallDimensions() {
     this.width = $(this.divKey).width();
-    this.height = $(document).height()*1/4;
+    this.height = $(document).height()*0.22;
   }
   createChart(){
     /////////////////////// Part1
@@ -184,7 +184,7 @@ export class CardsPanelComponent implements OnInit {
     let labels_font_size = 10;
 
     let cell_width = this.cards_width/(header.length+1);
-    let cell_height = this.cards_height/7;
+    let cell_height = this.cards_height/8;
 
     //HEADER
     header.forEach((element,i)=>{

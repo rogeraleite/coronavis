@@ -18,9 +18,23 @@ div.cards{
 }
 div.button button{
     position: absolute;
-    top: 6%;
+    top: 4.5%;
     left: 5%;    
-    width: 152%;
-    height: 94%;
+    width: 95%;
+    height: 91%;
     z-index:999999;
+}
+
+h6{
+    margin-bottom: 1px;
+}
+label{
+    margin-bottom: 1px;
+}
+
+div.col-sm-5{
+    padding: 5px;
+}
+div.col-sm-10{
+    padding: 5px;
 }
