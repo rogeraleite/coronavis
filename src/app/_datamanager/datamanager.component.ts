@@ -303,8 +303,6 @@ export class DataManagerComponent implements OnInit {
         if(!country) country = this.selected_country
         let result = [];
         let grouped = this.groupEventDataByCountry();
-
-        console.log(grouped)
         
         let g = grouped.get(country);
         g.forEach(sample => {

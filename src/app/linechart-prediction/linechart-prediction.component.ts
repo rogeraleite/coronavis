@@ -20,7 +20,6 @@ export class LinechartPredictionComponent extends LinechartsParent {
     this.width = $(this.divKey).width()//*1.05;
     this.margin.right = 0;//- $(this.divKey).width()*0.05;
     this.height = ($(document).height()*this.dm.getGraphHeightProportion());
-    console.log(this.height)
     this.scaleYType = "linear";
     this.yDimension = "pCases";  
     this.axis_y_label = "confirmed "+this.yDimension;
@@ -28,4 +27,13 @@ export class LinechartPredictionComponent extends LinechartsParent {
     this.current_curve_data = this.dm.getCurrentDataByCountryList(null);
     this.prediction_curve_data = this.dm.getPredictionDataByCountryList(null);
   }
+  
+  changeFeature(feature){    
+    if(feature == "deaths")  feature = "pDeaths"
+    else if(feature == "cases")  feature = "pCases"
+    this.yDimension = feature;
+    this.updateAxisYLabels();
+    this.refreshChart();
+  }
+  
 }

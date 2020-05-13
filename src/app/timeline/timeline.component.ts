@@ -146,6 +146,9 @@ export class TimelineComponent implements OnInit {
                               let size = this.calculateRectSize(d.LegacyStringencyIndexForDisplay);
                               let x = this.height-size-this.margin.bottom/2;
                               return x;
+                            })
+                            .on("click", (d) => {
+                                console.log(d);
                             });
   }
   calculateRectSize(value){
@@ -154,7 +157,7 @@ export class TimelineComponent implements OnInit {
   }
   drawAxis() {    
     this.drawAxisX();
-    this.drawAxisY(); 
+    // this.drawAxisY(); 
   }
   drawAxisX(){
     this.axis_x = d3.axisTop(this.scale_x)
@@ -228,10 +231,10 @@ export class TimelineComponent implements OnInit {
       this.gAxis_x.selectAll(".tick text")
                   .attr("transform", "translate(-8,18)");
                   // .attr("transform", "translate(-8,-15) rotate(90)");
-      this.gAxis_y.selectAll(".tick line")
-                  .attr("stroke",axis_color)
-                  .attr("opacity",axis_opacity)
-                  .attr("transform", "translate(0,18)");;
+      // this.gAxis_y.selectAll(".tick line")
+      //             .attr("stroke",axis_color)
+      //             .attr("opacity",axis_opacity)
+      //             .attr("transform", "translate(0,18)");;
     }
   }
 

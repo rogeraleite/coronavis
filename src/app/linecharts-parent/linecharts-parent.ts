@@ -509,7 +509,7 @@ export class LinechartsParent implements OnInit {
     drawAxisX(){
         this.axis_x = d3.axisTop(this.scale_x)
                         .tickFormat(d3.timeFormat("%d\/%m"))
-                        .ticks((this.width + 2) / (this.height + 2) * 10)
+                        .ticks((this.width + 2) / (this.height + 2) * 5)
                         .tickSize(this.height)
                         .tickPadding(8 - this.height);
         this.gAxis_x = this.svg.append("g")
@@ -565,14 +565,14 @@ export class LinechartsParent implements OnInit {
     }
     addAxisLabels() {
       this.svg.append("text")
-                  .attr("y", 28)
+                  .attr("y", 35)
                   .attr("x", -this.height / 2)
                   .attr("transform", "rotate(-90)")
                   .attr("dy", "1em")
                   .style("text-anchor", "middle")
                   .text(this.axis_y_label);  
       this.svg.append("text")
-                  .attr("y", this.height - 45)
+                  .attr("y", this.height - 50)
                   .attr("x", this.width / 2)
                   .attr("dy", "1em")
                   .style("text-anchor", "middle")
@@ -653,17 +653,17 @@ export class LinechartsParent implements OnInit {
 
     changeScale(scale){
       this.scaleYType = scale;
-      this.updateAxisYLegend();
+      this.updateAxisYLabels();
       this.refreshChart();
     }
     changeFeature(feature){      
       this.yDimension = feature;
-      this.updateAxisYLegend();
+      this.updateAxisYLabels();
       this.refreshChart();
     }
     changeUnit(unit){          
       this.yUnit = unit;
-      this.updateAxisYLegend();
+      this.updateAxisYLabels();
       this.refreshChart();
     }
     isDeathsDimension(){
@@ -684,14 +684,14 @@ export class LinechartsParent implements OnInit {
     isPredictionDimension(){
       return this.isPredictionCasesDaysDimension() || this.isPredictionDeathsDaysDimension()
     }
-    updateAxisYLegend(){
+    updateAxisYLabels(){
       let dimension_text = this.pipeYDimensionText();
       if(this.isLogScaled()) this.axis_y_label = "log("+dimension_text+")";
       else this.axis_y_label = dimension_text;    
     }
     pipeYDimensionText() {
-      if(this.yDimension == "pDeaths") return "Predicted Deaths Event Days"
-      else if(this.yDimension == "pCases") return "Predicted Cases Event Days"
+      if(this.yDimension == "pDeaths") return "Predicted Deaths Days"
+      else if(this.yDimension == "pCases") return "Predicted Cases Days"
       return this.yDimension;
     }
     isLogScaled(){

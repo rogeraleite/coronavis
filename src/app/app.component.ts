@@ -54,8 +54,9 @@ export class AppComponent {
     this.lineChartNComponent_child.changeScale(scale);
   }
   changeFeature(feature){//cases/deaths/tests/pCases/pDeaths
-    this.lineChartNComponent_child.changeFeature(feature);
-    this.timelineComponent_child.changeFeature(feature);
+    this.lineChartNComponent_child.changeFeature(feature);    
+    this.lineChartPredictionComponent_child.changeFeature(feature);
+    this.lineChartNewCases_child.changeFeature(feature);
   }
   changeUnit(unit){//absolute/populationRatio    
     this.lineChartNComponent_child.changeUnit(unit);

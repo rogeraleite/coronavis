@@ -20,7 +20,6 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     this.initialTransform = d3.zoomIdentity.translate(-120, 23).scale(1.13);
     this.width = $(this.divKey).width();
     this.height = ($(document).height()*this.dm.getGraphHeightProportion());
-    console.log(this.height)
     this.current_curve_data = this.dm.getLastWeekDataByCountryList(null);
     this.axis_y_label = "log(cases last week)";
     this.axis_x_label = "log(total cases)";
@@ -34,21 +33,47 @@ export class LinechartNewcasesComponent extends LinechartsParent {
   }
   //////////////////////////////////////////////// Part 2
   setXYScales(){    
-    this.scale_x = d3.scaleLog().range([0, this.width]);
-    this.scale_y = d3.scaleLog().range([this.height, 0]);
+    this.scale_x = d3.scaleSymlog().range([0, this.width]);
+    this.scale_y = d3.scaleSymlog().range([this.height, 0]);
   }
   createLinesRules(){
-    this.lineRules = d3.line()
-                       .x((d) => { return this.scale_x(d.total_confirmed); })
-                       .y((d) => { return this.scale_y(d.confirmed_last_week); });
+    if(this.isDeathsDimension()){ 
+      this.lineRules = d3.line()
+                          .x((d) => { return this.scale_x(d.total_deaths); })
+                          .y((d) => { return this.scale_y(d.deaths_last_week); });
+    }
+    else{
+      this.lineRules = d3.line()
+                          .x((d) => { return this.scale_x(d.total_confirmed); })
+                          .y((d) => { return this.scale_y(d.confirmed_last_week); });
+    }
+    
   }
-  scaleXYDomains() {
-    this.scale_x.domain(d3.extent(this.current_curve_data, (d) => { 
-      return d.total_confirmed; 
-    }));
+  scaleXYDomains() {    
+    if(this.isDeathsDimension()){ 
+      this.setXDomain_asDeaths();
+      this.setYDomain_asDeaths(); 
+    }
+    else{ 
+      this.setXDomain_asCases();
+      this.setYDomain_asCases(); 
+    }      
+  }
+  setXDomain_asDeaths(){
+    this.scale_x.domain(d3.extent(this.current_curve_data, (d) => { return +d.total_deaths; }));
+  }
+  setYDomain_asDeaths(){
+    this.scale_y.domain([d3.min(this.current_curve_data, (d) => { return +d.deaths_last_week; }),
+                         d3.max(this.current_curve_data, (d) => { return +d.deaths_last_week; })]);
+  }
+  setXDomain_asCases(){
+    this.scale_x.domain(d3.extent(this.current_curve_data, (d) => { return +d.total_confirmed; }));
+  }
+  setYDomain_asCases(){
     this.scale_y.domain([d3.min(this.current_curve_data, (d) => { return +d.confirmed_last_week; }),
                          d3.max(this.current_curve_data, (d) => { return +d.confirmed_last_week; })]);
   }
+
   //////////////////////////////////////////////// Part 3
   drawAxisY(){
     this.axis_y = d3.axisRight(this.scale_y)
@@ -91,8 +116,18 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                       })
                       .style("fill", (d) => { return this.color_scale(d.country); })                      
                       .attr("stroke", "gray")
-                      .attr("cx", (d) => { return this.scale_x(d.total_confirmed); })
-                      .attr("cy", (d) => { return this.scale_y(d.confirmed_last_week); });
+                      .attr("cx", (d) => {                        
+                        if(this.isDeathsDimension()){
+                          return this.scale_x(d.total_deaths); 
+                        }
+                        return this.scale_x(d.total_confirmed); 
+                      })
+                      .attr("cy", (d) => {              
+                        if(this.isDeathsDimension()){
+                          return this.scale_y(d.deaths_last_week); 
+                        }                            
+                        return this.scale_y(d.confirmed_last_week); 
+                      });
     this.addTooltipBehaviorToDots();
   }
   getCurrentDotsTooltipText(d){
@@ -145,8 +180,9 @@ export class LinechartNewcasesComponent extends LinechartsParent {
           this.gAxis_y.call(this.axis_y.scale(curTransform.rescaleY(this.scale_y)));
       }
   }
-  drawPredictionDot() {}
-
+  drawPrediction() {
+    //leave empty
+  }
 
 
 
