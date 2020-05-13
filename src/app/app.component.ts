@@ -65,6 +65,13 @@ export class AppComponent {
   }
 
 
+  async updateSelectedDay(){    
+    this.lineChartNComponent_child.updateSelectedDay();
+    this.lineChartTestsComponent_child.updateSelectedDay();
+    this.lineChartPredictionComponent_child.updateSelectedDay();
+    this.lineChartNewCases_child.updateSelectedDay();
+  }
+
   async applySelectCountry($event){
     let country = $event;
     this.lineChartNComponent_child.updateSelectedCountry();

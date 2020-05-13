@@ -47,7 +47,7 @@ export class DataManagerComponent implements OnInit {
     //     '#aaffc3', '#469990', '#000075', '#808080', '#000000',
     // ];
     private _colors_array = [
-        '#8dd3c7', '#fdb462', '#bebada', '#fb8072', '#80b1d3', '#b3de69','#fccde5'
+        '#8dd3c7', '#fdb462', '#bebada', '#fb8072', '#80b1d3', '#b3de69', '#fccde5'
     ]
 
     constructor() {

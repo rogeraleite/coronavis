@@ -21,6 +21,10 @@ export class LinechartsParent implements OnInit {
     protected gAxis_y: any;
     protected axis_x_label: any;
     protected axis_y_label: any;
+    
+    protected event_shadow: any;
+    protected event_line: any;
+    protected incubation_days = 5;
 
     protected scaleYType: string;
     protected yDimension: string;    
@@ -649,6 +653,38 @@ export class LinechartsParent implements OnInit {
         //this.gCanvas.call(this.zoom.transform, change_transform)
         this.gCanvas.attr("transform", change_transform);
       }    
+    }
+
+    updateSelectedDay(){
+      let date = this.dm.getSelectedDate();
+      let end_incubation_date = this.addDaysToMillisecondDate(date,this.incubation_days);
+      this.drawIncubationPeriodMarks(date, end_incubation_date);
+    }
+
+    drawIncubationPeriodMarks(x_value, x_end_value){
+      if(this.event_shadow) this.event_shadow.remove();
+      if(this.event_line) this.event_line.remove();
+
+      let shadow_size = 10000;
+      let x_value_pos = this.scale_x(x_value);
+      let dif = this.scale_x(x_end_value) - x_value_pos;
+
+      this.event_shadow = this.gCanvas.append("rect")
+                                      .attr("class","event-shadow")
+                                      .attr("x",-shadow_size)
+                                      .attr("y",-this.height)
+                                      .attr("opacity",.1)
+                                      .attr("height",this.height*3)
+                                      .attr("width",shadow_size+x_value_pos+dif);  
+      this.event_line = this.gCanvas.append("rect")
+                                    .attr("class","event-line")
+                                    .attr("x",()=>{ return this.scale_x(x_value); })
+                                    .attr("y",-this.height)
+                                    .attr("height",this.height*3)
+                                    .attr("width",2)  
+    }
+    addDaysToMillisecondDate(date, days){
+      return date += 1000 * 60 * 60 * 24 * days;
     }
 
     changeScale(scale){

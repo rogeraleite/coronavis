@@ -180,10 +180,45 @@ export class LinechartNewcasesComponent extends LinechartsParent {
           this.gAxis_y.call(this.axis_y.scale(curTransform.rescaleY(this.scale_y)));
       }
   }
-  drawPrediction() {
-    //leave empty
+  changeFeature(feature){      
+    this.yDimension = feature;
+    this.updateAxisYLabels();
+    this.updateAxisXLabels();
+    this.refreshChart();
+  }
+  updateAxisYLabels(){
+    if(this.isDeathsDimension()) this.axis_y_label = "log(deaths last week)";
+    else this.axis_y_label = "log(cases last week)";    
+  }
+  updateAxisXLabels(){
+    if(this.isDeathsDimension()) this.axis_x_label = "log(total deaths)";
+    else this.axis_x_label = "log(total cases)";    
   }
 
+  findXValueByDate(date){
+    for(let i = 0; i<this.current_curve_data.length; i++){
+      let d = this.current_curve_data[i];
+      if(this.dm.isSelectedCountry(d.country) && d.date==date){
+        let value = d.total_confirmed;
+        if(this.isDeathsDimension()){
+          value = d.total_deaths; 
+        }
+        return value;
+      }
+    }
+    return null;
+  }
+
+  drawPrediction() {
+    //leave it empty
+  }
+  updateSelectedDay(){
+    let date = this.dm.getSelectedDate();
+    let end_incubation_date = this.addDaysToMillisecondDate(date,this.incubation_days);
+    let respective_x = this.findXValueByDate(date);
+    let respective_end_x = this.findXValueByDate(end_incubation_date);
+    this.drawIncubationPeriodMarks(respective_x, respective_end_x);  
+  }
 
 
 }

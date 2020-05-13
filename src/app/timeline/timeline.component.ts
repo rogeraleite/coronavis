@@ -13,6 +13,7 @@ export class TimelineComponent implements OnInit {
 
   @Input() dm: DataManagerComponent;
   @Output() zoomOutput = new EventEmitter<any>();
+  @Output() selectedDayOutput = new EventEmitter<any>();
 
   protected svg: any;
   protected gCanvas: any;
@@ -239,6 +240,10 @@ export class TimelineComponent implements OnInit {
     this.deactivateReceivedZoomFlag();          
   }
 
+  emitDaySelectionOutput(){
+    this.selectedDayOutput.emit()
+  }
+
   paintAxis(){     
     if(this.gAxis_x){
       let axis_color = "gray";
@@ -305,6 +310,7 @@ export class TimelineComponent implements OnInit {
   }
   updateSelectedDate(date){
     this.dm.setSelectedDate(date);
+    this.emitDaySelectionOutput();
     this.refreshChart();
   }
 }
