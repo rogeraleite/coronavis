@@ -571,7 +571,7 @@ export class DataManagerComponent implements OnInit {
 
      
       getInitialTransform(){
-        return d3.zoomIdentity.translate(25,15).scale(0.85);
+        return d3.zoomIdentity.translate(45,15).scale(0.8);
       }
 
       getSelectedCountry(){

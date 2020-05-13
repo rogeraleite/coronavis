@@ -33,6 +33,7 @@ export class LinechartsParent implements OnInit {
     // protected curTransform: any;
     protected zoom: any;
     protected zoom_y: any;
+    protected zoom_k: any;
     protected received_zoom_flag: boolean = true;
     protected initialTransform: any;
 
@@ -513,7 +514,7 @@ export class LinechartsParent implements OnInit {
     drawAxisX(){
         this.axis_x = d3.axisTop(this.scale_x)
                         .tickFormat(d3.timeFormat("%d\/%m"))
-                        .ticks((this.width + 2) / (this.height + 2) * 5)
+                        .ticks((this.width + 2) / (this.height + 2) * 4)
                         .tickSize(this.height)
                         .tickPadding(8 - this.height);
         this.gAxis_x = this.svg.append("g")
@@ -562,7 +563,8 @@ export class LinechartsParent implements OnInit {
                     .attr("stroke",axis_color)
                     .attr("opacity",axis_opacity);
         this.gAxis_x.selectAll(".tick text")
-                    .attr("transform", "translate(-8,-15) rotate(90)");
+                    // .attr("transform", "translate(-8,-15) rotate(90)");
+                    .attr("transform", "translate(0,7) rotate(0)");
         this.gAxis_y.selectAll(".tick line")
                     .attr("stroke",axis_color)
                     .attr("opacity",axis_opacity);
@@ -573,12 +575,16 @@ export class LinechartsParent implements OnInit {
                   .attr("x", -this.height / 2)
                   .attr("transform", "rotate(-90)")
                   .attr("dy", "1em")
+                  .attr("font-size", "12px")
+                  .style('fill', 'gray')
                   .style("text-anchor", "middle")
                   .text(this.axis_y_label);  
       this.svg.append("text")
-                  .attr("y", this.height - 50)
+                  .attr("y", this.height - 30)
                   .attr("x", this.width / 2)
                   .attr("dy", "1em")
+                  .attr("font-size", "12px")
+                  .style('fill', 'gray')
                   .style("text-anchor", "middle")
                   .text(this.axis_x_label); 
     }
@@ -596,7 +602,8 @@ export class LinechartsParent implements OnInit {
                     
       this.svg.call(this.zoom)    
               .call(this.zoom.transform, this.initialTransform)    
-      this.zoom_y = this.initialTransform.y;
+      this.zoom_y = this.initialTransform.y;    
+      this.zoom_k = this.initialTransform.k;
     }
     
     emitZoomOutput(transform){
@@ -608,9 +615,10 @@ export class LinechartsParent implements OnInit {
     receiveZoom(transform){
       if(this.svg){
         let y = d3.zoomTransform(this.svg).y;
+        let k = d3.zoomTransform(this.svg).k;
         let t = d3.zoomIdentity
                   .translate(transform.x, this.zoom_y)                  
-                  .scale(transform.k);
+                  .scale(this.zoom_k);
         this.activeReceivedZoomFlag();
         this.svg.call(this.zoom.transform, t);
       }      

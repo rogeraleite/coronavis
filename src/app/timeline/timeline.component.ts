@@ -14,6 +14,7 @@ export class TimelineComponent implements OnInit {
   @Input() dm: DataManagerComponent;
   @Output() zoomOutput = new EventEmitter<any>();
   @Output() selectedDayOutput = new EventEmitter<any>();
+  
 
   protected svg: any;
   protected gCanvas: any;
@@ -305,7 +306,7 @@ export class TimelineComponent implements OnInit {
   // timeline-chart
   
   updateSelectedCountry(){
-    let selected_country = this.dm.getSelectedCountry()
+    let selected_country = this.dm.getSelectedCountry();
     this.loadCountriesByArray([selected_country]);
   }
   updateSelectedDate(date){

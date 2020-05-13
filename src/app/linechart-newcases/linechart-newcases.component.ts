@@ -90,7 +90,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
   drawAxisX(){
     this.axis_x = d3.axisTop(this.scale_x)
                     .tickFormat((d)=>{ 
-                      if(d>=0) return d/1000 + "k";                       
+                      return this.dm.pipeNumberToAbbreviationStr(d);                  
                     })
                     .ticks((this.width + 2) / (this.height + 2) * 10)
                     .ticks(4)
