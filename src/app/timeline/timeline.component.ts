@@ -20,7 +20,7 @@ export class TimelineComponent implements OnInit {
   protected divKey;
   protected width;
   protected height;
-  protected margin = {top: 0, right: 0, bottom: 0, left: 0};
+  protected margin = {top: -5, right: 0, bottom: 10, left: 0};
   protected newTransform: any;
 
   protected zoom: any;
@@ -55,7 +55,7 @@ export class TimelineComponent implements OnInit {
     this.divKey = ".timeline-chart";
     this.width = $(this.divKey).width();//*1.05;
     this.margin.right = 0;//- $(this.divKey).width()*0.05;
-    this.height = ($(document).height()/20) + this.margin.top/2;         
+    this.height = ($(document).height()/18) //+ this.margin.top/2;         
     this.initialTransform = this.dm.getInitialTransform();
   }
   getData() {    
@@ -68,6 +68,7 @@ export class TimelineComponent implements OnInit {
   }
 
   createChart() {
+    this.filterSelectedCountryEvents();
     /////////////////////// Part1
     this.setSVG();
     this.setCanvas();
@@ -79,6 +80,18 @@ export class TimelineComponent implements OnInit {
     this.drawData();
     this.drawAxis();  
     this.applyZoomFeature();
+  }
+
+  filterSelectedCountryEvents() {
+    let result = []
+
+    this.events_data.forEach((e)=>{
+      if(this.dm.isSelectedCountry(e.country)){
+        result.push(e);
+      }
+    })
+
+    this.events_data = result;
   }
 
   setSVG() {
@@ -94,25 +107,19 @@ export class TimelineComponent implements OnInit {
   }
   setXYScales() {
     this.scale_x = d3.scaleTime().range([0, this.width]);
-    this.scale_y = d3.scalePoint().range([this.height*0.8, 0]);
+    this.scale_y = d3.scalePoint().range([this.height, 0]);
   }
   scaleXYDomains() {
     this.setXDomain_asDate();
     this.setYDomain_asCountries();
   }
   setYDomain_asCountries() {
-    let domain = this.dm.getCountriesSelection();
-    this.scale_y.domain(domain);
+    this.scale_y.domain([0,this.height/100]);
   }
   setXDomain_asDate(){
-    let latest_predicted_date = this.getLastDateAccordingToDimension();
     let first_date = this.dm.getFirstDate();
     let last_date = this.dm.getLastDate();
     this.scale_x.domain([first_date, last_date]);
-  }
-  getLastDateAccordingToDimension(){
-    if(this.isDeathsDimension() || this.isCasesDimension()) return new Date(this.dm.getLatestPredictedDate());
-    return this.dm.getLastDate();
   }
   calculateColors() {
     let map_result = this.current_data_grouped.map(function(d){ return d.key }) // list of group names      
@@ -124,13 +131,26 @@ export class TimelineComponent implements OnInit {
     this.event_elements = this.gCanvas.selectAll("circle")
                           .data(this.events_data)
                           .enter()
-                            .append("circle")
-                            .attr("r", 2.5)
-                            .style("fill", (d) => { return this.color_scale(d.country) })
-                            .attr("cx", (d) => { return this.scale_x(d.date); })
-                            .attr("cy", (d) => {                               
-                              return this.scale_y(d.country)
+                            .append("rect")
+                            .attr("height", (d)=>{ 
+                              let size = this.calculateRectSize(d.LegacyStringencyIndexForDisplay);
+                              return size;
+                            })
+                            .attr("width", (this.width/this.events_data.length)-1)
+                            .style("fill", (d) => { 
+                              let color = this.dm.getColorByCountry(d.country);
+                              return color;
+                            })
+                            .attr("x", (d) => { return this.scale_x(d.date); })
+                            .attr("y", (d)=>{ 
+                              let size = this.calculateRectSize(d.LegacyStringencyIndexForDisplay);
+                              let x = this.height-size-this.margin.bottom/2;
+                              return x;
                             });
+  }
+  calculateRectSize(value){
+    let size = (value/100)*this.height;
+    return size
   }
   drawAxis() {    
     this.drawAxisX();
@@ -140,7 +160,7 @@ export class TimelineComponent implements OnInit {
     this.axis_x = d3.axisTop(this.scale_x)
     this.gAxis_x = this.svg.append("g")
                               .attr("class", "axis axis-x")
-                              .attr("transform", "translate(-1," + (this.height-1) + ")")
+                              .attr("transform", "translate(-1," + (this.height-this.margin.bottom) + ")")
                               .call(this.axis_x);        
   }
   drawAxisY(){
@@ -206,10 +226,12 @@ export class TimelineComponent implements OnInit {
                   .attr("stroke",axis_color)
                   .attr("opacity",axis_opacity);
       this.gAxis_x.selectAll(".tick text")
-                  .attr("transform", "translate(-8,-15) rotate(90)");
+                  .attr("transform", "translate(-8,18)");
+                  // .attr("transform", "translate(-8,-15) rotate(90)");
       this.gAxis_y.selectAll(".tick line")
                   .attr("stroke",axis_color)
-                  .attr("opacity",axis_opacity);
+                  .attr("opacity",axis_opacity)
+                  .attr("transform", "translate(0,18)");;
     }
   }
 
@@ -244,10 +266,20 @@ export class TimelineComponent implements OnInit {
   activeReceivedZoomFlag(){
     this.received_zoom_flag = true;
   }
+
   loadCountriesByArray(countries:Array<string>){
-    this.current_data = this.dm.getCurrentDataByCountryList(countries);       
-    this.events_data = this.dm.getEventsDataByCountryList(countries);
+    let first_country = countries[0];
+    this.current_data = this.dm.getCurrentDataByCountryList([first_country]);       
+    this.events_data = this.dm.getEventsDataByCountryList(first_country);
+    this.current_data_grouped = d3.nest() // nest function allows to group the calculation per level of a factor
+                                  .key((d) => {return d.country;})
+                                  .entries(this.current_data);
     this.refreshChart();
   }
   // timeline-chart
+  
+  updateSelectedCountry(){
+    let selected_country = this.dm.getSelectedCountry()
+    this.loadCountriesByArray([selected_country]);
+  }
 }

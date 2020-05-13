@@ -10,6 +10,8 @@ import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 
 import * as $ from 'jquery';
 import { TimelineComponent } from './timeline/timeline.component';
+import { LinechartTestsComponent } from './linechart-tests/linechart-tests.component';
+import { LinechartPredictionComponent } from './linechart-prediction/linechart-prediction.component';
 
 @Component({
   selector: 'app-root',
@@ -20,12 +22,17 @@ export class AppComponent {
   title = 'coronavis';
   public _dm: DataManagerComponent;
 
+  
+  @ViewChild(TotalOverviewComponent) totalOverviewComponent_child;  
+  
   @ViewChild(LinechartNComponent) lineChartNComponent_child;
-  @ViewChild(TimelineComponent) timelineComponent_child;
-
+  @ViewChild(LinechartTestsComponent) lineChartTestsComponent_child;
+  @ViewChild(LinechartPredictionComponent) lineChartPredictionComponent_child;
   @ViewChild(LinechartNewcasesComponent) lineChartNewCases_child;  
+
+  @ViewChild(TimelineComponent) timelineComponent_child;
   @ViewChild(CardsPanelComponent) cardsPanelComponent_child;
-  @ViewChild(TotalOverviewComponent) totalOverviewComponent_child;
+  
   
   protected closeResult = '';
   protected country_list_data;
@@ -54,6 +61,16 @@ export class AppComponent {
     this.lineChartNComponent_child.changeUnit(unit);
   }
 
+
+  async applySelectCountry($event){
+    let country = $event;
+    this.lineChartNComponent_child.updateSelectedCountry();
+    this.lineChartTestsComponent_child.updateSelectedCountry();
+    this.lineChartPredictionComponent_child.updateSelectedCountry();
+    this.lineChartNewCases_child.updateSelectedCountry();
+
+    this.timelineComponent_child.updateSelectedCountry();
+  }
   async applyZoomToTimeline($event){
     let zoom_transform = $event;
     this.timelineComponent_child.receiveZoom(zoom_transform);
@@ -65,11 +82,15 @@ export class AppComponent {
 
   async updateCountriesSelection($event){
     let countries = $event;
-    countries = this._dm.updateSelectedCountries(countries);
+    countries = this._dm.loadCountriesByArray(countries);
+
     this.lineChartNComponent_child.loadCountriesByArray(countries);
-    // this.lineChartNewCases_child.loadCountriesByArray(countries);
-    this.cardsPanelComponent_child.loadCountriesGroupsByArray(countries);
+    this.lineChartNewCases_child.loadCountriesByArray(countries);
+    this.lineChartTestsComponent_child.loadCountriesByArray(countries);
+    this.lineChartPredictionComponent_child.loadCountriesByArray(countries);
+
     this.timelineComponent_child.loadCountriesByArray(countries);
+    this.cardsPanelComponent_child.loadCountriesGroupsByArray(countries);
   }
 
   addCountry(content){    

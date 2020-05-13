@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DataManagerComponent } from '../_datamanager/datamanager.component';
 
 import * as d3 from "d3";
@@ -13,6 +13,7 @@ import * as $ from 'jquery';
 export class CardsPanelComponent implements OnInit {
 
   @Input() dm: DataManagerComponent;
+  @Output() selectCountryOutput = new EventEmitter<any>();
 
   protected divKey;
   protected svg: any;
@@ -117,12 +118,16 @@ export class CardsPanelComponent implements OnInit {
                                   .attr("class","cards")
                                   .on("click", (d) => {
                                     this.dm.setSelectedCountry(d.key);
+                                    this.emitCountrySelection(d.key);
                                     this.updateChart();
                                   })
                                   .attr("transform", (d,i) => {
                                           return "translate(" + ((i*this.cards_width)+this.margin) + ","
                                                               + this.margin +")";
                                         });
+  }
+  emitCountrySelection(country){
+      this.selectCountryOutput.emit(country);
   }
   drawCardsBackground() {
     this.gCards.append("rect")
@@ -132,14 +137,11 @@ export class CardsPanelComponent implements OnInit {
                 .attr("height", this.cards_height - this.margin)
                 .attr("stroke-width", 2)
                 .attr("stroke", (d)=>{
-                  if(this.isSelectedCountry(d.key)){ return "black" }
+                  if(this.dm.isSelectedCountry(d.key)){ return "black" }
                   return "none"
                 })                
                 .attr("rx", 3)
                 .attr("ry", 3);
-  }
-  isSelectedCountry(country){
-    return this.dm.getSelectedCountry() == country
   }
   writeCardsTitle() {
     let top_margin = 15;

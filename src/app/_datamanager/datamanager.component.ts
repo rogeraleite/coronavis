@@ -36,7 +36,7 @@ export class DataManagerComponent implements OnInit {
 
     private _timeRange: Array<Date>;
     private countries_selection = ["Austria","Brazil","Germany","Italy","US"];
-    private selected_country = "Austria";
+    private selected_country = this.countries_selection[0];
 
     private _colors: d3.ScaleOrdinal<string, string>;
     // private _colors_array = [
@@ -68,7 +68,7 @@ export class DataManagerComponent implements OnInit {
     ngOnInit(): void {
         throw new Error("Method not implemented.");
     }
-    updateSelectedCountries(countries){
+    loadCountriesByArray(countries){
         let result = [];
         this.countries_selection.forEach((c)=>{
             if(countries.includes(c)) result.push(c)
@@ -77,6 +77,7 @@ export class DataManagerComponent implements OnInit {
             if(!result.includes(c)) result.push(c)
         })
         this.countries_selection = result;
+        this.selected_country = this.countries_selection[0];
         return this.countries_selection;
     }
     fetchBasicData(){
@@ -298,16 +299,18 @@ export class DataManagerComponent implements OnInit {
         });
         return result;        
     }
-    getEventsDataByCountryList(countries: Array<string>){
-        if(!countries) countries = this.getCountriesSelection()
+    getEventsDataByCountryList(country){
+        if(!country) country = this.selected_country
         let result = [];
         let grouped = this.groupEventDataByCountry();
-        countries.forEach(c => {
-            let country = grouped.get(c);
-            country.forEach(sample => {
-                result.push(sample)             
-            });            
-        });
+
+        console.log(grouped)
+        
+        let g = grouped.get(country);
+        g.forEach(sample => {
+            result.push(sample)             
+        });            
+        
         return result;        
     }
     getLastWeekDataByCountryList(countries: Array<string>){
@@ -459,6 +462,11 @@ export class DataManagerComponent implements OnInit {
         return this._colors;
     }
 
+    getColorByCountry(country){
+        let index = this.countries_selection.indexOf(country);
+        return this._colors_array[index];
+    }
+
     getNodeById(id: string): any {
         return this._current_data.find((d: any) => {
             return d.id == id;
@@ -575,6 +583,9 @@ export class DataManagerComponent implements OnInit {
 
       getGraphHeightProportion(){
         return this._graph_height_proportion;
+      }
+      isSelectedCountry(country){
+          return this.selected_country == country
       }
 
 }//end class

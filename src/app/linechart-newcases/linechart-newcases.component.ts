@@ -17,7 +17,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
 
   setup(){
     this.divKey = ".linechart-newcases";    
-    this.initialTransform = d3.zoomIdentity.translate(-80, 123).scale(1.13);
+    this.initialTransform = d3.zoomIdentity.translate(-120, 23).scale(1.13);
     this.width = $(this.divKey).width();
     this.height = ($(document).height()*this.dm.getGraphHeightProportion());
     console.log(this.height)
@@ -82,6 +82,9 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                     .enter()
                       .append("circle")
                       .attr("r", 2.5)
+                      .attr("opacity", (d)=>{
+                        return this.getColorOpacityByCountry(d.country);
+                      })                      
                       .style("visibility",(d)=>{
                         let lastDate = this.dm.getLastDateByCountry(d.country);
                         return (d.date === lastDate) ? "visible" : "hidden";

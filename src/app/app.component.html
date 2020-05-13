@@ -62,7 +62,8 @@
           <button class="btn btn-sm btn-outline-dark add-country" (click)="addCountry(content)">Add Country</button>
         </div>           
         <div class="col-sm-10 cards"> 
-          <app-cards-panel [dm]="_dm"></app-cards-panel>
+          <app-cards-panel [dm]="_dm"
+                           (selectCountryOutput)="applySelectCountry($event)"></app-cards-panel>
         </div>
   </div> 
 

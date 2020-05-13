@@ -312,8 +312,11 @@ export class LinechartsParent implements OnInit {
                   .enter()
                     .append("path")
                     .attr("fill", "none")
+                    .attr("opacity",(d)=>{ 
+                      return this.getColorOpacityByCountry(d.key);
+                    })
                     .attr("stroke", (d)=>{ 
-                      return this.color_scale(d.key) 
+                      return this.color_scale(d.key);
                     })
                     .attr("stroke-width", 2)
                     .attr("d", (d)=>{
@@ -329,7 +332,10 @@ export class LinechartsParent implements OnInit {
                       .append("path")
                       .attr("fill", "none")
                       .attr("stroke", "gray")
-                      .attr("stroke-width", 2)
+                      .attr("stroke-width", 2)                            
+                      .attr("opacity",(d)=>{ 
+                        return this.getColorOpacityByCountry(d.key);
+                      })
                       .attr("d", (d)=>{                  
                           return this.lineRules(d.values)
                       })
@@ -342,6 +348,9 @@ export class LinechartsParent implements OnInit {
                       .enter()
                         .append("circle")
                         .attr("r", 2.5)
+                        .attr("opacity",(d)=>{ 
+                          return this.getColorOpacityByCountry(d.key);
+                        })
                         .style("fill", (d) => { return this.color_scale(d.country) })
                         .attr("cx", (d) => { return this.scale_x(d.date); })
                         .attr("cy", (d) => { 
@@ -436,12 +445,13 @@ export class LinechartsParent implements OnInit {
                             // if(size<3) size=3;
                             // if(this.isLogScaled()) size = Math.log(size)
                             return size;
-                          })       
-                          .attr("opacity",.7)
+                          })                                 
+                          .attr("opacity",(d)=>{ 
+                            return this.getColorOpacityByCountry(d.key);
+                          })
                           .attr("stroke", "black")
                           .attr("fill", (d) => { 
-                            let country = d.key;
-                            return this.color_scale(country); 
+                            return this.color_scale(d.key); 
                           })
                           .style("stroke-dasharray", ("10,5")) // make the stroke dashed
       this.addTooltipBehaviorToPrediction();
@@ -685,10 +695,10 @@ export class LinechartsParent implements OnInit {
       return this.yDimension;
     }
     isLogScaled(){
-      return this.scaleYType=="log"
+      return this.scaleYType == "log"
     }
     isLinearScaled(){
-      return this.scaleYType=="linear"
+      return this.scaleYType == "linear"
     }
     isPerMillionUnit(){
       return this.yUnit == "perMillion"
@@ -706,6 +716,19 @@ export class LinechartsParent implements OnInit {
     activeReceivedZoomFlag(){
       this.received_zoom_flag = true;
     }
+
+    getColorOpacityByCountry(country){
+      if(this.dm.isSelectedCountry(country)){
+        return 1;
+      }
+      return 0.2      
+    }
+
+    updateSelectedCountry(){
+      this.refreshChart();
+    }
+
+    
 
 
 }
