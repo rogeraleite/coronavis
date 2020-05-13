@@ -37,6 +37,7 @@ export class DataManagerComponent implements OnInit {
     private _timeRange: Array<Date>;
     private countries_selection = ["Austria","Brazil","Germany","Italy","US"];
     private selected_country = this.countries_selection[0];
+    private selected_date;
 
     private _colors: d3.ScaleOrdinal<string, string>;
     // private _colors_array = [
@@ -57,7 +58,7 @@ export class DataManagerComponent implements OnInit {
         this._data_map = new Map();
         this._timeRange = new Array<Date>();
 
-        this._colors = d3.scaleOrdinal(this._colors_array);
+        this._colors = d3.scaleOrdinal(this._colors_array);        
     }
     groupBasicData(){
         this._current_data_groupedByCountry = this.groupCurrentDataByCountry();           
@@ -308,6 +309,8 @@ export class DataManagerComponent implements OnInit {
         g.forEach(sample => {
             result.push(sample)             
         });            
+
+        this.selected_date = result[0].date;//first event
         
         return result;        
     }
@@ -584,6 +587,12 @@ export class DataManagerComponent implements OnInit {
       }
       isSelectedCountry(country){
           return this.selected_country == country
+      }
+      getSelectedDate(){
+        return this.selected_date
+      }
+      setSelectedDate(date){
+        this.selected_date = date
       }
 
 }//end class

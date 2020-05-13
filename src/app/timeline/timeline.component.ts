@@ -25,7 +25,7 @@ export class TimelineComponent implements OnInit {
 
   protected zoom: any;
   protected received_zoom_flag: boolean = true;
-  protected initialTransform;
+  protected currentTransform;
 
   protected current_data;
   protected current_data_grouped;
@@ -56,7 +56,7 @@ export class TimelineComponent implements OnInit {
     this.width = $(this.divKey).width();//*1.05;
     this.margin.right = 0;//- $(this.divKey).width()*0.05;
     this.height = ($(document).height()/18) //+ this.margin.top/2;         
-    this.initialTransform = this.dm.getInitialTransform();
+    this.currentTransform = d3.zoomIdentity.translate(100,0).scale(1);
   }
   getData() {    
     this.current_data = this.dm.getCurrentDataByCountryList(null);    
@@ -79,7 +79,27 @@ export class TimelineComponent implements OnInit {
     /////////////////////// Part3
     this.drawData();
     this.drawAxis();  
+    this.drawDateSelector();
     this.applyZoomFeature();
+  }
+
+  drawDateSelector() {
+    let date = this.dm.getSelectedDate();
+    this.gCanvas.append("rect")
+                .attr("class", "selector")
+                .attr("height", ()=>{ 
+                  let size = this.calculateRectSize(100);
+                  return size;
+                })
+                .attr("width", 8)
+                .style("fill", "none")
+                .style("stroke", "black")
+                .attr("x", () => { return this.scale_x(date); })
+                .attr("y", (d)=>{ 
+                  let size = this.calculateRectSize(100);
+                  let x = this.height-size-this.margin.bottom;
+                  return x;
+                });
   }
 
   filterSelectedCountryEvents() {
@@ -117,9 +137,7 @@ export class TimelineComponent implements OnInit {
     this.scale_y.domain([0,this.height/100]);
   }
   setXDomain_asDate(){
-    let first_date = this.dm.getFirstDate();
-    let last_date = this.dm.getLastDate();
-    this.scale_x.domain([first_date, last_date]);
+    this.scale_x.domain(d3.extent(this.events_data, (d) => { return d.date; }));
   }
   calculateColors() {
     let map_result = this.current_data_grouped.map(function(d){ return d.key }) // list of group names      
@@ -128,7 +146,7 @@ export class TimelineComponent implements OnInit {
                          .range(this.dm.getColorsArray())
   }
   drawData() {
-    this.event_elements = this.gCanvas.selectAll("circle")
+    this.event_elements = this.gCanvas.selectAll("rect")
                           .data(this.events_data)
                           .enter()
                             .append("rect")
@@ -136,7 +154,7 @@ export class TimelineComponent implements OnInit {
                               let size = this.calculateRectSize(d.LegacyStringencyIndexForDisplay);
                               return size;
                             })
-                            .attr("width", (this.width/this.events_data.length)-1)
+                            .attr("width", 8)
                             .style("fill", (d) => { 
                               let color = this.dm.getColorByCountry(d.country);
                               return color;
@@ -144,15 +162,15 @@ export class TimelineComponent implements OnInit {
                             .attr("x", (d) => { return this.scale_x(d.date); })
                             .attr("y", (d)=>{ 
                               let size = this.calculateRectSize(d.LegacyStringencyIndexForDisplay);
-                              let x = this.height-size-this.margin.bottom/2;
+                              let x = this.height-size-this.margin.bottom;
                               return x;
                             })
                             .on("click", (d) => {
-                                console.log(d);
+                              this.updateSelectedDate(d.date);
                             });
   }
   calculateRectSize(value){
-    let size = (value/100)*this.height;
+    let size = (value/100)*(this.height-this.margin.bottom-1);
     return size
   }
   drawAxis() {    
@@ -189,13 +207,13 @@ export class TimelineComponent implements OnInit {
       this.zoom(this.svg);
                     
       this.svg.call(this.zoom)    
-              .call(this.zoom.transform, this.initialTransform);
+              .call(this.zoom.transform, this.currentTransform);
   }
 
   transformCanvas(transform){
     if(this.gCanvas){      
-      let change_transform = d3.zoomIdentity.translate(transform.x, 0).scale(transform.k);
-      this.gCanvas.attr("transform", change_transform);
+      this.currentTransform = d3.zoomIdentity.translate(transform.x, 0).scale(transform.k);
+      this.gCanvas.attr("transform", this.currentTransform);
     }    
   }
   receiveZoom(transform){
@@ -229,7 +247,7 @@ export class TimelineComponent implements OnInit {
                   .attr("stroke",axis_color)
                   .attr("opacity",axis_opacity);
       this.gAxis_x.selectAll(".tick text")
-                  .attr("transform", "translate(-8,18)");
+                  .attr("transform", "translate(0,18)");
                   // .attr("transform", "translate(-8,-15) rotate(90)");
       // this.gAxis_y.selectAll(".tick line")
       //             .attr("stroke",axis_color)
@@ -284,5 +302,9 @@ export class TimelineComponent implements OnInit {
   updateSelectedCountry(){
     let selected_country = this.dm.getSelectedCountry()
     this.loadCountriesByArray([selected_country]);
+  }
+  updateSelectedDate(date){
+    this.dm.setSelectedDate(date);
+    this.refreshChart();
   }
 }

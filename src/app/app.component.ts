@@ -52,6 +52,7 @@ export class AppComponent {
 
   changeScale(scale){//linear/log
     this.lineChartNComponent_child.changeScale(scale);
+    this.lineChartTestsComponent_child.changeScale(scale);
   }
   changeFeature(feature){//cases/deaths/tests/pCases/pDeaths
     this.lineChartNComponent_child.changeFeature(feature);    
@@ -60,6 +61,7 @@ export class AppComponent {
   }
   changeUnit(unit){//absolute/populationRatio    
     this.lineChartNComponent_child.changeUnit(unit);
+    this.lineChartTestsComponent_child.changeUnit(unit);
   }
 
 
@@ -73,8 +75,8 @@ export class AppComponent {
     this.timelineComponent_child.updateSelectedCountry();
   }
   async applyZoomToTimeline($event){
-    let zoom_transform = $event;
-    this.timelineComponent_child.receiveZoom(zoom_transform);
+    // let zoom_transform = $event;
+    // this.timelineComponent_child.receiveZoom(zoom_transform);
   }
   async applyZoomToLineChart($event){
     let zoom_transform = $event;

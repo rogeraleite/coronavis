@@ -84,7 +84,7 @@ export class CardsPanelComponent implements OnInit {
   }  
   setCanvas(){
     this.gCanvas = this.svg.append("g")
-                            .attr("class", "canvas");
+                           .attr("class", "canvas");
     // if (this.curTransform) this.gCanvas.attr('transform', this.curTransform);
   }
   getData() {
