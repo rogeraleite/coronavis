@@ -262,12 +262,12 @@ export class CardsPanelComponent implements OnInit {
         break;
       }
       case "cases_total":{        
-        result = this.dm.pipeNumberToString(this.dm.getTotalCases(country));
+        result = this.dm.pipeNumberToAbbreviationStr(this.dm.getTotalCases(country));
         break;
       }
       case "cases_expected":{        
         let exp_cases_number = this.dm.getExpectedCasesByComparingWithCurrent(country);
-        result = this.dm.pipeNumberToString(exp_cases_number) // + "(+-"+this.dm.pipeNumberToString((info.cases_number_error.toFixed(0))/1000)+"k)";
+        result = this.dm.pipeNumberToAbbreviationStr(exp_cases_number) // + "(+-"+this.dm.pipeNumberToString((info.cases_number_error.toFixed(0))/1000)+"k)";
         break;
       }
       case "cases_today":{

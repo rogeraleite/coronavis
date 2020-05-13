@@ -551,7 +551,7 @@ export class DataManagerComponent implements OnInit {
         let k = ""
         let result = number+""
         if(number<1000) return result
-        else if(number>1000000) result = (number/1000000).toFixed(1) + "kk"        
+        else if(number>=1000000) result = (number/1000000).toFixed(1) + "kk"        
         else result = (number/1000).toFixed(1)+"k"
 
         //check right zeros

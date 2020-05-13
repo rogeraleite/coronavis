@@ -525,10 +525,10 @@ export class LinechartsParent implements OnInit {
       this.axis_y = d3.axisRight(this.scale_y)
                       .ticks(4,'.02f')
                       .tickFormat((d)=>{                         
-                        if(d>=0 && !this.isPerMillionUnit()) {
-                          return d/1000 + "k";   
-                        }
-                        return d;
+                        // if(d>=0 && !this.isPerMillionUnit()) {
+                        //   return d/1000 + "k";   
+                        // }
+                        return this.dm.pipeNumberToAbbreviationStr(d);
                       })
                       .tickSize(this.width)
                       .tickPadding(8 - this.width)
@@ -540,10 +540,10 @@ export class LinechartsParent implements OnInit {
       this.axis_y = d3.axisRight(this.scale_y)
                         .ticks(10)
                         .tickFormat((d)=>{ 
-                          if(d>=0 && !this.isPerMillionUnit()) {
-                            return d/1000 + "k"
-                          }; 
-                          return d;
+                          // if(d>=0 && !this.isPerMillionUnit()) {
+                          //   return d/1000 + "k"
+                          // }; 
+                          return this.dm.pipeNumberToAbbreviationStr(d);
                         })
                         .tickSize(this.width)
                         .tickPadding(8 - this.width)
