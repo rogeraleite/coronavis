@@ -16,16 +16,13 @@ export class LinechartTestsComponent extends LinechartsParent {
 
   setup(){
     this.divKey = ".linechart-tests";
-    this.initialTransform = this.dm.getInitialTransform();
-    this.width = $(this.divKey).width()//*1.05;
-    this.margin.right = 0;//- $(this.divKey).width()*0.05;
-    this.height = ($(document).height()*this.dm.getGraphHeightProportion());
     this.scaleYType = "linear";
     this.yDimension = "tests";  
     this.axis_y_label = "confirmed "+this.yDimension;
     this.axis_x_label = "date";
     this.current_curve_data = this.dm.getCurrentDataByCountryList(null);
     this.prediction_curve_data = this.dm.getPredictionDataByCountryList(null);
+    this.initialTransform = this.dm.getInitialTransform();
   }
 
 }

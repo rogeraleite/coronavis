@@ -14,15 +14,15 @@ label.radio-inline{
     font-size: 10px;
 } */
 div.cards{
-    padding-left: 5%;
+    padding-left: 0%;
 }
 div.button button{
     position: absolute;
-    top: 4.5%;
+    top: 1%;
     left: 5%;    
     width: 95%;
-    height: 91%;
-    z-index:999999;
+    height: 96%;
+    z-index: 999999;
 }
 
 h6{
@@ -32,9 +32,22 @@ label{
     margin-bottom: 1px;
 }
 
-div.col-sm-5{
+div.col-sm-6{
     padding: 5px;
 }
-div.col-sm-10{
+div.col-sm-12{
     padding: 5px;
+}
+  
+div.linechart-n{
+    display:block
+}
+div.linechart-tests{
+    display:block
+}
+div.linechart-newcases{
+    display:block
+}
+div.linechart-prediction{
+    display:block
 }

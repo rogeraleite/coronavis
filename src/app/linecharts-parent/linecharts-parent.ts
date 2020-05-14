@@ -8,6 +8,7 @@ export class LinechartsParent implements OnInit {
 
     @Input() dm: DataManagerComponent;  
     @Output() zoomOutput = new EventEmitter<any>();
+    @Output() viewFocusOutput = new EventEmitter<any>();
     
     protected divKey;
     protected svg: any;
@@ -69,6 +70,7 @@ export class LinechartsParent implements OnInit {
     }
     
     createChart(){
+      this.getBasicDimensions();
       /////////////////////// Part1
       this.setSVG();
       this.setCanvas();
@@ -85,6 +87,14 @@ export class LinechartsParent implements OnInit {
       this.drawAxis();  
       this.defineZoomFeature(); 
       // this.addResetFeatureToButton();
+    }
+    getBasicDimensions() {      
+      this.width = $(this.divKey).width()//*1.05;
+      this.margin.right = 0;//- $(this.divKey).width()*0.05;
+      this.height = $(document).height()*this.dm.getGraphHeightProportion(); 
+      if(!this.dm.isSelectedViewAll()){
+        this.height = this.height*2;
+      }
     }
 
     drawCurrentData() {
@@ -513,8 +523,8 @@ export class LinechartsParent implements OnInit {
     }
     drawAxisX(){
         this.axis_x = d3.axisTop(this.scale_x)
-                        .tickFormat(d3.timeFormat("%d\/%m"))
-                        .ticks((this.width + 2) / (this.height + 2) * 4)
+                        // .tickFormat(d3.timeFormat("%d\/%m"))
+                        .ticks((this.width + 2) / (this.height + 2) * 2)
                         .tickSize(this.height)
                         .tickPadding(8 - this.height);
         this.gAxis_x = this.svg.append("g")
@@ -766,6 +776,11 @@ export class LinechartsParent implements OnInit {
         return 1;
       }
       return 0.2      
+    }
+
+    async updateViewsFocus($event){
+      this.dm.setSelectedView($event)
+      this.viewFocusOutput.emit($event)
     }
 
     updateSelectedCountry(){

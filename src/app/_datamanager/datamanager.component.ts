@@ -36,8 +36,10 @@ export class DataManagerComponent implements OnInit {
 
     private _timeRange: Array<Date>;
     private countries_selection = ["Austria","Brazil","Germany","Italy","US"];
+
     private selected_country = this.countries_selection[0];
     private selected_date;
+    private selected_view = "all";
 
     private _colors: d3.ScaleOrdinal<string, string>;
     // private _colors_array = [
@@ -571,7 +573,7 @@ export class DataManagerComponent implements OnInit {
 
      
       getInitialTransform(){
-        return d3.zoomIdentity.translate(45,15).scale(0.8);
+        return d3.zoomIdentity.translate(45,22).scale(0.8);
       }
 
       getSelectedCountry(){
@@ -593,6 +595,16 @@ export class DataManagerComponent implements OnInit {
       }
       setSelectedDate(date){
         this.selected_date = date
+      }
+      getSelectedView(){
+        return this.selected_view
+      }
+      setSelectedView(view){
+        if(this.selected_view == view) this.selected_view = "all"
+        else this.selected_view = view
+      }
+      isSelectedViewAll(){
+          return this.selected_view == "all"
       }
 
 }//end class

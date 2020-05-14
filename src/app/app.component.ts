@@ -64,6 +64,54 @@ export class AppComponent {
     this.lineChartTestsComponent_child.changeUnit(unit);
   }
 
+  async updateViewsFocus($event){
+    let view_id = $event;
+    console.log(view_id)
+    this.maximazeViewById(view_id)
+
+  }
+
+  maximazeViewById(id){
+    let NAME = document.getElementById(id);
+    let currentClass = NAME.className.split(" ");
+    if (currentClass[0] == "col-sm-6") { // Check the current class name
+        NAME.className = "col-sm-12"+" "+currentClass[1];   // Set other class name
+        this.hideAllLinecharts();
+        this.showLinechartsById(id);
+    } 
+    else {
+        NAME.className = "col-sm-6"+" "+currentClass[1];  // Otherwise, use `second_name`
+        this.showAllLinecharts();
+    }
+    this.refreshChartById(id);
+  }  
+  refreshChartById(id){
+    switch(id){
+      case "linechart-n": this.lineChartNComponent_child.refreshChart();
+      break;
+      case "linechart-tests": this.lineChartTestsComponent_child.refreshChart();
+      break;
+      case "linechart-newcases": this.lineChartNewCases_child.refreshChart();
+      break;
+      case "linechart-prediction": this.lineChartPredictionComponent_child.refreshChart();
+      break;
+    }
+  }
+  showLinechartsById(id){    
+    document.getElementById(id).style.display='block';
+  }
+  hideAllLinecharts(){    
+    document.getElementById("linechart-n").style.display='none';
+    document.getElementById("linechart-tests").style.display='none';
+    document.getElementById("linechart-newcases").style.display='none';
+    document.getElementById("linechart-prediction").style.display='none';
+  }
+  showAllLinecharts(){    
+    document.getElementById("linechart-n").style.display='block';
+    document.getElementById("linechart-tests").style.display='block';
+    document.getElementById("linechart-newcases").style.display='block';
+    document.getElementById("linechart-prediction").style.display='block';
+  }
 
   async updateSelectedDay(){    
     this.lineChartNComponent_child.updateSelectedDay();
@@ -73,7 +121,6 @@ export class AppComponent {
   }
 
   async applySelectCountry($event){
-    let country = $event;
     this.lineChartNComponent_child.updateSelectedCountry();
     this.lineChartTestsComponent_child.updateSelectedCountry();
     this.lineChartPredictionComponent_child.updateSelectedCountry();

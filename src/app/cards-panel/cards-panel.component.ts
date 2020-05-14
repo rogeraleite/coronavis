@@ -45,7 +45,7 @@ export class CardsPanelComponent implements OnInit {
   }
   calculateOverallDimensions() {
     this.width = $(this.divKey).width();
-    this.height = $(document).height()*0.22;
+    this.height = $(document).height()*0.23;
   }
   createChart(){
     /////////////////////// Part1
@@ -80,7 +80,7 @@ export class CardsPanelComponent implements OnInit {
                   .append("svg")
                   .attr("width", this.width)
                   .attr("height", this.height)
-                  .attr("transform", "translate(0," + this.margin + ")");
+                  .attr("transform", "translate(0," + 0 + ")");
   }  
   setCanvas(){
     this.gCanvas = this.svg.append("g")

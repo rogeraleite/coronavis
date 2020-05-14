@@ -55,7 +55,7 @@ export class TimelineComponent implements OnInit {
   }
   setDimensionsVariables(){
     this.divKey = ".timeline-chart";
-    this.width = $(this.divKey).width();//*1.05;
+    this.width = $(this.divKey).width()*0.99;
     this.margin.right = 0;//- $(this.divKey).width()*0.05;
     this.height = ($(document).height()/18) //+ this.margin.top/2;         
     this.currentTransform = d3.zoomIdentity.translate(100,0).scale(1);

@@ -18,38 +18,43 @@
         <br>
         <h6>Unit:</h6>                
         <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('absolute')" checked>Absolute</label><br>
-        <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('perMillion')">per Million</label><br>        
-        <!-- <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('tests')">Tests</label><br>       -->
-        <!-- <h6>Prediction Change:</h6>
-        <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('pCases')">Cases length</label><br>
-        <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('pDeaths')">Deaths length</label><br> -->
-      </div>
-      <div class="col-sm-5 linechart-n">
-          <app-linechart-n [dm]="_dm"
-                           (zoomOutput)="applyZoomToTimeline($event)"></app-linechart-n>
-      </div>
-      <div class="col-sm-5 linechart-tests">
-        <app-linechart-tests [dm]="_dm"></app-linechart-tests>
-      </div>
-  </div>  
-  <div class="row">      
-      <div class="col-sm-2">                
+        <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('perMillion')">per Million</label><br>     
+        <br>      
         <h6>Feature:</h6>
         <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('cases')" checked>Cases</label><br>             
-        <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('deaths')">Deaths</label>
-        <br><br>
+        <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('deaths')">Deaths</label><br>
+        <br>
         <h6>Events:</h6>
         <label class="checkbox-inline"><input type="checkbox" name="eventcheckbox" (click)="changeEvent('containment')" checked>Containment</label><br>             
         <label class="checkbox-inline"><input type="checkbox" name="eventcheckbox" (click)="changeEvent('economic')">Economic</label><br>
         <label class="checkbox-inline"><input type="checkbox" name="eventcheckbox" (click)="changeEvent('health')">Health</label><br>      
-      </div>    
-      <div class="col-sm-5 linechart-newcases">
-          <app-linechart-newcases [dm]="_dm"></app-linechart-newcases>
+        <!-- <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('tests')">Tests</label><br>       -->
+        <!-- <h6>Prediction Change:</h6>
+        <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('pCases')">Cases length</label><br>
+        <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('pDeaths')">Deaths length</label><br> -->
       </div>      
-      <div class="col-sm-5 linechart-prediction">
-          <app-linechart-prediction [dm]="_dm"></app-linechart-prediction>
+      <div class="col-sm-10">          
+          <div class="row">      
+            <div id="linechart-n" class="col-sm-6 linechart-n">
+                <app-linechart-n [dm]="_dm"
+                                (zoomOutput)="applyZoomToTimeline($event)"
+                                (viewFocusOutput)="updateViewsFocus($event)"></app-linechart-n>
+            </div>
+            <div id="linechart-tests" class="col-sm-6 linechart-tests">
+              <app-linechart-tests [dm]="_dm"
+                                  (viewFocusOutput)="updateViewsFocus($event)"></app-linechart-tests>
+            </div> 
+            <div id="linechart-newcases" class="col-sm-6 linechart-newcases">
+              <app-linechart-newcases [dm]="_dm"
+                                      (viewFocusOutput)="updateViewsFocus($event)"></app-linechart-newcases>
+            </div>      
+            <div id="linechart-prediction" class="col-sm-6 linechart-prediction">
+              <app-linechart-prediction [dm]="_dm"              
+                                        (viewFocusOutput)="updateViewsFocus($event)"></app-linechart-prediction>
+            </div> 
+          </div>
       </div>
-  </div>            
+  </div>             
   <div class="row">  
       <div class="col-sm-2">                
         
