@@ -45,7 +45,7 @@ export class CardsPanelComponent implements OnInit {
   }
   calculateOverallDimensions() {
     this.width = $(this.divKey).width();
-    this.height = $(document).height()*0.23;
+    this.height = $(document).height()*0.21;
   }
   createChart(){
     /////////////////////// Part1

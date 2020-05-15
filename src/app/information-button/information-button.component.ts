@@ -40,7 +40,8 @@ export class InformationButtonComponent implements OnInit {
     return result;
   }
 
-  submit(content){   
+  // submit(content){   
+  submit(){  
     this.switchText();
     this.viewFocusOutput.emit(this.key);
   }

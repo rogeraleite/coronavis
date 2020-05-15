@@ -57,7 +57,7 @@ export class TimelineComponent implements OnInit {
     this.divKey = ".timeline-chart";
     this.width = $(this.divKey).width()*0.99;
     this.margin.right = 0;//- $(this.divKey).width()*0.05;
-    this.height = ($(document).height()/18) //+ this.margin.top/2;         
+    this.height = ($(document).height()/14) //+ this.margin.top/2;         
     this.currentTransform = d3.zoomIdentity.translate(100,0).scale(1);
   }
   getData() {    
@@ -178,9 +178,21 @@ export class TimelineComponent implements OnInit {
     let size = (value/100)*(this.height-this.margin.bottom-1);
     return size
   }
+  addAxisLabels() {
+    this.svg.append("text")
+                .attr("y", -2)
+                .attr("x", -this.height / 2 +5)
+                .attr("transform", "rotate(-90)")
+                .attr("dy", "1em")
+                .attr("font-size", "9px")
+                .style('fill', 'gray')
+                .style("text-anchor", "middle")
+                .text("stringency");  
+  }
   drawAxis() {    
     this.drawAxisX();
     // this.drawAxisY(); 
+    this.addAxisLabels();
   }
   drawAxisX(){
     this.axis_x = d3.axisTop(this.scale_x)
