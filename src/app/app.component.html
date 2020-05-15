@@ -24,10 +24,11 @@
         <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('cases')" checked>Cases</label><br>             
         <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('deaths')">Deaths</label><br>
         <br>
-        <h6>Events:</h6>
+        
+        <!-- <h6>Events:</h6>
         <label class="checkbox-inline"><input type="checkbox" name="eventcheckbox" (click)="changeEvent('containment')" checked>Containment</label><br>             
         <label class="checkbox-inline"><input type="checkbox" name="eventcheckbox" (click)="changeEvent('economic')">Economic</label><br>
-        <label class="checkbox-inline"><input type="checkbox" name="eventcheckbox" (click)="changeEvent('health')">Health</label><br>      
+        <label class="checkbox-inline"><input type="checkbox" name="eventcheckbox" (click)="changeEvent('health')">Health</label><br>       -->
         <!-- <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('tests')">Tests</label><br>       -->
         <!-- <h6>Prediction Change:</h6>
         <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('pCases')">Cases length</label><br>
@@ -62,7 +63,7 @@
       <div class="col-sm-10 timeline">
           <app-timeline [dm]="_dm"
                         (zoomOutput)="applyZoomToLineChart($event)"
-                        (selectedDayOutput)="updateSelectedDay()"></app-timeline>
+                        (selectedDayOutput)="updateSelectedDay($event)"></app-timeline>
       </div>
   </div> 
   <div class="row">

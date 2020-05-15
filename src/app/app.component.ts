@@ -113,7 +113,10 @@ export class AppComponent {
     document.getElementById("linechart-prediction").style.display='block';
   }
 
-  async updateSelectedDay(){    
+  async updateSelectedDay($event){    
+    let event = $event;
+    this._dm.separateEventNotes(event)
+
     this.lineChartNComponent_child.updateSelectedDay();
     this.lineChartTestsComponent_child.updateSelectedDay();
     this.lineChartPredictionComponent_child.updateSelectedDay();

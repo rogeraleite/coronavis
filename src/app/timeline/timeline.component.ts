@@ -159,6 +159,9 @@ export class TimelineComponent implements OnInit {
                             .attr("width", 8)
                             .style("fill", (d) => { 
                               let color = this.dm.getColorByCountry(d.country);
+                              if(this.dm.separateEventNotes(d).length== 0){
+                                color = "white"
+                              }
                               return color;
                             })
                             .attr("x", (d) => { return this.scale_x(d.date); })
@@ -168,7 +171,7 @@ export class TimelineComponent implements OnInit {
                               return x;
                             })
                             .on("click", (d) => {
-                              this.updateSelectedDate(d.date);
+                              this.updateSelectedDate(d);
                             });
   }
   calculateRectSize(value){
@@ -241,8 +244,8 @@ export class TimelineComponent implements OnInit {
     this.deactivateReceivedZoomFlag();          
   }
 
-  emitDaySelectionOutput(){
-    this.selectedDayOutput.emit()
+  emitDaySelectionOutput(d){
+    this.selectedDayOutput.emit(d)
   }
 
   paintAxis(){     
@@ -309,9 +312,9 @@ export class TimelineComponent implements OnInit {
     let selected_country = this.dm.getSelectedCountry();
     this.loadCountriesByArray([selected_country]);
   }
-  updateSelectedDate(date){
-    this.dm.setSelectedDate(date);
-    this.emitDaySelectionOutput();
+  updateSelectedDate(d){
+    this.dm.setSelectedDate(d.date);
+    this.emitDaySelectionOutput(d);
     this.refreshChart();
   }
 }

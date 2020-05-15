@@ -607,4 +607,101 @@ export class DataManagerComponent implements OnInit {
           return this.selected_view == "all"
       }
 
+      separateEventNotes(event):Array<any>{
+          let notes = [];
+          let note = {type:"",text:""}
+          if(event.C1_Notes){
+              note.type = "C1_Notes"
+              note.text = event.C1_Notes
+              notes.push(note);
+          }
+          if(event.C1_Notes){
+              note.type = "C1_Notes"
+              note.text = event.C1_Notes
+              notes.push(note);
+          }
+          if(event.C2_Notes){
+              note.type = "C2_Notes"
+              note.text = event.C2_Notes
+              notes.push(note);
+          }
+          if(event.C3_Notes){
+              note.type = "C3_Notes"
+              note.text = event.C3_Notes
+              notes.push(note);
+          }
+          if(event.C4_Notes){
+              note.type = "C4_Notes"
+              note.text = event.C4_Notes
+              notes.push(note);
+          }
+          if(event.C5_Notes){
+              note.type = "C5_Notes"
+              note.text = event.C5_Notes
+              notes.push(note);
+          }
+          if(event.C6_Notes){
+              note.type = "C6_Notes"
+              note.text = event.C6_Notes
+              notes.push(note);
+          }
+          if(event.C7_Notes){
+              note.type = "C7_Notes"
+              note.text = event.C7_Notes
+              notes.push(note);
+          }
+          if(event.C8_Notes){
+              note.type = "C8_Notes"
+              note.text = event.C8_Notes
+              notes.push(note);
+          }
+          if(event.E1_Notes){
+              note.type = "E1_Notes"
+              note.text = event.E1_Notes
+              notes.push(note);
+          }
+          if(event.E2_Notes){
+              note.type = "E2_Notes"
+              note.text = event.E2_Notes
+              notes.push(note);
+          }
+          if(event.E3_Notes){
+              note.type = "E3_Notes"
+              note.text = event.E3_Notes
+              notes.push(note);
+          }
+          if(event.E4_Notes){
+              note.type = "E4_Notes"
+              note.text = event.E4_Notes
+              notes.push(note);
+          }
+          if(event.H1_Notes){
+              note.type = "H1_Notes"
+              note.text = event.H1_Notes
+              notes.push(note);
+          }
+          if(event.H2_Notes){
+              note.type = "H2_Notes"
+              note.text = event.H2_Notes
+              notes.push(note);
+          }
+          if(event.H3_Notes){
+              note.type = "H3_Notes"
+              note.text = event.H3_Notes
+              notes.push(note);
+          }
+          if(event.H4_Notes){
+              note.type = "H4_Notes"
+              note.text = event.H4_Notes
+              notes.push(note);
+          }
+          if(event.M1_Notes){
+              note.type = "M1_Notes"
+              note.text = event.M1_Notes
+              notes.push(note);
+          }
+          console.log(notes);
+          return notes;
+      }
+
 }//end class
