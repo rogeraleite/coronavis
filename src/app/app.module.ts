@@ -16,6 +16,7 @@ import { InformationButtonComponent } from './information-button/information-but
 import { TimelineComponent } from './timeline/timeline.component';
 import { LinechartTestsComponent } from './linechart-tests/linechart-tests.component';
 import { LinechartPredictionComponent } from './linechart-prediction/linechart-prediction.component';
+import { EventViewComponent } from './event-view/event-view.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { LinechartPredictionComponent } from './linechart-prediction/linechart-p
     InformationButtonComponent,
     TimelineComponent,
     LinechartTestsComponent,
-    LinechartPredictionComponent
+    LinechartPredictionComponent,
+    EventViewComponent
   ],
   imports: [
     BrowserModule,

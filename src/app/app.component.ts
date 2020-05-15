@@ -1,17 +1,18 @@
 import { Component, ViewChild } from '@angular/core';
-import { LinechartNComponent } from './linechart-n/linechart-n.component';
-import { LinechartNewcasesComponent } from './linechart-newcases/linechart-newcases.component';
 import { CardsPanelComponent } from './cards-panel/cards-panel.component';
 import { DataManagerComponent } from './_datamanager/datamanager.component'
 import { TotalOverviewComponent } from './total-overview/total-overview.component'
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 
-
-import * as $ from 'jquery';
 import { TimelineComponent } from './timeline/timeline.component';
 import { LinechartTestsComponent } from './linechart-tests/linechart-tests.component';
 import { LinechartPredictionComponent } from './linechart-prediction/linechart-prediction.component';
+import { LinechartNComponent } from './linechart-n/linechart-n.component';
+import { LinechartNewcasesComponent } from './linechart-newcases/linechart-newcases.component';
+import { EventViewComponent } from './event-view/event-view.component';
+
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,6 @@ import { LinechartPredictionComponent } from './linechart-prediction/linechart-p
 export class AppComponent {
   title = 'coronavis';
   public _dm: DataManagerComponent;
-
   
   @ViewChild(TotalOverviewComponent) totalOverviewComponent_child;  
   
@@ -32,7 +32,7 @@ export class AppComponent {
 
   @ViewChild(TimelineComponent) timelineComponent_child;
   @ViewChild(CardsPanelComponent) cardsPanelComponent_child;
-  
+  @ViewChild(EventViewComponent) eventViewComponent_child;
   
   protected closeResult = '';
   protected country_list_data;
@@ -66,9 +66,7 @@ export class AppComponent {
 
   async updateViewsFocus($event){
     let view_id = $event;
-    console.log(view_id)
     this.maximazeViewById(view_id)
-
   }
 
   maximazeViewById(id){
@@ -115,7 +113,9 @@ export class AppComponent {
 
   async updateSelectedDay($event){    
     let event = $event;
-    this._dm.separateEventNotes(event)
+    console.log(event)
+    this._dm.separateEventNotes(event);
+    this.eventViewComponent_child.updateEvent();
 
     this.lineChartNComponent_child.updateSelectedDay();
     this.lineChartTestsComponent_child.updateSelectedDay();

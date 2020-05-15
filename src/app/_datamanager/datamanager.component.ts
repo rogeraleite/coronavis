@@ -40,6 +40,7 @@ export class DataManagerComponent implements OnInit {
     private selected_country = this.countries_selection[0];
     private selected_date;
     private selected_view = "all";
+    private selected_event_notes:any ;
 
     private _colors: d3.ScaleOrdinal<string, string>;
     // private _colors_array = [
@@ -609,99 +610,138 @@ export class DataManagerComponent implements OnInit {
 
       separateEventNotes(event):Array<any>{
           let notes = [];
-          let note = {type:"",text:""}
           if(event.C1_Notes){
-              note.type = "C1_Notes"
-              note.text = event.C1_Notes
-              notes.push(note);
+              let type = "C1_Notes"
+              let text = event.C1_Notes
+              notes.push({type:type,text:text});
           }
           if(event.C1_Notes){
-              note.type = "C1_Notes"
-              note.text = event.C1_Notes
-              notes.push(note);
+              let type = "C1_Notes"
+              let text = event.C1_Notes
+              notes.push({type:type,text:text});
           }
           if(event.C2_Notes){
-              note.type = "C2_Notes"
-              note.text = event.C2_Notes
-              notes.push(note);
+              let type = "C2_Notes"
+              let text = event.C2_Notes
+              notes.push({type:type,text:text});
           }
           if(event.C3_Notes){
-              note.type = "C3_Notes"
-              note.text = event.C3_Notes
-              notes.push(note);
+              let type = "C3_Notes"
+              let text = event.C3_Notes
+              notes.push({type:type,text:text});
           }
           if(event.C4_Notes){
-              note.type = "C4_Notes"
-              note.text = event.C4_Notes
-              notes.push(note);
+              let type = "C4_Notes"
+              let text = event.C4_Notes
+              notes.push({type:type,text:text});
           }
           if(event.C5_Notes){
-              note.type = "C5_Notes"
-              note.text = event.C5_Notes
-              notes.push(note);
+              let type = "C5_Notes"
+              let text = event.C5_Notes
+              notes.push({type:type,text:text});
           }
           if(event.C6_Notes){
-              note.type = "C6_Notes"
-              note.text = event.C6_Notes
-              notes.push(note);
+              let type = "C6_Notes"
+              let text = event.C6_Notes
+              notes.push({type:type,text:text});
           }
           if(event.C7_Notes){
-              note.type = "C7_Notes"
-              note.text = event.C7_Notes
-              notes.push(note);
+              let type = "C7_Notes"
+              let text = event.C7_Notes
+              notes.push({type:type,text:text});
           }
           if(event.C8_Notes){
-              note.type = "C8_Notes"
-              note.text = event.C8_Notes
-              notes.push(note);
+              let type = "C8_Notes"
+              let text = event.C8_Notes
+              notes.push({type:type,text:text});
           }
           if(event.E1_Notes){
-              note.type = "E1_Notes"
-              note.text = event.E1_Notes
-              notes.push(note);
+              let type = "E1_Notes"
+              let text = event.E1_Notes
+              notes.push({type:type,text:text});
           }
           if(event.E2_Notes){
-              note.type = "E2_Notes"
-              note.text = event.E2_Notes
-              notes.push(note);
+              let type = "E2_Notes"
+              let text = event.E2_Notes
+              notes.push({type:type,text:text});
           }
           if(event.E3_Notes){
-              note.type = "E3_Notes"
-              note.text = event.E3_Notes
-              notes.push(note);
+              let type = "E3_Notes"
+              let text = event.E3_Notes
+              notes.push({type:type,text:text});
           }
           if(event.E4_Notes){
-              note.type = "E4_Notes"
-              note.text = event.E4_Notes
-              notes.push(note);
+              let type = "E4_Notes"
+              let text = event.E4_Notes
+              notes.push({type:type,text:text});
           }
           if(event.H1_Notes){
-              note.type = "H1_Notes"
-              note.text = event.H1_Notes
-              notes.push(note);
+              let type = "H1_Notes"
+              let text = event.H1_Notes
+              notes.push({type:type,text:text});
           }
           if(event.H2_Notes){
-              note.type = "H2_Notes"
-              note.text = event.H2_Notes
-              notes.push(note);
+              let type = "H2_Notes"
+              let text = event.H2_Notes
+              notes.push({type:type,text:text});
           }
           if(event.H3_Notes){
-              note.type = "H3_Notes"
-              note.text = event.H3_Notes
-              notes.push(note);
+              let type = "H3_Notes"
+              let text = event.H3_Notes
+              notes.push({type:type,text:text});
           }
           if(event.H4_Notes){
-              note.type = "H4_Notes"
-              note.text = event.H4_Notes
-              notes.push(note);
+              let type = "H4_Notes"
+              let text = event.H4_Notes
+              notes.push({type:type,text:text});
           }
           if(event.M1_Notes){
-              note.type = "M1_Notes"
-              note.text = event.M1_Notes
-              notes.push(note);
+              let type = "M1_Notes"
+              let text = event.M1_Notes
+              notes.push({type:type,text:text});
           }
-          console.log(notes);
+          this.selected_event_notes = this.translateNotes(notes);
           return notes;
+      }
+
+      translateNotes(notes){
+          let result = []
+          notes.forEach((n)=>{  
+            let mean = this.getNoteTypeMean(n.type);
+            result.push({type:mean,text:n.text});
+          })
+          return result;
+      }
+      getNoteTypeMean(type){
+          let mean = "null";
+          switch(type){
+            case "C1_Notes": mean = "school closure"; break;
+            case "C2_Notes": mean = "workplace closure"; break;
+            case "C3_Notes": mean = "cancellation of public events"; break;
+            case "C4_Notes": mean = "restrictions on gathering size"; break;
+            case "C5_Notes": mean = "public transport closures"; break;
+            case "C6_Notes": mean = "stay-at-home requirements"; break;
+            // case "C7_Notes": mean = "restrictions on domestic/internal movement"; break;
+            case "C7_Notes": mean = "restrictions on domestic movement"; break;
+            case "C8_Notes": mean = "restrictions on international travel"; break;
+            case "E1_Notes": mean = "income support"; break;
+            // case "E2_Notes": mean = "debt/contract relief for households"; break;
+            case "E2_Notes": mean = "debt relief for households"; break;
+            // case "E3_Notes": mean = "economic stimulus measures"; break;
+            case "E3_Notes": mean = "economic stimulus"; break;
+            // case "E4_Notes": mean = "giving international support to other countries"; break;
+            case "E4_Notes": mean = "giving international"; break;
+            case "H1_Notes": mean = "public information campaign"; break;
+            case "H2_Notes": mean = "testing policy"; break;
+            case "H3_Notes": mean = "contact tracing policy"; break;
+            case "H4_Notes": mean = "emergency investment in healthcare"; break;
+            case "M1_Notes": mean = "other"; break;
+          }
+          return mean;
+      }
+
+      getSelectedEventNotes(){
+        return this.selected_event_notes;
       }
 
 }//end class
