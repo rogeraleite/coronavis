@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DataManagerComponent } from '../_datamanager/datamanager.component';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
@@ -10,6 +10,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 export class EventViewComponent implements OnInit {
 
   @Input() dm: DataManagerComponent;
+  @Output() timelineTypeSelectionOutput = new EventEmitter<any>();
 
   public event_notes: any;
   public selected_date: any;
@@ -28,7 +29,6 @@ export class EventViewComponent implements OnInit {
   }
 
    submit(content){    
-    console.log(content)
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
@@ -44,6 +44,10 @@ export class EventViewComponent implements OnInit {
     } else {
       return `with: ${reason}`;
     }
+  }
+
+  selectCheckBox(type){
+    this.timelineTypeSelectionOutput.emit(type);
   }
 
 }

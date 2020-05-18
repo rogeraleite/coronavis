@@ -138,6 +138,11 @@ export class AppComponent {
 
     this.timelineComponent_child.updateSelectedCountry();
   }
+
+  async updateTimelineTypeSelection($event){
+    this.timelineComponent_child.updateTypeSelection($event);
+  }
+
   async applyZoomToTimeline($event){
     // let zoom_transform = $event;
     // this.timelineComponent_child.receiveZoom(zoom_transform);

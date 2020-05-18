@@ -712,7 +712,7 @@ export class DataManagerComponent implements OnInit {
           let result = []
           notes.forEach((n)=>{  
             let mean = this.getNoteTypeMean(n.type);
-            result.push({type:mean,text:n.text});
+            result.push({type:n.type, mean:mean, text:n.text});
           })
           return result;
       }

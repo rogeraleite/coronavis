@@ -26,6 +26,7 @@ export class TimelineComponent implements OnInit {
   protected margin = {top: -5, right: 0, bottom: 10, left: 0};
   protected newTransform: any;
 
+  private bar_width = 6;
   protected lineRule;
   protected zoom: any;
   protected received_zoom_flag: boolean = true;
@@ -46,6 +47,8 @@ export class TimelineComponent implements OnInit {
   protected gAxis_y: any;
 
   protected event_elements: any;
+
+  private type_selection = [];
   
   constructor() { }
 
@@ -138,7 +141,7 @@ export class TimelineComponent implements OnInit {
                                   let size = this.height - this.scale_y(100)
                                   return size;
                                 })
-                                .attr("width", 8)
+                                .attr("width", this.bar_width)
                                 .style("fill", "none")
                                 .style("stroke", "black")
                                 .attr("x", () => { return this.scale_x(date); })
@@ -148,6 +151,15 @@ export class TimelineComponent implements OnInit {
                                 });
   }
 
+  updateTypeSelection(type){
+    if(this.type_selection.includes(type)){
+      this.type_selection = this.type_selection.filter(d=> d != type)
+    }
+    else{
+      this.type_selection.push(type);
+    }
+    this.refreshChart();
+  }
 
 
   filterSelectedCountryEvents() {
@@ -236,11 +248,15 @@ export class TimelineComponent implements OnInit {
                               let size = this.height - this.scale_y(d.LegacyStringencyIndexForDisplay)
                               return size;
                             })
-                            .attr("width", 8)
+                            .attr("width", this.bar_width)
                             .style("fill", (d) => { 
                               let color = this.dm.getColorByCountry(d.country);
                               if(this.dm.isEventEmpty(d)){ color = "white" }
                               return color;
+                            })
+                            .attr("opacity", (d) => { 
+                              let value = this.checkEventTypes(d);
+                              return value;
                             })
                             .attr("x", (d) => { return this.scale_x(d.date); })
                             .attr("y", (d)=>{ 
@@ -253,6 +269,14 @@ export class TimelineComponent implements OnInit {
                               this.updateSelectedDate(d.date);
                               this.emitDaySelectionOutput(d);
                             });
+  }
+  checkEventTypes(d: any) {
+    let date_events = this.dm.separateEventNotes(d);
+    if(this.type_selection.length == 0) return 1;
+    
+    let result = date_events.filter(d => this.type_selection.includes(d.type) )
+    if(result.length>0) return 1;
+    return 0.2;
   }
   addSelectedDayShadow(date){
     if(this.day_shadow) this.day_shadow.remove();
