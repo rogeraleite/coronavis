@@ -212,7 +212,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
   }
   updateSelectedDay(){
     let date = this.dm.getSelectedDate();
-    let end_incubation_date = this.addDaysToMillisecondDate(date,this.incubation_days);
+    let end_incubation_date = this.dm.addDaysToMillisecondDate(date,this.incubation_days);
     let respective_x = this.findXValueByDate(date);
     let respective_end_x = this.findXValueByDate(end_incubation_date);
     this.drawIncubationPeriodMarks(respective_x, respective_end_x);  

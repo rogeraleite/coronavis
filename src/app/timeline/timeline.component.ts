@@ -91,6 +91,7 @@ export class TimelineComponent implements OnInit {
   }
 
   drawToolTip() {
+    if(this.tooltip) this.tooltip.remove()
     this.tooltip = d3.select("body")
                     .append("div")
                     .style("position", "absolute")
@@ -98,15 +99,21 @@ export class TimelineComponent implements OnInit {
                     .style("visibility", "hidden");
   }
   addTooltipToRects() {
-    this.event_elements.on("mouseover", ()=>{
-                          return this.tooltip.style("visibility", "visible");
+    this.event_elements.on("mouseover", (d)=>{
+                          if(!this.dm.isEventEmpty(d)){ 
+                            return this.tooltip.style("visibility", "visible");
+                          }
                         })
-                        .on("mousemove", (d)=>{
-                          this.tooltip.html(this.getCurrentDotsTooltipText(d))
-                          return this.getTooltip();
+                        .on("mousemove", (d)=>{                          
+                          if(!this.dm.isEventEmpty(d)){ 
+                            this.tooltip.html(this.getCurrentDotsTooltipText(d))
+                            return this.getTooltip();
+                          }
                         })
-                        .on("mouseout", ()=>{
-                          return this.tooltip.style("visibility", "hidden");                
+                        .on("mouseout", (d)=>{                  
+                          if(!this.dm.isEventEmpty(d)){ 
+                            return this.tooltip.style("visibility", "hidden");       
+                          }         
                         });
   }
   getCurrentDotsTooltipText(d){
@@ -199,9 +206,7 @@ export class TimelineComponent implements OnInit {
                             .attr("width", 8)
                             .style("fill", (d) => { 
                               let color = this.dm.getColorByCountry(d.country);
-                              if(this.dm.separateEventNotes(d).length== 0){
-                                color = "white"
-                              }
+                              if(this.dm.isEventEmpty(d)){ color = "white" }
                               return color;
                             })
                             .attr("x", (d) => { return this.scale_x(d.date); })
@@ -213,7 +218,6 @@ export class TimelineComponent implements OnInit {
                             .on("click", (d) => {
                               this.updateSelectedDate(d.date);
                               this.emitDaySelectionOutput(d);
-                              console.log("click")
                             });
   }
   addSelectedDayShadow(date){
@@ -257,7 +261,7 @@ export class TimelineComponent implements OnInit {
                               .call(this.axis_x);        
   }
   drawAxisY(){
-    this.axis_y =  d3.axisLeft()
+    this.axis_y = d3.axisLeft()
                       .scale(this.scale_y)
                       .tickSize(this.height)
     this.gAxis_y = this.svg.append("g")

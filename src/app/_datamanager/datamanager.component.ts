@@ -704,6 +704,10 @@ export class DataManagerComponent implements OnInit {
           return notes;
       }
 
+      isEventEmpty(d){
+          return this.separateEventNotes(d).length == 0
+      }
+
       translateNotes(notes){
           let result = []
           notes.forEach((n)=>{  
@@ -718,12 +722,14 @@ export class DataManagerComponent implements OnInit {
             case "C1_Notes": mean = "school closure"; break;
             case "C2_Notes": mean = "workplace closure"; break;
             case "C3_Notes": mean = "cancellation of public events"; break;
-            case "C4_Notes": mean = "restrictions on gathering size"; break;
+            // case "C4_Notes": mean = "restrictions on gathering size"; break;
+            case "C4_Notes": mean = "restrictions on gathering"; break;
             case "C5_Notes": mean = "public transport closures"; break;
             case "C6_Notes": mean = "stay-at-home requirements"; break;
             // case "C7_Notes": mean = "restrictions on domestic/internal movement"; break;
-            case "C7_Notes": mean = "restrictions on domestic movement"; break;
-            case "C8_Notes": mean = "restrictions on international travel"; break;
+            case "C7_Notes": mean = "domestic movement restrictions"; break;
+            // case "C8_Notes": mean = "restrictions on international travel"; break;            
+            case "C8_Notes": mean = "international travel restrictions"; break;
             case "E1_Notes": mean = "income support"; break;
             // case "E2_Notes": mean = "debt/contract relief for households"; break;
             case "E2_Notes": mean = "debt relief for households"; break;
@@ -734,7 +740,8 @@ export class DataManagerComponent implements OnInit {
             case "H1_Notes": mean = "public information campaign"; break;
             case "H2_Notes": mean = "testing policy"; break;
             case "H3_Notes": mean = "contact tracing policy"; break;
-            case "H4_Notes": mean = "emergency investment in healthcare"; break;
+            // case "H4_Notes": mean = "emergency investment in healthcare"; break;
+            case "H4_Notes": mean = "investment in healthcare"; break;
             case "M1_Notes": mean = "other"; break;
           }
           return mean;
