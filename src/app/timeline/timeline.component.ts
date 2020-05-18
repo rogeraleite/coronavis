@@ -26,6 +26,7 @@ export class TimelineComponent implements OnInit {
   protected margin = {top: -5, right: 0, bottom: 10, left: 0};
   protected newTransform: any;
 
+  protected lineRule;
   protected zoom: any;
   protected received_zoom_flag: boolean = true;
   protected currentTransform;
@@ -61,7 +62,7 @@ export class TimelineComponent implements OnInit {
     this.width = $(this.divKey).width()*0.99;
     this.margin.right = 0;//- $(this.divKey).width()*0.05;
     this.height = ($(document).height()/14) //+ this.margin.top/2;         
-    this.currentTransform = d3.zoomIdentity.translate(100,0).scale(1);
+    this.currentTransform = d3.zoomIdentity.translate(100,0).scale(0.84);
   }
   getData() {    
     this.current_data = this.dm.getCurrentDataByCountryList(null);    
@@ -132,21 +133,19 @@ export class TimelineComponent implements OnInit {
 
   drawDateSelector() {
     let date = this.dm.getSelectedDate();
-    this.gCanvas.append("rect")
-                              .attr("class", "selector")
-                              .attr("height", ()=>{ 
-                                let size = this.calculateRectSize(100);
-                                return size;
-                              })
-                              .attr("width", 8)
-                              .style("fill", "none")
-                              .style("stroke", "black")
-                              .attr("x", () => { return this.scale_x(date); })
-                              .attr("y", (d)=>{ 
-                                let size = this.calculateRectSize(100);
-                                let x = this.height-size-this.margin.bottom;
-                                return x;
-                              });
+    this.gCanvas.append("rect").attr("class", "selector")
+                                .attr("height", ()=>{ 
+                                  let size = this.height - this.scale_y(100)
+                                  return size;
+                                })
+                                .attr("width", 8)
+                                .style("fill", "none")
+                                .style("stroke", "black")
+                                .attr("x", () => { return this.scale_x(date); })
+                                .attr("y", ()=>{ 
+                                  let y = this.scale_y(100)
+                                  return y;
+                                });
   }
 
 
@@ -176,14 +175,14 @@ export class TimelineComponent implements OnInit {
   }
   setXYScales() {
     this.scale_x = d3.scaleTime().range([0, this.width]);
-    this.scale_y = d3.scalePoint().range([this.height, 0]);
+    this.scale_y = d3.scaleLinear().range([this.height-this.margin.bottom, 0]);
   }
   scaleXYDomains() {
     this.setXDomain_asDate();
     this.setYDomain_asCountries();
   }
   setYDomain_asCountries() {
-    this.scale_y.domain([0,this.height/100]);
+    this.scale_y.domain([0,100]);
   }
   setXDomain_asDate(){
     this.scale_x.domain(d3.extent(this.events_data, (d) => { return d.date; }));
@@ -194,13 +193,47 @@ export class TimelineComponent implements OnInit {
                          .domain(map_result)
                          .range(this.dm.getColorsArray())
   }
-  drawData() {
+  drawData(){
+    this.drawBars();
+    this.drawLinechart();
+  }
+  drawLinechart() {
+    this.createLinesRules();
+    this.drawLines();
+  }
+  createLinesRules() {
+    this.lineRule = d3.line()
+                      .x((d) => { 
+                        return this.scale_x(d.date); 
+                      })
+                      .y((d)=>{ 
+                        let y = this.scale_y(d.LegacyStringencyIndexForDisplay);
+                        return y;
+                      });
+  }
+  drawLines() {
+    this.gCanvas.selectAll(".line-current")
+                .data(this.events_data)
+                .enter()
+                  .append("path")
+                  .attr("fill", "black")
+                  .attr("stroke", (d)=>{ 
+                    let color = this.dm.getColorByCountry(d.country);
+                    return color
+                  })
+                  .attr("stroke-width", 2)
+                  .attr("d", (d)=>{
+                    return this.lineRule(d)
+                  })
+  }
+  drawBars() {
     this.event_elements = this.gCanvas.selectAll("rect")
                           .data(this.events_data)
                           .enter()
                             .append("rect")
                             .attr("height", (d)=>{ 
-                              let size = this.calculateRectSize(d.LegacyStringencyIndexForDisplay);
+                              // let size = this.calculateRectSize(d.LegacyStringencyIndexForDisplay);
+                              let size = this.height - this.scale_y(d.LegacyStringencyIndexForDisplay)
                               return size;
                             })
                             .attr("width", 8)
@@ -211,9 +244,10 @@ export class TimelineComponent implements OnInit {
                             })
                             .attr("x", (d) => { return this.scale_x(d.date); })
                             .attr("y", (d)=>{ 
-                              let size = this.calculateRectSize(d.LegacyStringencyIndexForDisplay);
-                              let x = this.height-size-this.margin.bottom;
-                              return x;
+                              // let size = this.calculateRectSize(d.LegacyStringencyIndexForDisplay);
+                              // let y = this.height-size-this.margin.bottom;
+                              let y = this.scale_y(d.LegacyStringencyIndexForDisplay)
+                              return y;
                             })
                             .on("click", (d) => {
                               this.updateSelectedDate(d.date);
@@ -303,6 +337,7 @@ export class TimelineComponent implements OnInit {
   }
   applyZoom(transform){
     if(transform){      
+      transform.k = 0.84;
       this.zoomAxisX(transform);     
       this.transformCanvas(transform);
       this.paintAxis();   
