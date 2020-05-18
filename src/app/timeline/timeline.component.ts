@@ -219,24 +219,20 @@ export class TimelineComponent implements OnInit {
                         return this.scale_x(d.date); 
                       })
                       .y((d)=>{ 
-                        let y = this.scale_y(d.LegacyStringencyIndexForDisplay);
-                        return y;
+                        return this.scale_y(d.LegacyStringencyIndexForDisplay);
                       });
   }
   drawLines() {
-    this.gCanvas.selectAll(".line-current")
-                .data(this.events_data)
+    let color = this.dm.getColorByCountry(this.dm.getSelectedCountry());
+                    
+    this.gCanvas.selectAll(".line-current2")
+                .data([this.events_data])
                 .enter()
                   .append("path")
-                  .attr("fill", "black")
-                  .attr("stroke", (d)=>{ 
-                    let color = this.dm.getColorByCountry(d.country);
-                    return color
-                  })
-                  .attr("stroke-width", 2)
-                  .attr("d", (d)=>{
-                    return this.lineRule(d)
-                  })
+                  .attr("d", this.lineRule)
+                  .attr("fill", "none")
+                  .attr("stroke", color)
+                  .attr("stroke-width", 2);
   }
   drawBars() {
     this.event_elements = this.gCanvas.selectAll("rect")
@@ -244,7 +240,6 @@ export class TimelineComponent implements OnInit {
                           .enter()
                             .append("rect")
                             .attr("height", (d)=>{ 
-                              // let size = this.calculateRectSize(d.LegacyStringencyIndexForDisplay);
                               let size = this.height - this.scale_y(d.LegacyStringencyIndexForDisplay)
                               return size;
                             })
@@ -260,8 +255,6 @@ export class TimelineComponent implements OnInit {
                             })
                             .attr("x", (d) => { return this.scale_x(d.date); })
                             .attr("y", (d)=>{ 
-                              // let size = this.calculateRectSize(d.LegacyStringencyIndexForDisplay);
-                              // let y = this.height-size-this.margin.bottom;
                               let y = this.scale_y(d.LegacyStringencyIndexForDisplay)
                               return y;
                             })
