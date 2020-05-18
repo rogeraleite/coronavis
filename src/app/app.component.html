@@ -39,7 +39,8 @@
             <div id="linechart-n" class="col-sm-6 linechart-n">
                 <app-linechart-n [dm]="_dm"
                                 (zoomOutput)="applyZoomToTimeline($event)"
-                                (viewFocusOutput)="updateViewsFocus($event)"></app-linechart-n>
+                                (viewFocusOutput)="updateViewsFocus($event)"
+                                (selectedDayOutput)="updateSelectedDay_InTimeline($event)"></app-linechart-n>
             </div>
             <div id="linechart-tests" class="col-sm-6 linechart-tests">
               <app-linechart-tests [dm]="_dm"
@@ -63,7 +64,7 @@
       <div class="col-sm-10 timeline">
           <app-timeline [dm]="_dm"
                         (zoomOutput)="applyZoomToLineChart($event)"
-                        (selectedDayOutput)="updateSelectedDay($event)"></app-timeline>
+                        (selectedDayOutput)="updateSelectedDay_InLinecharts($event)"></app-timeline>
       </div>
   </div> 
   <div class="row">

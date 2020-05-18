@@ -9,6 +9,7 @@ export class LinechartsParent implements OnInit {
     @Input() dm: DataManagerComponent;  
     @Output() zoomOutput = new EventEmitter<any>();
     @Output() viewFocusOutput = new EventEmitter<any>();
+    @Output() selectedDayOutput = new EventEmitter<any>();
     
     protected divKey;
     protected svg: any;
@@ -36,7 +37,7 @@ export class LinechartsParent implements OnInit {
     protected zoom_y: any;
     protected zoom_k: any;
     protected received_zoom_flag: boolean = true;
-    protected initialTransform: any;
+    protected currentTransform: any;
 
     protected dots: any;
     protected predictionDot: any;
@@ -131,9 +132,17 @@ export class LinechartsParent implements OnInit {
     setSVG(){
       this.svg = d3.select(this.divKey)
                     .append("svg")
+                    .attr("id", this.divKey)
                     .attr("width", this.width)
                     .attr("height", this.height)
                     .attr("transform", "translate("+this.margin.right+"," + this.margin.top + ")");
+      // this.svg.on("click",()=>{                      
+      //   let x = d3.event.pageX - document.getElementById(this.divKey).getBoundingClientRect().x;
+      //   let y = d3.event.pageY - document.getElementById(this.divKey).getBoundingClientRect().y;
+      //   console.log("-----")
+      //   console.log(this.scale_x.invert(x))
+      //   console.log(this.scale_y.invert(y))
+      // })
     }  
     setCanvas(){
       this.gCanvas = this.svg.append("g")
@@ -369,23 +378,37 @@ export class LinechartsParent implements OnInit {
                         .style("fill", (d) => { return this.color_scale(d.country) })
                         .attr("cx", (d) => { return this.scale_x(d.date); })
                         .attr("cy", (d) => { 
-                          let value = this.applyUnitInValue(d.country, d.confirmed);
-                          if(this.isDeathsDimension()){
-                            value = this.applyUnitInValue(d.country, d.deaths); 
-                          }
-                          else if(this.isTestsDimension()){
-                            value = this.applyUnitInValue(d.country, d.tests); 
-                          }
-                          else if(this.isPredictionCasesDaysDimension()){
-                            value = d.prediction_cases_length; 
-                          }
-                          else if(this.isPredictionDeathsDaysDimension()){
-                            value = d.prediction_deaths_length; 
-                          }
+                          let value = this.getYValueAccordingToSelectedFeature(d);
                           return this.scale_y(value); 
+                        })
+                        .on("click",(d)=>{
+                          this.drawTimeLineShadow(d.date);
                         });
+
       this.addTooltipBehaviorToDots();
     }
+
+    drawTimeLineShadow(date){
+      this.selectedDayOutput.emit(date);
+    }
+
+    getYValueAccordingToSelectedFeature(d){
+      let value = this.applyUnitInValue(d.country, d.confirmed);
+      if(this.isDeathsDimension()){
+        value = this.applyUnitInValue(d.country, d.deaths); 
+      }
+      else if(this.isTestsDimension()){
+        value = this.applyUnitInValue(d.country, d.tests); 
+      }
+      else if(this.isPredictionCasesDaysDimension()){
+        value = d.prediction_cases_length; 
+      }
+      else if(this.isPredictionDeathsDaysDimension()){
+        value = d.prediction_deaths_length; 
+      }
+      return value;
+    }
+
     getCurrentDotsTooltipText(d){
       let date_str = this.dm.pipeDateObjToDateString(d.date);
 
@@ -602,7 +625,7 @@ export class LinechartsParent implements OnInit {
       let zoomed = () => {
           let newTransform = d3.event.transform;  
           this.applyZoom(newTransform);
-          this.emitZoomOutput(newTransform);        
+          this.emitZoomOutput(newTransform);
       } 
       this.zoom = d3.zoom()
                     .scaleExtent([0.7, 5])
@@ -611,9 +634,9 @@ export class LinechartsParent implements OnInit {
       this.zoom(this.svg);
                     
       this.svg.call(this.zoom)    
-              .call(this.zoom.transform, this.initialTransform)    
-      this.zoom_y = this.initialTransform.y;    
-      this.zoom_k = this.initialTransform.k;
+              .call(this.zoom.transform, this.currentTransform)    
+      this.zoom_y = this.currentTransform.y;    
+      this.zoom_k = this.currentTransform.k;
     }
     
     emitZoomOutput(transform){
@@ -623,15 +646,16 @@ export class LinechartsParent implements OnInit {
       this.deactivateReceivedZoomFlag();          
     }
     receiveZoom(transform){
-      if(this.svg){
-        let y = d3.zoomTransform(this.svg).y;
-        let k = d3.zoomTransform(this.svg).k;
-        let t = d3.zoomIdentity
-                  .translate(transform.x, this.zoom_y)                  
-                  .scale(this.zoom_k);
-        this.activeReceivedZoomFlag();
-        this.svg.call(this.zoom.transform, t);
-      }      
+      // console.log(transform)
+      // if(this.svg){
+      //   let y = d3.zoomTransform(this.svg).y;
+      //   let k = d3.zoomTransform(this.svg).k;
+      //   let t = d3.zoomIdentity
+      //             .translate(transform.x, this.zoom_y)                  
+      //             .scale(this.zoom_k);
+      //   this.activeReceivedZoomFlag();
+      //   this.svg.call(this.zoom.transform, t);
+      // }      
     }
 
     applyZoom(transform){
@@ -675,7 +699,7 @@ export class LinechartsParent implements OnInit {
 
     updateSelectedDay(){
       let date = this.dm.getSelectedDate();
-      let end_incubation_date = this.addDaysToMillisecondDate(date,this.incubation_days);
+      let end_incubation_date = this.dm.addDaysToMillisecondDate(date,this.incubation_days);
       this.drawIncubationPeriodMarks(date, end_incubation_date);
     }
 
@@ -701,9 +725,7 @@ export class LinechartsParent implements OnInit {
                                     .attr("height",this.height*3)
                                     .attr("width",2)  
     }
-    addDaysToMillisecondDate(date, days){
-      return date += 1000 * 60 * 60 * 24 * days;
-    }
+  
 
     changeScale(scale){
       this.scaleYType = scale;

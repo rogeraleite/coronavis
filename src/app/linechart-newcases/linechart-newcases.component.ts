@@ -17,7 +17,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
 
   setup(){
     this.divKey = ".linechart-newcases";    
-    this.initialTransform = d3.zoomIdentity.translate(-120, 23).scale(1.13);
+    this.currentTransform = d3.zoomIdentity.translate(-120, 23).scale(1.13);
     this.current_curve_data = this.dm.getLastWeekDataByCountryList(null);
     this.axis_y_label = "log(cases last week)";
     this.axis_x_label = "log(total cases)";
@@ -166,7 +166,7 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     this.zoom(this.svg);
                   
     this.svg.call(this.zoom)    
-            .call(this.zoom.transform, this.initialTransform)    
+            .call(this.zoom.transform, this.currentTransform)    
   }
   zoomAxisX(curTransform){        
       if(curTransform){

@@ -111,7 +111,7 @@ export class AppComponent {
     document.getElementById("linechart-prediction").style.display='block';
   }
 
-  async updateSelectedDay($event){    
+  async updateSelectedDay_InLinecharts($event){    
     let event = $event;
     console.log(event)
     this._dm.separateEventNotes(event);
@@ -121,6 +121,13 @@ export class AppComponent {
     this.lineChartTestsComponent_child.updateSelectedDay();
     this.lineChartPredictionComponent_child.updateSelectedDay();
     this.lineChartNewCases_child.updateSelectedDay();
+  }
+
+  async updateSelectedDay_InTimeline($event){    
+    let date = $event;    
+    let date_minus_incubation_phase = this._dm.addDaysToMillisecondDate(date,-5);
+    this.timelineComponent_child.updateSelectedDate(date_minus_incubation_phase);
+    this.timelineComponent_child.addSelectedDayShadow(date_minus_incubation_phase);
   }
 
   async applySelectCountry($event){

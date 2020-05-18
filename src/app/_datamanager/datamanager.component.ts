@@ -744,4 +744,8 @@ export class DataManagerComponent implements OnInit {
         return this.selected_event_notes;
       }
 
+      addDaysToMillisecondDate(date, days){
+        return date += 1000 * 60 * 60 * 24 * days;
+      }
+
 }//end class

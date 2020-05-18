@@ -23,7 +23,7 @@ export class LinechartNComponent extends LinechartsParent {
     this.axis_x_label = "date";
     this.current_curve_data = this.dm.getCurrentDataByCountryList(null);
     this.prediction_curve_data = this.dm.getPredictionDataByCountryList(null);
-    this.initialTransform = this.dm.getInitialTransform();
+    this.currentTransform = this.dm.getInitialTransform();
   }
   
 }

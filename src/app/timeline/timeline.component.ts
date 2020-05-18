@@ -18,6 +18,7 @@ export class TimelineComponent implements OnInit {
 
   protected svg: any;
   protected gCanvas: any;
+  protected tooltip: any;
   protected color_scale: any;
   protected divKey;
   protected width;
@@ -33,6 +34,8 @@ export class TimelineComponent implements OnInit {
   protected current_data_grouped;
   protected events_data;
   protected yDimension = "cases";
+
+  protected day_shadow: any;
 
   protected axis_x: any;
   protected axis_y: any;
@@ -80,29 +83,66 @@ export class TimelineComponent implements OnInit {
     this.calculateColors();
     /////////////////////// Part3
     this.drawData();
+    this.drawToolTip();
+    this.addTooltipToRects();
     this.drawAxis();  
     this.drawDateSelector();
     this.applyZoomFeature();
   }
 
+  drawToolTip() {
+    this.tooltip = d3.select("body")
+                    .append("div")
+                    .style("position", "absolute")
+                    .style("z-index", "10")
+                    .style("visibility", "hidden");
+  }
+  addTooltipToRects() {
+    this.event_elements.on("mouseover", ()=>{
+                          return this.tooltip.style("visibility", "visible");
+                        })
+                        .on("mousemove", (d)=>{
+                          this.tooltip.html(this.getCurrentDotsTooltipText(d))
+                          return this.getTooltip();
+                        })
+                        .on("mouseout", ()=>{
+                          return this.tooltip.style("visibility", "hidden");                
+                        });
+  }
+  getCurrentDotsTooltipText(d){
+    let date_str = this.dm.pipeDateObjToDateString(d.date);
+
+    return  "<small>Strigency Level: "+
+            d.StringencyIndexForDisplay+          
+            "<br>"+date_str+"</small>";
+            
+  }
+  getTooltip(){
+    return this.tooltip.style("top", (d3.event.pageY-10)+"px")
+                        .style("left",(d3.event.pageX+10)+"px")                                     
+                        .style("background-color","rgba(255,255,255,.8)");
+  }
+
   drawDateSelector() {
     let date = this.dm.getSelectedDate();
     this.gCanvas.append("rect")
-                .attr("class", "selector")
-                .attr("height", ()=>{ 
-                  let size = this.calculateRectSize(100);
-                  return size;
-                })
-                .attr("width", 8)
-                .style("fill", "none")
-                .style("stroke", "black")
-                .attr("x", () => { return this.scale_x(date); })
-                .attr("y", (d)=>{ 
-                  let size = this.calculateRectSize(100);
-                  let x = this.height-size-this.margin.bottom;
-                  return x;
-                });
+                              .attr("class", "selector")
+                              .attr("height", ()=>{ 
+                                let size = this.calculateRectSize(100);
+                                return size;
+                              })
+                              .attr("width", 8)
+                              .style("fill", "none")
+                              .style("stroke", "black")
+                              .attr("x", () => { return this.scale_x(date); })
+                              .attr("y", (d)=>{ 
+                                let size = this.calculateRectSize(100);
+                                let x = this.height-size-this.margin.bottom;
+                                return x;
+                              });
   }
+
+
 
   filterSelectedCountryEvents() {
     let result = []
@@ -171,8 +211,23 @@ export class TimelineComponent implements OnInit {
                               return x;
                             })
                             .on("click", (d) => {
-                              this.updateSelectedDate(d);
+                              this.updateSelectedDate(d.date);
+                              this.emitDaySelectionOutput(d);
+                              console.log("click")
                             });
+  }
+  addSelectedDayShadow(date){
+    if(this.day_shadow) this.day_shadow.remove();
+    
+    this.day_shadow = this.gCanvas.append("rect")
+                                  .attr("class","event-shadow")
+                                  .attr("height",this.height)
+                                  .attr("opacity",.1)
+                                  .attr("x",-1000)
+                                  .attr("width", ()=>{
+                                    return this.scale_x(date)+1000;
+                                  })
+
   }
   calculateRectSize(value){
     let size = (value/100)*(this.height-this.margin.bottom-1);
@@ -324,9 +379,8 @@ export class TimelineComponent implements OnInit {
     let selected_country = this.dm.getSelectedCountry();
     this.loadCountriesByArray([selected_country]);
   }
-  updateSelectedDate(d){
-    this.dm.setSelectedDate(d.date);
-    this.emitDaySelectionOutput(d);
+  updateSelectedDate(date){
+    this.dm.setSelectedDate(date);
     this.refreshChart();
   }
 }
