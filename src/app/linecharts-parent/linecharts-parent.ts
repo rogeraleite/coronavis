@@ -383,6 +383,8 @@ export class LinechartsParent implements OnInit {
                         })
                         .on("click",(d)=>{
                           this.drawTimeLineShadow(d.date);
+                          let day_before_incubation = this.dm.addDaysToMillisecondDate(d.date,-5);
+                          this.drawIncubationPeriodMarks(day_before_incubation,d.date);
                         });
 
       this.addTooltipBehaviorToDots();
