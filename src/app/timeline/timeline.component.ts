@@ -434,6 +434,8 @@ export class TimelineComponent implements OnInit {
   updateSelectedCountry(){
     let selected_country = this.dm.getSelectedCountry();
     this.loadCountriesByArray([selected_country]);
+    this.type_selection = [];
+    this.refreshChart();
   }
   updateSelectedDate(date){
     this.dm.setSelectedDate(date);

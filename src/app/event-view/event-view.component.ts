@@ -25,7 +25,6 @@ export class EventViewComponent implements OnInit {
     this.event_notes = this.dm.getSelectedEventNotes();
     this.selected_date = this.dm.pipeDateObjToDateString(this.dm.getSelectedDate());
     this.selected_country = this.dm.getSelectedCountry();
-    console.log(this.event_notes)
   }
 
    submit(content){    
@@ -48,6 +47,12 @@ export class EventViewComponent implements OnInit {
 
   selectCheckBox(type){
     this.timelineTypeSelectionOutput.emit(type);
+  }
+
+  reset(){
+    this.event_notes = null
+    this.selected_date = null
+    this.selected_country = null
   }
 
 }

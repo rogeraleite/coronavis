@@ -137,6 +137,7 @@ export class AppComponent {
     this.lineChartNewCases_child.updateSelectedCountry();
 
     this.timelineComponent_child.updateSelectedCountry();
+    this.eventViewComponent_child.reset();
   }
 
   async updateTimelineTypeSelection($event){
