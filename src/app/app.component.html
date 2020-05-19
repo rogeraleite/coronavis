@@ -45,15 +45,18 @@
             </div>
             <div id="linechart-tests" class="col-sm-6 linechart-tests">
               <app-linechart-tests [dm]="_dm"
-                                  (viewFocusOutput)="updateViewsFocus($event)"></app-linechart-tests>
+                                  (viewFocusOutput)="updateViewsFocus($event)"
+                                  (selectedDayOutput)="updateSelectedDay_InTimeline($event)"></app-linechart-tests>
             </div> 
             <div id="linechart-newcases" class="col-sm-6 linechart-newcases">
               <app-linechart-newcases [dm]="_dm"
-                                      (viewFocusOutput)="updateViewsFocus($event)"></app-linechart-newcases>
+                                      (viewFocusOutput)="updateViewsFocus($event)"
+                                      (selectedDayOutput)="updateSelectedDay_InTimeline($event)"></app-linechart-newcases>
             </div>      
             <div id="linechart-prediction" class="col-sm-6 linechart-prediction">
               <app-linechart-prediction [dm]="_dm"              
-                                        (viewFocusOutput)="updateViewsFocus($event)"></app-linechart-prediction>
+                                        (viewFocusOutput)="updateViewsFocus($event)"
+                                        (selectedDayOutput)="updateSelectedDay_InTimeline($event)"></app-linechart-prediction>
             </div> 
           </div>
       </div>

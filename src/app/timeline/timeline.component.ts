@@ -271,9 +271,11 @@ export class TimelineComponent implements OnInit {
     if(result.length>0) return 1;
     return 0.2;
   }
-  addSelectedDayShadow(date){
+  resetShadow(){
     if(this.day_shadow) this.day_shadow.remove();
-    
+  }
+  addSelectedDayShadow(date){
+    this.resetShadow();
     this.day_shadow = this.gCanvas.append("rect")
                                   .attr("class","event-shadow")
                                   .attr("height",this.height)

@@ -382,15 +382,17 @@ export class LinechartsParent implements OnInit {
                           return this.scale_y(value); 
                         })
                         .on("click",(d)=>{
-                          this.drawTimeLineShadow(d.date);
-                          let day_before_incubation = this.dm.addDaysToMillisecondDate(d.date,-5);
-                          this.drawIncubationPeriodMarks(day_before_incubation,d.date);
+                          this.emitTimelineShadow(d.date);
                         });
 
       this.addTooltipBehaviorToDots();
     }
 
-    drawTimeLineShadow(date){
+    
+
+
+
+    emitTimelineShadow(date){
       this.selectedDayOutput.emit(date);
     }
 
@@ -705,9 +707,18 @@ export class LinechartsParent implements OnInit {
       this.drawIncubationPeriodMarks(date, end_incubation_date);
     }
 
-    drawIncubationPeriodMarks(x_value, x_end_value){
+    receiveDrawIncubationPeriodMarks(date){      
+      let day_before_incubation = this.dm.addDaysToMillisecondDate(date,-5);
+      this.drawIncubationPeriodMarks(day_before_incubation,date);
+    }
+
+    resetShadow(){
       if(this.event_shadow) this.event_shadow.remove();
       if(this.event_line) this.event_line.remove();
+    }
+
+    drawIncubationPeriodMarks(x_value, x_end_value){
+      this.resetShadow();
 
       let shadow_size = 10000;
       let x_value_pos = this.scale_x(x_value);
@@ -719,7 +730,10 @@ export class LinechartsParent implements OnInit {
                                       .attr("y",-this.height)
                                       .attr("opacity",.1)
                                       .attr("height",this.height*3)
-                                      .attr("width",shadow_size+x_value_pos+dif);  
+                                      .attr("width",shadow_size+x_value_pos+dif)                    
+                                      .on("click",()=>{ 
+                                        this.emitTimelineShadow(null);
+                                      });  
       this.event_line = this.gCanvas.append("rect")
                                     .attr("class","event-line")
                                     .attr("x",()=>{ return this.scale_x(x_value); })

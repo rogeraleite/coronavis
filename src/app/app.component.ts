@@ -125,9 +125,27 @@ export class AppComponent {
 
   async updateSelectedDay_InTimeline($event){    
     let date = $event;    
-    let date_minus_incubation_phase = this._dm.addDaysToMillisecondDate(date,-5);
-    this.timelineComponent_child.updateSelectedDate(date_minus_incubation_phase);
-    this.timelineComponent_child.addSelectedDayShadow(date_minus_incubation_phase);
+    if(!date){
+      this.resetShadowInViews();
+    }
+    else{
+      let date_minus_incubation_phase = this._dm.addDaysToMillisecondDate(date,-5);
+      this.timelineComponent_child.updateSelectedDate(date_minus_incubation_phase);
+      this.timelineComponent_child.addSelectedDayShadow(date_minus_incubation_phase);
+      
+      this.lineChartNComponent_child.receiveDrawIncubationPeriodMarks(date);
+      this.lineChartTestsComponent_child.receiveDrawIncubationPeriodMarks(date);
+      this.lineChartPredictionComponent_child.receiveDrawIncubationPeriodMarks(date);
+      this.lineChartNewCases_child.receiveDrawIncubationPeriodMarks(date);
+    }
+  }
+  resetShadowInViews() {
+    this.timelineComponent_child.resetShadow();
+
+    this.lineChartNComponent_child.resetShadow();
+    this.lineChartTestsComponent_child.resetShadow();
+    this.lineChartPredictionComponent_child.resetShadow();
+    this.lineChartNewCases_child.resetShadow();
   }
 
   async applySelectCountry($event){
