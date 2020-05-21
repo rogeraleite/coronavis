@@ -113,14 +113,18 @@ export class AppComponent {
 
   async updateSelectedDay_InLinecharts($event){    
     let event = $event;
-    console.log(event)
-    this._dm.separateEventNotes(event);
-    this.eventViewComponent_child.updateEvent();
+    if(!event){
+      this.resetShadowInViews();
+    }
+    else{
+      this._dm.separateEventNotes(event);
+      this.eventViewComponent_child.updateEvent();
 
-    this.lineChartNComponent_child.updateSelectedDay();
-    this.lineChartTestsComponent_child.updateSelectedDay();
-    this.lineChartPredictionComponent_child.updateSelectedDay();
-    this.lineChartNewCases_child.updateSelectedDay();
+      this.lineChartNComponent_child.updateSelectedDay();
+      this.lineChartTestsComponent_child.updateSelectedDay();
+      this.lineChartPredictionComponent_child.updateSelectedDay();
+      this.lineChartNewCases_child.updateSelectedDay();
+    }
   }
 
   async updateSelectedDay_InTimeline($event){    
@@ -137,6 +141,8 @@ export class AppComponent {
       this.lineChartTestsComponent_child.receiveDrawIncubationPeriodMarks(date);
       this.lineChartPredictionComponent_child.receiveDrawIncubationPeriodMarks(date);
       this.lineChartNewCases_child.receiveDrawIncubationPeriodMarks(date);
+
+      this.eventViewComponent_child.updateEvent();
     }
   }
   resetShadowInViews() {

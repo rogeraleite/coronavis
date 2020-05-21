@@ -149,7 +149,16 @@ export class TimelineComponent implements OnInit {
                                   let y = this.scale_y(100)
                                   return y;
                                 });
+    let data_event = this.getDataEventByDate(date);
+    this.emitDaySelectionOutput(data_event);
   }
+
+  getDataEventByDate(date: any) {
+    let result = this.events_data.filter(d => d.date == date);
+    return result[0]
+  }
+
+  
 
   updateTypeSelection(type){
     if(this.type_selection.includes(type)){
@@ -260,7 +269,8 @@ export class TimelineComponent implements OnInit {
                             })
                             .on("click", (d) => {
                               this.updateSelectedDate(d.date);
-                              this.emitDaySelectionOutput(d);
+                              this.addSelectedDayShadow(d.date);
+                              // this.emitDaySelectionOutput(d);
                             });
   }
   checkEventTypes(d: any) {
@@ -283,6 +293,9 @@ export class TimelineComponent implements OnInit {
                                   .attr("x",-1000)
                                   .attr("width", ()=>{
                                     return this.scale_x(date)+1000;
+                                  })
+                                  .on("click",()=>{
+                                    this.emitDaySelectionOutput(null)
                                   })
 
   }
