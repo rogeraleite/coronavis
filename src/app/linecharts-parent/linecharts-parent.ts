@@ -707,11 +707,6 @@ export class LinechartsParent implements OnInit {
       this.drawIncubationPeriodMarks(date, end_incubation_date);
     }
 
-    receiveDrawIncubationPeriodMarks(date){      
-      let day_before_incubation = this.dm.addDaysToMillisecondDate(date,-5);
-      this.drawIncubationPeriodMarks(day_before_incubation,date);
-    }
-
     resetShadow(){
       if(this.event_shadow) this.event_shadow.remove();
       if(this.event_line) this.event_line.remove();
@@ -736,7 +731,7 @@ export class LinechartsParent implements OnInit {
                                       });  
       this.event_line = this.gCanvas.append("rect")
                                     .attr("class","event-line")
-                                    .attr("x",()=>{ return this.scale_x(x_value); })
+                                    .attr("x",x_value_pos)
                                     .attr("y",-this.height)
                                     .attr("height",this.height*3)
                                     .attr("width",2)  
@@ -810,9 +805,7 @@ export class LinechartsParent implements OnInit {
     }
 
     getColorOpacityByCountry(country){
-      if(this.dm.isSelectedCountry(country)){
-        return 1;
-      }
+      if(this.dm.isSelectedCountry(country)){ return 1; }
       return 0.2      
     }
 

@@ -313,7 +313,7 @@ export class DataManagerComponent implements OnInit {
             result.push(sample)             
         });            
 
-        this.selected_date = result[0].date;//first event
+        this.selected_date = result[9].date;//first event
         
         return result;        
     }

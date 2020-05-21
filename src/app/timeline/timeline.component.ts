@@ -268,11 +268,15 @@ export class TimelineComponent implements OnInit {
                               return y;
                             })
                             .on("click", (d) => {
-                              this.updateSelectedDate(d.date);
-                              this.addSelectedDayShadow(d.date);
-                              // this.emitDaySelectionOutput(d);
+                              this.updateSelectedDateBehavior(d.date);
                             });
   }
+
+  updateSelectedDateBehavior(date){
+    this.updateSelectedDate(date);
+    this.addSelectedDayShadow(date);
+  }
+
   checkEventTypes(d: any) {
     let date_events = this.dm.separateEventNotes(d);
     if(this.type_selection.length == 0) return 1;

@@ -194,17 +194,14 @@ export class LinechartNewcasesComponent extends LinechartsParent {
   }
 
   findXValueByDate(date){
-    for(let i = 0; i<this.current_curve_data.length; i++){
-      let d = this.current_curve_data[i];
-      if(this.dm.isSelectedCountry(d.country) && d.date==date){
-        let value = d.total_confirmed;
-        if(this.isDeathsDimension()){
-          value = d.total_deaths; 
-        }
-        return value;
-      }
+    if(this.current_curve_data){
+      let sample = this.current_curve_data.filter(d => (this.dm.isSelectedCountry(d.country) && d.date==date))[0]
+      if(sample){
+        if(this.isDeathsDimension()) return sample.total_deaths;
+        return sample.total_confirmed;
+      }      
     }
-    return null;
+    return null
   }
 
   drawPrediction() {

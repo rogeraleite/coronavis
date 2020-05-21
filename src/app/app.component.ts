@@ -111,11 +111,9 @@ export class AppComponent {
     document.getElementById("linechart-prediction").style.display='block';
   }
 
-  async updateSelectedDay_InLinecharts($event){    
+  async updateSelectedDay_FromTimeline($event){    
     let event = $event;
-    if(!event){
-      this.resetShadowInViews();
-    }
+    if(!event){ this.resetShadowInViews(); }
     else{
       this._dm.separateEventNotes(event);
       this.eventViewComponent_child.updateEvent();
@@ -127,22 +125,15 @@ export class AppComponent {
     }
   }
 
-  async updateSelectedDay_InTimeline($event){    
+  async updateSelectedDay_FromLinecharts($event){    
     let date = $event;    
-    if(!date){
-      this.resetShadowInViews();
-    }
+    if(!date){ this.resetShadowInViews(); }
     else{
       let date_minus_incubation_phase = this._dm.addDaysToMillisecondDate(date,-5);
-      this.timelineComponent_child.updateSelectedDate(date_minus_incubation_phase);
-      this.timelineComponent_child.addSelectedDayShadow(date_minus_incubation_phase);
-      
-      this.lineChartNComponent_child.receiveDrawIncubationPeriodMarks(date);
-      this.lineChartTestsComponent_child.receiveDrawIncubationPeriodMarks(date);
-      this.lineChartPredictionComponent_child.receiveDrawIncubationPeriodMarks(date);
-      this.lineChartNewCases_child.receiveDrawIncubationPeriodMarks(date);
+      this.timelineComponent_child.updateSelectedDateBehavior(date_minus_incubation_phase);
 
-      this.eventViewComponent_child.updateEvent();
+      let event = this.timelineComponent_child.getDataEventByDate(date_minus_incubation_phase);
+      this.updateSelectedDay_FromTimeline(event);
     }
   }
   resetShadowInViews() {
