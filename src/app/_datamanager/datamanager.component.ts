@@ -297,9 +297,7 @@ export class DataManagerComponent implements OnInit {
         let result = [];
         countries.forEach(c => {
             let country = this._current_data_groupedByCountry.get(c);
-            country.forEach(sample => {
-                result.push(sample)             
-            });            
+            country.forEach(sample => { result.push(sample) });            
         });
         return result;        
     }
@@ -309,9 +307,7 @@ export class DataManagerComponent implements OnInit {
         let grouped = this.groupEventDataByCountry();
         
         let g = grouped.get(country);
-        g.forEach(sample => {
-            result.push(sample)             
-        });            
+        g.forEach(sample => { result.push(sample) });            
 
         this.selected_date = result[9].date;//first event
         

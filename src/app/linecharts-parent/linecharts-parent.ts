@@ -26,6 +26,7 @@ export class LinechartsParent implements OnInit {
     
     protected event_shadow: any;
     protected event_line: any;
+    protected event_label: any;
     protected incubation_days = 5;
 
     protected scaleYType: string;
@@ -710,6 +711,7 @@ export class LinechartsParent implements OnInit {
     resetShadow(){
       if(this.event_shadow) this.event_shadow.remove();
       if(this.event_line) this.event_line.remove();
+      if(this.event_label) this.event_label.remove();
     }
 
     drawIncubationPeriodMarks(x_value, x_end_value){
@@ -734,8 +736,31 @@ export class LinechartsParent implements OnInit {
                                     .attr("x",x_value_pos)
                                     .attr("y",-this.height)
                                     .attr("height",this.height*3)
-                                    .attr("width",2)  
+                                    .attr("width",2); 
+                                    
+      this.printShadowText(x_value_pos);
+      
     }
+  printShadowText(x_value_pos) {
+    if(this.divKey==".linechart-newcases"){
+      this.event_label = this.gCanvas.append("text")
+                                      .attr("x", -this.height / 3)
+                                      .attr("font-size", "8px")
+    }
+    else{
+      this.event_label = this.gCanvas.append("text")
+                                      .attr("x", -this.height / 2)
+                                      .attr("font-size", "11px")
+
+    }
+    this.event_label.attr("class","incubation-period")
+                    .attr("y",x_value_pos+5)
+                    .attr("transform", "rotate(-90)")
+                    .attr("dy", "1em")
+                    .style('fill', 'gray')
+                    .style("text-anchor", "middle")
+                    .text(this.incubation_days+" days incubation period"); 
+  }
   
 
     changeScale(scale){
