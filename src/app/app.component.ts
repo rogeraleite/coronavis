@@ -85,13 +85,21 @@ export class AppComponent {
   }  
   refreshChartById(id){
     switch(id){
-      case "linechart-n": this.lineChartNComponent_child.refreshChart();
+      case "linechart-n":
+        this.lineChartNComponent_child.refreshChart();
+        this.lineChartNComponent_child.updateSelectedDay();
       break;
-      case "linechart-tests": this.lineChartTestsComponent_child.refreshChart();
+      case "linechart-tests": 
+        this.lineChartTestsComponent_child.refreshChart();
+        this.lineChartTestsComponent_child.updateSelectedDay();
       break;
-      case "linechart-newcases": this.lineChartNewCases_child.refreshChart();
+      case "linechart-newcases": 
+        this.lineChartNewCases_child.refreshChart();
+        this.lineChartNewCases_child.updateSelectedDay();
       break;
-      case "linechart-prediction": this.lineChartPredictionComponent_child.refreshChart();
+      case "linechart-prediction": 
+        this.lineChartPredictionComponent_child.refreshChart();
+        this.lineChartPredictionComponent_child.updateSelectedDay();
       break;
     }
   }
