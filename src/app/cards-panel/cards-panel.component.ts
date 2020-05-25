@@ -33,7 +33,7 @@ export class CardsPanelComponent implements OnInit {
   protected prediction_datamap;
 
   private left_margin = 6;
-  private body_top_margin = 40;
+  private body_top_margin = 15;
 
   constructor() { }
 
@@ -45,7 +45,7 @@ export class CardsPanelComponent implements OnInit {
   }
   calculateOverallDimensions() {
     this.width = $(this.divKey).width();
-    this.height = $(document).height()*0.21;
+    this.height = $(document).height()*0.18;
   }
   createChart(){
     /////////////////////// Part1
@@ -55,8 +55,6 @@ export class CardsPanelComponent implements OnInit {
     /////////////////////// Part2
     this.drawCardsStructure();
     this.drawCardsBackground();
-    
-    this.writeCardsTitle();    
     this.writeCardsBody();
     this.writeCardsFootnote();
   }
@@ -143,13 +141,6 @@ export class CardsPanelComponent implements OnInit {
                 .attr("rx", 3)
                 .attr("ry", 3);
   }
-  writeCardsTitle() {
-    let top_margin = 15;
-    this.gCards.append("text")
-                .text((d) => { return d.key; })
-                .attr("transform", "translate("+this.left_margin+","+top_margin*1.5+")")                
-                .attr("font-weight", 500); 
-  }
   writeCardsFootnote() {    
     this.writeCardsExpectedEndDay();
     this.writeAmountSamples();    
@@ -188,6 +179,14 @@ export class CardsPanelComponent implements OnInit {
     let cell_width = this.cards_width/(header.length+1);
     let cell_height = this.cards_height/8;
 
+    //TITLE    
+    this.gCards.append("text").text(d => {return this.pipeCountriesName(d.key)})
+                  .style("font-size", (labels_font_size+3)+"px")
+                  .attr("transform", "translate("+
+                                                (this.left_margin)+","+ //x
+                                                (this.body_top_margin)+")") //y
+                  .attr("font-weight", 500)
+
     //HEADER
     header.forEach((element,i)=>{
         this.gCards.append("text").text(element)
@@ -207,6 +206,12 @@ export class CardsPanelComponent implements OnInit {
 
     this.writeCardsTableInfo(header,rows,cell_width,cell_height);
 
+  }
+
+  pipeCountriesName(country){
+    if(country == "United Kingdom") return "UK";
+    if(country == "South Korea") return "S.Korea";
+    return country
   }
 
   writeCardsTableInfo(header: string[], rows: string[], cell_width, cell_height) {    

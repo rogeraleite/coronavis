@@ -46,7 +46,20 @@ export class TimelineComponent implements OnInit {
   protected gAxis_x: any;
   protected gAxis_y: any;
 
-  protected event_elements: any;
+  //https://www.weforum.org/agenda/2020/04/coronavirus-spread-covid19-pandemic-timeline-milestones/
+  protected global_events = [{title: "Diamond Princess cruise ship in quarantine", date: 1580857200000},
+                             {title: "first death in Europe", date: 1581634800000},
+                             {title: "Italy starts lockdown", date: 1582412400000},
+                             {title: "WHO calls it a pandemic", date: 1583881200000},
+                             {title: "no new local infections in China", date: 1584572400000},
+                             {title: "cases reach 1 million", date: 1585785600000}, //670543200000
+                             {title: "deaths reach 300.000", date: 1589493600000}]
+
+  protected added_events = [{title: "placeholder example", date: 1583881200000}]
+
+  protected country_event_elements: any;
+  protected global_event_elements: any;
+  protected added_event_elements: any;
 
   private type_selection = [];
   
@@ -64,8 +77,8 @@ export class TimelineComponent implements OnInit {
     this.divKey = ".timeline-chart";
     this.width = $(this.divKey).width()*0.99;
     this.margin.right = 0;//- $(this.divKey).width()*0.05;
-    this.height = ($(document).height()/14) //+ this.margin.top/2;         
-    this.currentTransform = d3.zoomIdentity.translate(100,0).scale(0.84);
+    this.height = ($(document).height()/6) //+ this.margin.top/2;         
+    this.currentTransform = d3.zoomIdentity.translate(100,0).scale(0.8);
   }
   getData() {    
     this.current_data = this.dm.getCurrentDataByCountryList(null);    
@@ -86,9 +99,8 @@ export class TimelineComponent implements OnInit {
     this.scaleXYDomains();
     this.calculateColors();
     /////////////////////// Part3
-    this.drawData();
     this.drawToolTip();
-    this.addTooltipToRects();
+    this.drawData();
     this.drawAxis();  
     this.drawDateSelector();
     this.applyZoomFeature();
@@ -102,15 +114,15 @@ export class TimelineComponent implements OnInit {
                     .style("z-index", "10")
                     .style("visibility", "hidden");
   }
-  addTooltipToRects() {
-    this.event_elements.on("mouseover", (d)=>{
+  addTooltipToCountryEvents() {
+    this.country_event_elements.on("mouseover", (d)=>{
                           if(!this.dm.isEventEmpty(d)){ 
                             return this.tooltip.style("visibility", "visible");
                           }
                         })
                         .on("mousemove", (d)=>{                          
                           if(!this.dm.isEventEmpty(d)){ 
-                            this.tooltip.html(this.getCurrentDotsTooltipText(d))
+                            this.tooltip.html(this.getTooltipText(d))
                             return this.getTooltip();
                           }
                         })
@@ -120,13 +132,14 @@ export class TimelineComponent implements OnInit {
                           }         
                         });
   }
-  getCurrentDotsTooltipText(d){
+  getTooltipText(d){
     let date_str = this.dm.pipeDateObjToDateString(d.date);
-
-    return  "<small>Strigency Level: "+
-            d.StringencyIndexForDisplay+          
-            "<br>"+date_str+"</small>";
-            
+    if(d.StringencyIndexForDisplay){ // country event
+      return  "<small>Strigency Level: "+d.StringencyIndexForDisplay+"<br>"+  
+      "Events: "+this.dm.separateEventNotes(d).length+"<br>"+
+      date_str+"</small>";  
+    }          
+    return "<small>"+d.title+"<br>"+date_str+"</small>";  
   }
   getTooltip(){
     return this.tooltip.style("top", (d3.event.pageY-10)+"px")
@@ -158,7 +171,6 @@ export class TimelineComponent implements OnInit {
     return result[0]
   }
 
-  
 
   updateTypeSelection(type){
     if(this.type_selection.includes(type)){
@@ -192,18 +204,18 @@ export class TimelineComponent implements OnInit {
   }
   setCanvas() {
     this.gCanvas = this.svg.append("g")
-                           .attr("class", "canvas-timeline");
+                           .attr("class", "canvas-timeline");    
   }
   setXYScales() {
     this.scale_x = d3.scaleTime().range([0, this.width]);
-    this.scale_y = d3.scaleLinear().range([this.height-this.margin.bottom, 0]);
+    this.scale_y = d3.scaleLinear().range([(this.height), 0]);
   }
   scaleXYDomains() {
     this.setXDomain_asDate();
     this.setYDomain_asCountries();
   }
   setYDomain_asCountries() {
-    this.scale_y.domain([0,100]);
+    this.scale_y.domain([0,140]);
   }
   setXDomain_asDate(){
     this.scale_x.domain(d3.extent(this.events_data, (d) => { return d.date; }));
@@ -215,21 +227,83 @@ export class TimelineComponent implements OnInit {
                          .range(this.dm.getColorsArray())
   }
   drawData(){
-    this.drawBars();
+    this.drawGlobalEventsSquares();
+    this.drawAddedEventsSquares();
+    this.drawCountryEventBars();
     this.drawLinechart();
   }
+
+  drawAddedEventsSquares() {
+    this.added_event_elements = this.gCanvas.selectAll("rect.added-events")
+                                        .data(this.added_events)
+                                        .enter()
+                                          .append("rect")
+                                          .attr("class", "global-events")
+                                          .attr("height", this.bar_width)
+                                          .attr("width", this.bar_width)
+                                          .style("fill", "#C7C6C1")
+                                          .attr("x", (d) => { return this.scale_x(d.date); })
+                                          .attr("y", ()=>{ 
+                                            let y = this.scale_y(130)+this.bar_width
+                                            return y;
+                                          })
+                                          .on("click", (d) => {
+                                            console.log(d.title)
+                                          });
+    this.addTooltipToAddedEvents();
+  }
+  addTooltipToAddedEvents() {
+    this.added_event_elements.on("mouseover", (d)=>{
+                            return this.tooltip.style("visibility", "visible");
+                        })
+                        .on("mousemove", (d)=>{                          
+                            this.tooltip.html(this.getTooltipText(d))
+                            return this.getTooltip();
+                        })
+                        .on("mouseout", (d)=>{       
+                            return this.tooltip.style("visibility", "hidden");       
+                        });
+  }
+  drawGlobalEventsSquares() {
+    this.global_event_elements = this.gCanvas.selectAll("rect.global-events")
+                                    .data(this.global_events)
+                                    .enter()
+                                      .append("rect")
+                                      .attr("class", "global-events")
+                                      .attr("height", this.bar_width)
+                                      .attr("width", this.bar_width)
+                                      .style("fill", "black")
+                                      .attr("x", (d) => { return this.scale_x(d.date); })
+                                      .attr("y", ()=>{ 
+                                        let y = this.scale_y(120)+this.bar_width
+                                        return y;
+                                      })
+                                      .on("click", (d) => {
+                                        console.log(d.title)
+                                      });
+    this.addTooltipToGlobalEvents();
+  }
+  addTooltipToGlobalEvents() {
+    this.global_event_elements.on("mouseover", (d)=>{ 
+                            return this.tooltip.style("visibility", "visible");
+                        })
+                        .on("mousemove", (d)=>{                          
+                            this.tooltip.html(this.getTooltipText(d))
+                            return this.getTooltip();
+                        })
+                        .on("mouseout", (d)=>{       
+                            return this.tooltip.style("visibility", "hidden");       
+                        });
+  }
+
   drawLinechart() {
     this.createLinesRules();
     this.drawLines();
   }
   createLinesRules() {
     this.lineRule = d3.line()
-                      .x((d) => { 
-                        return this.scale_x(d.date); 
-                      })
-                      .y((d)=>{ 
-                        return this.scale_y(d.LegacyStringencyIndexForDisplay);
-                      });
+                      .x((d) => { return this.scale_x(d.date); })
+                      .y((d)=>{ return this.scale_y(d.LegacyStringencyIndexForDisplay); });
   }
   drawLines() {
     let color = this.dm.getColorByCountry(this.dm.getSelectedCountry());
@@ -243,11 +317,12 @@ export class TimelineComponent implements OnInit {
                   .attr("stroke", color)
                   .attr("stroke-width", 2);
   }
-  drawBars() {
-    this.event_elements = this.gCanvas.selectAll("rect")
+  drawCountryEventBars() {
+    this.country_event_elements = this.gCanvas.selectAll("rect.country-events")
                           .data(this.events_data)
                           .enter()
                             .append("rect")
+                            .attr("class", "country-events")
                             .attr("height", (d)=>{ 
                               let size = this.height - this.scale_y(d.LegacyStringencyIndexForDisplay)
                               return size;
@@ -268,8 +343,10 @@ export class TimelineComponent implements OnInit {
                               return y;
                             })
                             .on("click", (d) => {
+                              console.log(d.date)
                               this.updateSelectedDateBehavior(d.date);
                             });
+      this.addTooltipToCountryEvents();
   }
 
   updateSelectedDateBehavior(date){
@@ -338,8 +415,6 @@ export class TimelineComponent implements OnInit {
                             .attr("class", "axis axis-y")                              
                             .call(this.axis_y);   
   }
-
-
   applyZoomFeature() {          
       let zoomed = () => {
         this.newTransform = d3.event.transform;    
