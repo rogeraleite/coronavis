@@ -47,13 +47,13 @@ export class TimelineComponent implements OnInit {
   protected gAxis_y: any;
 
   //https://www.weforum.org/agenda/2020/04/coronavirus-spread-covid19-pandemic-timeline-milestones/
-  protected global_events = [{title: "Diamond Princess cruise ship in quarantine", date: 1580857200000},
-                             {title: "first death in Europe", date: 1581634800000},
-                             {title: "Italy starts lockdown", date: 1582412400000},
-                             {title: "WHO calls it a pandemic", date: 1583881200000},
-                             {title: "no new local infections in China", date: 1584572400000},
-                             {title: "cases reach 1 million", date: 1585785600000}, //670543200000
-                             {title: "deaths reach 300.000", date: 1589493600000}]
+  protected global_events = [{type:"global", title: "Diamond Princess cruise ship in quarantine", date: 1580857200000},
+                             {type:"global", title: "first death in Europe", date: 1581634800000},
+                             {type:"global", title: "Italy starts lockdown", date: 1582412400000},
+                             {type:"global", title: "WHO calls it a pandemic", date: 1583881200000},
+                             {type:"global", title: "no new local infections in China", date: 1584572400000},
+                             {type:"global", title: "cases reach 1 million", date: 1585785600000}, //670543200000
+                             {type:"global", title: "deaths reach 300.000", date: 1589493600000}]
 
   protected added_events = [{title: "placeholder example", date: 1583881200000}]
 
@@ -77,8 +77,8 @@ export class TimelineComponent implements OnInit {
     this.divKey = ".timeline-chart";
     this.width = $(this.divKey).width()*0.99;
     this.margin.right = 0;//- $(this.divKey).width()*0.05;
-    this.height = ($(document).height()/6) //+ this.margin.top/2;         
-    this.currentTransform = d3.zoomIdentity.translate(100,0).scale(0.8);
+    this.height = ($(document).height()/7) //+ this.margin.top/2;         
+    this.currentTransform = d3.zoomIdentity.translate(100,0).scale(1);
   }
   getData() {    
     this.current_data = this.dm.getCurrentDataByCountryList(null);    
@@ -139,7 +139,10 @@ export class TimelineComponent implements OnInit {
       "Events: "+this.dm.separateEventNotes(d).length+"<br>"+
       date_str+"</small>";  
     }          
-    return "<small>"+d.title+"<br>"+date_str+"</small>";  
+    else if(d.type=="global"){
+      return "<small>Global Event:<br>"+d.title+"<br>"+date_str+"</small>";  
+    } 
+    return "<small>Added Event:<br>"+d.title+"<br>"+date_str+"</small>";  
   }
   getTooltip(){
     return this.tooltip.style("top", (d3.event.pageY-10)+"px")
@@ -384,16 +387,36 @@ export class TimelineComponent implements OnInit {
     let size = (value/100)*(this.height-this.margin.bottom-1);
     return size
   }
-  addAxisLabels() {
+  addAxisLabels() {    
+    let color = this.dm.getColorByCountry(this.dm.getSelectedCountry());
     this.svg.append("text")
                 .attr("y", -2)
-                .attr("x", -this.height / 2 +5)
+                .attr("x", -this.height / 1.75)
                 .attr("transform", "rotate(-90)")
                 .attr("dy", "1em")
-                .attr("font-size", "9px")
-                .style('fill', 'gray')
+                .attr("font-size", "11px")
+                .style('fill', color)
                 .style("text-anchor", "middle")
-                .text("stringency");  
+                .text("stringency")
+                .attr("font-weight", 500);  
+    this.svg.append("text")
+                .attr("y", this.height / 8)
+                .attr("x", 5)
+                .attr("dy", "1em")
+                .attr("font-size", "10px")
+                .style('fill', 'black')
+                .style("text-anchor", "middle")
+                .text("G")
+                .attr("font-weight", 500);  
+    this.svg.append("text")
+                .attr("y", this.height / 18)
+                .attr("x", 5)
+                .attr("dy", "1em")
+                .attr("font-size", "10px")
+                .style('fill', "#C7C6C1")
+                .style("text-anchor", "middle")
+                .text("A")
+                .attr("font-weight", 500);  
   }
   drawAxis() {    
     this.drawAxisX();
@@ -404,7 +427,7 @@ export class TimelineComponent implements OnInit {
     this.axis_x = d3.axisTop(this.scale_x)
     this.gAxis_x = this.svg.append("g")
                               .attr("class", "axis axis-x")
-                              .attr("transform", "translate(-1," + (this.height-this.margin.bottom) + ")")
+                              .attr("transform", "translate(-1," + (this.height-1.5*this.margin.bottom) + ")")
                               .call(this.axis_x);        
   }
   drawAxisY(){

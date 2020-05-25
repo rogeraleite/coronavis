@@ -1,0 +1,6 @@
+button.add-event-button{
+    position: absolute;
+    top: 17%;
+    left: 89%;
+    z-index:1;
+}  
