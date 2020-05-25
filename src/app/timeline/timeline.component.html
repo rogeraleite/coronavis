@@ -1,5 +1,30 @@
 
 <button class="btn btn-sm btn-outline-dark btn-light add-event-button"
         style="font-size: 0.6em; font-weight: bold;" 
-        (click)="addEvent()">add event</button>
+        (click)="addEvent(content)">add event</button>
 <div class="timeline-chart"></div>
+
+
+
+<ng-template #content let-modal>    
+    <div class="modal-header">
+        <h5>Add Event:</h5>
+    </div>
+    <div class="modal-body">
+    <form>
+        <div class="form-group">
+            <form [formGroup]="form" (ngSubmit)="submitEvent()">
+
+                <input mdbInput placeholder="event title"
+                                type="text" id="titleInput" name="title"
+                                [formControl]="form.controls['title']" required>      
+                <br>    
+                <input name="date" type="date" [formControl]="form.controls['date']" >
+            </form>
+        </div>
+    </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="submitEvent()">Save</button>
+    </div>
+  </ng-template>

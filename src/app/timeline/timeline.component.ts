@@ -3,6 +3,9 @@ import { DataManagerComponent } from '../_datamanager/datamanager.component';
 
 import * as d3 from "d3";
 import * as $ from 'jquery';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { AddEventComponent } from '../add-event/add-event.component';
 
 @Component({
   selector: 'app-timeline',
@@ -14,6 +17,7 @@ export class TimelineComponent implements OnInit {
   @Input() dm: DataManagerComponent;
   @Output() zoomOutput = new EventEmitter<any>();
   @Output() selectedDayOutput = new EventEmitter<any>();
+  public form: FormGroup;
   
 
   protected svg: any;
@@ -31,6 +35,7 @@ export class TimelineComponent implements OnInit {
   protected zoom: any;
   protected received_zoom_flag: boolean = true;
   protected currentTransform;
+  protected closeResult = '';
 
   protected current_data;
   protected current_data_grouped;
@@ -63,11 +68,13 @@ export class TimelineComponent implements OnInit {
 
   private type_selection = [];
   
-  constructor() { }
+  constructor(private modalService: NgbModal,
+              private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.setup();
     this.createChart();
+    this.createForm();
   }
   setup() {
     this.setDimensionsVariables();
@@ -557,5 +564,39 @@ export class TimelineComponent implements OnInit {
   updateSelectedDate(date){
     this.dm.setSelectedDate(date);
     this.refreshChart();
+  }
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+  addEvent(content){   
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, 
+    (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+  getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
+  }
+  submitEvent() { 
+    let value = this.form.value;
+    var date = new Date(value.date); 
+    var milliseconds = date.getTime(); 
+    
+    this.added_events.push({title: value.title, date: milliseconds})
+
+    this.refreshChart();
+    this.modalService.dismissAll();
+  }
+  createForm(){
+    this.form = this.formBuilder.group({
+      title: "",
+      date: ""
+    });
   }
 }

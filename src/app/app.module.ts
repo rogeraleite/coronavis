@@ -17,6 +17,7 @@ import { TimelineComponent } from './timeline/timeline.component';
 import { LinechartTestsComponent } from './linechart-tests/linechart-tests.component';
 import { LinechartPredictionComponent } from './linechart-prediction/linechart-prediction.component';
 import { EventViewComponent } from './event-view/event-view.component';
+import { AddEventComponent } from './add-event/add-event.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { EventViewComponent } from './event-view/event-view.component';
     TimelineComponent,
     LinechartTestsComponent,
     LinechartPredictionComponent,
-    EventViewComponent
+    EventViewComponent,
+    AddEventComponent
   ],
   imports: [
     BrowserModule,
