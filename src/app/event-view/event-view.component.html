@@ -10,6 +10,7 @@
         (click)="submit(note.text)">{{note.mean}}</button>
       </label>
 </div>
+<small *ngIf="!event_notes.length"><br>*no events</small>
 
 
 <ng-template #content let-modal>

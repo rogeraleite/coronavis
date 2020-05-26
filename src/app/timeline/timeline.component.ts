@@ -19,7 +19,6 @@ export class TimelineComponent implements OnInit {
   @Output() selectedDayOutput = new EventEmitter<any>();
   public form: FormGroup;
   
-
   protected svg: any;
   protected gCanvas: any;
   protected tooltip: any;
@@ -82,7 +81,7 @@ export class TimelineComponent implements OnInit {
   }
   setDimensionsVariables(){
     this.divKey = ".timeline-chart";
-    this.width = $(this.divKey).width()*0.99;
+    this.width = $(this.divKey).width()//*0.99;
     this.margin.right = 0;//- $(this.divKey).width()*0.05;
     this.height = ($(document).height()/7) //+ this.margin.top/2;         
     this.currentTransform = d3.zoomIdentity.translate(100,0).scale(1);

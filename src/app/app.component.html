@@ -65,7 +65,7 @@
       <div class="col-sm-2">                
         
       </div>
-      <div class="col-sm-10 timeline">
+      <div id="timeline-chart" class="col-sm-10 timeline timeline-chart">
           <app-timeline [dm]="_dm"
                         (zoomOutput)="applyZoomToLineChart($event)"
                         (selectedDayOutput)="updateSelectedDay_FromTimeline($event)"></app-timeline>
