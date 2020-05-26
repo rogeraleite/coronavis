@@ -433,7 +433,7 @@ export class TimelineComponent implements OnInit {
     this.axis_x = d3.axisTop(this.scale_x)
     this.gAxis_x = this.svg.append("g")
                               .attr("class", "axis axis-x")
-                              .attr("transform", "translate(-1," + (this.height-1.5*this.margin.bottom) + ")")
+                              .attr("transform", "translate(-1," + (this.height-2*this.margin.bottom) + ")")
                               .call(this.axis_x);        
   }
   drawAxisY(){
