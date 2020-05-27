@@ -164,7 +164,15 @@ export class AppComponent {
   }
 
   async updateTimelineTypeSelection($event){
-    this.timelineComponent_child.updateTypeSelection($event);
+    let dates_event_occur = this.timelineComponent_child.updateTypeSelection($event);
+    this.addEventTypeShadowGroup(dates_event_occur);
+  }
+
+  addEventTypeShadowGroup(dates_event_occur){
+    this.lineChartNComponent_child.drawSeveralDateShadows(dates_event_occur);
+    this.lineChartTestsComponent_child.drawSeveralDateShadows(dates_event_occur);
+    this.lineChartPredictionComponent_child.drawSeveralDateShadows(dates_event_occur);
+    this.lineChartNewCases_child.drawSeveralDateShadows(dates_event_occur);
   }
 
   async applyZoomToTimeline($event){

@@ -50,6 +50,8 @@ export class TimelineComponent implements OnInit {
   protected gAxis_x: any;
   protected gAxis_y: any;
 
+  protected eventTypesDate: any = [];
+
   //https://www.weforum.org/agenda/2020/04/coronavirus-spread-covid19-pandemic-timeline-milestones/
   protected global_events = [{type:"global", title: "Diamond Princess cruise ship in quarantine", date: 1580857200000},
                              {type:"global", title: "first death in Europe", date: 1581634800000},
@@ -188,7 +190,9 @@ export class TimelineComponent implements OnInit {
     else{
       this.type_selection.push(type);
     }
+    
     this.refreshChart();
+    return this.eventTypesDate;
   }
 
 
@@ -327,6 +331,7 @@ export class TimelineComponent implements OnInit {
                   .attr("stroke-width", 2);
   }
   drawCountryEventBars() {
+    this.eventTypesDate = [];
     this.country_event_elements = this.gCanvas.selectAll("rect.country-events")
                           .data(this.events_data)
                           .enter()
@@ -352,7 +357,6 @@ export class TimelineComponent implements OnInit {
                               return y;
                             })
                             .on("click", (d) => {
-                              console.log(d.date)
                               this.updateSelectedDateBehavior(d.date);
                             });
       this.addTooltipToCountryEvents();
@@ -368,7 +372,10 @@ export class TimelineComponent implements OnInit {
     if(this.type_selection.length == 0) return 1;
     
     let result = date_events.filter(d => this.type_selection.includes(d.type) )
-    if(result.length>0) return 1;
+    if(result.length>0) {
+      this.eventTypesDate.push(d.date)
+      return 1;
+    }
     return 0.2;
   }
   resetShadow(){

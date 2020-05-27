@@ -1,14 +1,13 @@
 <small *ngIf="selected_date">{{selected_country}}, {{selected_date}}:</small>
+
 <div *ngFor="let note of event_notes">
   <!-- <span class="badge">{{note.type}}</span>  -->
   <!-- {{note.text}} -->
   
-      <label class="checkbox-inline">
-        <input type="checkbox" name="eventcheckbox" (click)="selectCheckBox(note.type)">
+        <input type="checkbox" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)" unchecked>
         <button class="btn btn-sm btn-outline-dark"
         style="font-size: 0.6em; font-weight: bold;" 
         (click)="submit(note.text)">{{note.mean}}</button>
-      </label>
 </div>
 <small *ngIf="!event_notes.length"><br>*no events</small>
 

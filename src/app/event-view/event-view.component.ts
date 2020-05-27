@@ -2,6 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DataManagerComponent } from '../_datamanager/datamanager.component';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
+import * as $ from 'jquery';
+
 @Component({
   selector: 'app-event-view',
   templateUrl: './event-view.component.html',

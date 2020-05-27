@@ -212,7 +212,37 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     let end_incubation_date = this.dm.addDaysToMillisecondDate(date,this.incubation_days);
     let respective_x = this.findXValueByDate(date);
     let respective_end_x = this.findXValueByDate(end_incubation_date);
-    this.drawIncubationPeriodMarks(respective_x, respective_end_x);  
+    this.drawIncubationPeriodShadow(respective_x, respective_end_x);  
+  }
+
+  drawSeveralDateShadows(date_list){
+    this.resetShadow();
+
+    let shadow_size = 10000;
+
+    this.event_shadow = this.gCanvas.selectAll(".event-shadow")
+                                    .data(date_list)
+                                    .enter()
+                                      .append("rect")
+                                      .attr("class","event-shadow")
+                                      .attr("x", -shadow_size)
+                                      .attr("y",-this.height)
+                                      .attr("opacity",.1)
+                                      .attr("height",this.height*3)
+                                      .attr("width", (date)=>{        
+                                        let x_value = this.findXValueByDate(date);
+                                        let end_incubation_date = this.dm.addDaysToMillisecondDate(date, this.incubation_days);
+                                        let end_x_value = this.findXValueByDate(end_incubation_date);
+                                        
+                                        let x_value_pos = this.scale_x(x_value);
+                                        let end_x_value_pos = this.scale_x(end_x_value);
+                                        let dif =  end_x_value_pos - x_value_pos;
+                                        
+                                        return shadow_size+x_value_pos+dif
+                                      })                    
+                                      .on("click",()=>{ 
+                                        this.emitTimelineShadow(null);
+                                      }); 
   }
 
 

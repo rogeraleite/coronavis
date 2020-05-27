@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LinechartsParent } from '../linecharts-parent/linecharts-parent';
 
-import * as $ from 'jquery';
 
 @Component({
   selector: 'app-linechart-tests',

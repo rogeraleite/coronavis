@@ -705,7 +705,7 @@ export class LinechartsParent implements OnInit {
     updateSelectedDay(){
       let date = this.dm.getSelectedDate();
       let end_incubation_date = this.dm.addDaysToMillisecondDate(date,this.incubation_days);
-      this.drawIncubationPeriodMarks(date, end_incubation_date);
+      this.drawIncubationPeriodShadow(date, end_incubation_date);
     }
 
     resetShadow(){
@@ -714,7 +714,33 @@ export class LinechartsParent implements OnInit {
       if(this.event_label) this.event_label.remove();
     }
 
-    drawIncubationPeriodMarks(x_value, x_end_value){
+    drawSeveralDateShadows(date_list){
+      this.resetShadow();
+
+      let shadow_size = 10000;
+
+      this.event_shadow = this.gCanvas.selectAll(".event-shadow")
+                                      .data(date_list)
+                                      .enter()
+                                        .append("rect")
+                                        .attr("class","event-shadow")
+                                        .attr("x", -shadow_size)
+                                        .attr("y",-this.height)
+                                        .attr("opacity",.1)
+                                        .attr("height",this.height*3)
+                                        .attr("width", (d)=>{        
+                                          let x_value_pos = this.scale_x(d);
+                                          let x_end_value = this.dm.addDaysToMillisecondDate(d,this.incubation_days);
+                                          let dif = this.scale_x(x_end_value) - x_value_pos;
+                                          
+                                          return shadow_size+x_value_pos+dif
+                                        })                    
+                                        .on("click",()=>{ 
+                                          this.emitTimelineShadow(null);
+                                        }); 
+    }
+
+    drawIncubationPeriodShadow(x_value, x_end_value){
       this.resetShadow();
 
       let shadow_size = 10000;
@@ -738,29 +764,29 @@ export class LinechartsParent implements OnInit {
                                     .attr("height",this.height*3)
                                     .attr("width",2); 
                                     
-      this.printShadowText(x_value_pos);
-      
+      this.printShadowText(x_value_pos);      
     }
-  printShadowText(x_value_pos) {
-    if(this.divKey==".linechart-newcases"){
-      this.event_label = this.gCanvas.append("text")
-                                      .attr("x", -this.height / 3)
-                                      .attr("font-size", "8px")
-    }
-    else{
-      this.event_label = this.gCanvas.append("text")
-                                      .attr("x", -this.height / 2)
-                                      .attr("font-size", "11px")
 
+    printShadowText(x_value_pos) {
+      if(this.divKey==".linechart-newcases"){
+        this.event_label = this.gCanvas.append("text")
+                                        .attr("x", -this.height / 3)
+                                        .attr("font-size", "8px")
+      }
+      else{
+        this.event_label = this.gCanvas.append("text")
+                                        .attr("x", -this.height / 2)
+                                        .attr("font-size", "11px")
+
+      }
+      this.event_label.attr("class","incubation-period")
+                      .attr("y",x_value_pos+5)
+                      .attr("transform", "rotate(-90)")
+                      .attr("dy", "1em")
+                      .style('fill', 'gray')
+                      .style("text-anchor", "middle")
+                      .text(this.incubation_days+" days incubation period"); 
     }
-    this.event_label.attr("class","incubation-period")
-                    .attr("y",x_value_pos+5)
-                    .attr("transform", "rotate(-90)")
-                    .attr("dy", "1em")
-                    .style('fill', 'gray')
-                    .style("text-anchor", "middle")
-                    .text(this.incubation_days+" days incubation period"); 
-  }
   
 
     changeScale(scale){
