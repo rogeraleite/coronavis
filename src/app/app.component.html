@@ -23,7 +23,7 @@
         <h6>Dimension:</h6>
         <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('cases')" checked>Cases</label><br>             
         <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('deaths')">Deaths</label><br>
-        <br>
+        
         <app-event-view [dm]="_dm"
                         (timelineTypeSelectionOutput)="updateTimelineTypeSelection($event)"></app-event-view>
         <!-- <h6>Events:</h6>
