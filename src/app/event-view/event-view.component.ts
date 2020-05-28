@@ -15,16 +15,20 @@ export class EventViewComponent implements OnInit {
   @Output() timelineTypeSelectionOutput = new EventEmitter<any>();
 
   public event_notes: any;
+  public possible_event_notes: any;
   public selected_date: any;
   public selected_country: any;
   protected closeResult = '';
   
   constructor(private modalService: NgbModal) { }
 
-  ngOnInit() { }
+  ngOnInit() { 
+    this.possible_event_notes = this.dm.getAllAvailableEventNoteTypeMeans();
+  }
 
   updateEvent(){
-    this.event_notes = this.dm.getSelectedEventNotes();
+    this.event_notes = this.getSelectedEventNotes();
+
     this.selected_date = this.dm.pipeDateObjToDateString(this.dm.getSelectedDate());
     this.selected_country = this.dm.getSelectedCountry();
   }
@@ -45,6 +49,25 @@ export class EventViewComponent implements OnInit {
     } else {
       return `with: ${reason}`;
     }
+  }
+
+  getSelectedEventNotes(){
+    let selected = this.dm.getSelectedEventNotes();
+    
+    let result = [];
+    
+    this.possible_event_notes.forEach(element => {
+      let filtered = selected.filter(d => element.mean == d.mean)
+      if(filtered.length>0){
+        result.push(filtered[0]);
+      }
+      else{
+        result.push(element)
+      }
+    });
+
+    console.log(result)
+    return result
   }
 
   selectCheckBox(type){

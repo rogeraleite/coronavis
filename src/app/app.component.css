@@ -13,6 +13,10 @@
 label.radio-inline{
     font-size: 10px;
 } */
+div.menu-option{
+    padding-left: 8px;
+    padding-right: 0px;
+}
 div.cards{
     padding-left: 0%;
 }

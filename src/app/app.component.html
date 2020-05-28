@@ -11,18 +11,26 @@
     </div>   
   </div>
   <div class="row">      
-      <div class="col-sm-2">                
-        <h6>Scale:</h6>                
-        <label class="radio-inline"><input type="radio" name="scaleradio" (click)="changeScale('linear')" checked>Linear</label><br>
-        <label class="radio-inline"><input type="radio" name="scaleradio" (click)="changeScale('log')">Log</label><br>
+      <div class="col-sm-2">    
+        <div class="row">    
+          <div class="col-sm-4 menu-option">      
+            <h6>Scale:</h6>                
+            <label class="radio-inline"><input type="radio" name="scaleradio" (click)="changeScale('linear')" checked>Linear</label><br>
+            <label class="radio-inline"><input type="radio" name="scaleradio" (click)="changeScale('log')">Log</label>
+          </div> 
+          <div class="col-sm-4 menu-option">      
+            <h6>Metric:</h6>                
+            <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('absolute')" checked>Absolute</label><br>
+            <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('perMillion')">per Million</label>  
+          </div> 
+          <div class="col-sm-4 menu-option">      
+            <h6>Dimension:</h6>
+            <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('cases')" checked>Cases</label><br>             
+            <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('deaths')">Deaths</label>
+          </div> 
+        </div>            
+           
         
-        <h6>Metric:</h6>                
-        <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('absolute')" checked>Absolute</label><br>
-        <label class="radio-inline"><input type="radio" name="unitradio" (click)="changeUnit('perMillion')">per Million</label><br>     
-        
-        <h6>Dimension:</h6>
-        <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('cases')" checked>Cases</label><br>             
-        <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('deaths')">Deaths</label><br>
         
         <app-event-view [dm]="_dm"
                         (timelineTypeSelectionOutput)="updateTimelineTypeSelection($event)"></app-event-view>

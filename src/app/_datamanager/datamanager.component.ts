@@ -743,6 +743,26 @@ export class DataManagerComponent implements OnInit {
           return mean;
       }
 
+      getAllAvailableEventNoteTypeMeans(){          
+        return [{mean:"school closure",type:"C1_Notes",text:"none"},
+                {mean:"workplace closure",type:"C2_Notes",text:"none"},
+                {mean:"cancellation of public events",type:"C3_Notes",text:"none"},        
+                {mean:"restrictions on gathering",type:"C4_Notes",text:"none"},
+                {mean:"public transport closures",type:"C5_Notes",text:"none"},
+                {mean:"stay-at-home requirements",type:"C6_Notes",text:"none"},        
+                {mean:"domestic movement restrictions",type:"C7_Notes",text:"none"},               
+                {mean:"international travel restrictions",type:"C8_Notes",text:"none"},
+                {mean:"income support",type:"E1_Notes",text:"none"},        
+                {mean:"debt relief for households",type:"E2_Notes",text:"none"},        
+                {mean:"economic stimulus",type:"E3_Notes",text:"none"},        
+                {mean:"giving international",type:"E4_Notes",text:"none"},
+                {mean:"public information campaign",type:"H1_Notes",text:"none"},
+                {mean:"testing policy",type:"H2_Notes",text:"none"},
+                {mean:"contact tracing policy",type:"H3_Notes",text:"none"},        
+                {mean:"investment in healthcare",type:"H4_Notes",text:"none"},
+                {mean:"other",type:"M1_Notes",text:"none"}];
+      }
+
       getSelectedEventNotes(){
         return this.selected_event_notes;
       }
