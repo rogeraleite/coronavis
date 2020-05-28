@@ -65,8 +65,6 @@ export class EventViewComponent implements OnInit {
         result.push(element)
       }
     });
-
-    console.log(result)
     return result
   }
 
