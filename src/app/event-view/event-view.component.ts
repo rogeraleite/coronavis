@@ -28,9 +28,20 @@ export class EventViewComponent implements OnInit {
 
   updateEvent(){
     this.event_notes = this.getSelectedEventNotes();
-
     this.selected_date = this.dm.pipeDateObjToDateString(this.dm.getSelectedDate());
     this.selected_country = this.dm.getSelectedCountry();
+  }
+
+  updateCheckbox() {
+    let checked:any = document.querySelector(".checkbox-checked");
+    let unchecked:any = document.querySelector(".checkbox-unchecked");
+    if(checked){
+      checked.style.visibility = 'hidden';
+      unchecked.style.visibility = 'visible';
+      console.log("-------reset")
+    }
+    
+    
   }
 
    submit(content){    
@@ -56,6 +67,7 @@ export class EventViewComponent implements OnInit {
     
     let result = [];
     
+    //categorize existing events in selection
     this.possible_event_notes.forEach(element => {
       let filtered = selected.filter(d => element.mean == d.mean)
       if(filtered.length>0){
@@ -68,8 +80,50 @@ export class EventViewComponent implements OnInit {
     return result
   }
 
+  alternateCheckboxCheck(type){
+    // let unchecked:any = document.querySelector(".checkbox-unchecked");
+    // debugger;
+    // if(unchecked.hasAttribute("checked")){
+    //   unchecked.removeAttribute("checked");
+    //   unchecked.setAttribute("unchecked","");  
+    // }
+    // else{
+    //   unchecked.removeAttribute("unchecked");
+    //   unchecked.setAttribute("checked","");  
+    // }
+    // debugger;
+
+    let checked:any = document.querySelector("#"+type+".checkbox-checked");
+    let unchecked:any = document.querySelector("#"+type+".checkbox-unchecked");
+    
+    console.log("--------------------")
+    // console.log(checked)
+    // console.log(unchecked)
+    
+    if(checked.style.visibility == ""){    
+      console.log("checked.style.visibility == ''")
+      checked.style.visibility = "hidden";
+      unchecked.style.visibility = "visible";
+    }
+
+    if(checked.style.visibility == "hidden"){      
+      console.log("checked.style.visibility == 'hidden'")
+      checked.style.visibility = "visible"
+      unchecked.style.visibility = "hidden"
+    }
+    else{   
+      console.log("else")
+      checked.style.visibility = "hidden"
+      unchecked.style.visibility = "visible"
+    }
+    debugger;
+    // console.log(checked)
+    // console.log(unchecked)
+  }
+
   selectCheckBox(type){
     this.timelineTypeSelectionOutput.emit(type);
+    // this.alternateCheckboxCheck(type);
   }
 
   reset(){

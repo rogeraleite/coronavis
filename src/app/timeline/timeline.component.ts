@@ -190,7 +190,6 @@ export class TimelineComponent implements OnInit {
     else{
       this.type_selection.push(type);
     }
-    
     this.refreshChart();
     return this.eventTypesDate;
   }

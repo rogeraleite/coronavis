@@ -857,7 +857,7 @@ export class LinechartsParent implements OnInit {
 
     getColorOpacityByCountry(country){
       if(this.dm.isSelectedCountry(country)){ return 1; }
-      return 0.2      
+      return 0.6
     }
 
     async updateViewsFocus($event){

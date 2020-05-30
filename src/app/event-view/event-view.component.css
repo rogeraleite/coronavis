@@ -7,3 +7,10 @@ div.event-none{
 div.event-exist{
     line-height: 1;
 }
+
+.checkbox-checked{
+    visibility: hidden;
+}
+.checkbox-unchecked{
+    visibility: visible;
+}
