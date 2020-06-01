@@ -104,13 +104,17 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                     .data(this.current_curve_data)
                     .enter()
                       .append("circle")
-                      .attr("r", 2.5)
+                      .attr("r", (d)=>{
+                        let lastDate = this.dm.getLastDateByCountry(d.country);
+                        return (d.date === lastDate) ? 2.5 : 1;
+                      })
                       .attr("opacity", (d)=>{
                         return this.getColorOpacityByCountry(d.country);
                       })                      
                       .style("visibility",(d)=>{
-                        let lastDate = this.dm.getLastDateByCountry(d.country);
-                        return (d.date === lastDate) ? "visible" : "hidden";
+                        // let lastDate = this.dm.getLastDateByCountry(d.country);
+                        // return (d.date === lastDate) ? "visible" : "hidden";
+                        return 'visible';
                       })
                       .style("fill", (d) => { return this.color_scale(d.country); })                      
                       .attr("stroke", "gray")
@@ -125,6 +129,11 @@ export class LinechartNewcasesComponent extends LinechartsParent {
                           return this.scale_y(d.deaths_last_week); 
                         }                            
                         return this.scale_y(d.confirmed_last_week); 
+                      })
+                      .on("click",(d)=>{
+                        if(this.dm.getSelectedCountry()==d.country){
+                          this.emitTimelineShadow(d.date);
+                        }                        
                       });
     this.addTooltipBehaviorToDots();
   }
@@ -209,10 +218,12 @@ export class LinechartNewcasesComponent extends LinechartsParent {
   }
   updateSelectedDay(){
     let date = this.dm.getSelectedDate();
-    let end_incubation_date = this.dm.addDaysToMillisecondDate(date,this.incubation_days);
-    let respective_x = this.findXValueByDate(date);
-    let respective_end_x = this.findXValueByDate(end_incubation_date);
-    this.drawIncubationPeriodShadow(respective_x, respective_end_x);  
+    if(date){
+      let end_incubation_date = this.dm.addDaysToMillisecondDate(date,this.incubation_days);
+      let respective_x = this.findXValueByDate(date);
+      let respective_end_x = this.findXValueByDate(end_incubation_date);    
+      this.drawIncubationPeriodShadow(respective_x, respective_end_x);  
+    }    
   }
 
   drawSeveralDateShadows(date_list){
