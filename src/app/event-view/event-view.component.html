@@ -3,29 +3,31 @@
 <div *ngFor="let note of event_notes">
   <!-- <span class="badge">{{note.type}}</span>  -->
   <!-- {{note.text}} -->
+        <div class="event-none" *ngIf="note.text == 'none'">
+          <input type="checkbox" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)">
+          <small class="event-list"> {{note.mean}}</small>
+        </div>
         <div class="event-exist" *ngIf="note.text != 'none'">
-          <input type="checkbox" class="checkbox-unchecked" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)" unchecked>
-          <input type="checkbox" class="checkbox-checked" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)" checked>
+          <input type="checkbox" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)">
+          <!-- <input type="checkbox" class="checkbox-checked" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)" checked> -->
           <button class="btn btn-sm btn-outline-dark"
                   style="font-size: 0.6em; font-weight: bold;" 
-                  (click)="submit(note.text)">{{note.mean}}</button>
-        </div>
-        <div class="event-none" *ngIf="note.text == 'none'">
-          <input type="checkbox" data-toggle="toggle" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)">
-          <small class="event-list">{{note.mean}}</small>
+                  (click)="submit(content, note)">{{note.mean}}</button>
+                  <!-- <small class="event-list"> {{note.mean}}</small> -->
         </div>
 </div>
 <!-- <small *ngIf="!event_notes.length"><br>*no events</small> -->
 
 <ng-template #content let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+    <h4 class="modal-title" id="modal-basic-title">{{selected_country}}, {{selected_date}}:</h4>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    We are going to add explanation content here.
+    <h4>{{note.mean}}</h4>
+    <h6>{{note.text}}</h6>    
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>

@@ -19,6 +19,7 @@ export class EventViewComponent implements OnInit {
   public selected_date: any;
   public selected_country: any;
   protected closeResult = '';
+  public note = ""
   
   constructor(private modalService: NgbModal) { }
 
@@ -44,7 +45,9 @@ export class EventViewComponent implements OnInit {
     
   }
 
-   submit(content){    
+   submit(content, note){
+     this.note = note;
+         
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
