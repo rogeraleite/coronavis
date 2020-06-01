@@ -13,7 +13,6 @@
           <button class="btn btn-sm btn-outline-dark"
                   style="font-size: 0.6em; font-weight: bold;" 
                   (click)="submit(content, note)">{{note.mean}}</button>
-                  <!-- <small class="event-list"> {{note.mean}}</small> -->
         </div>
 </div>
 <!-- <small *ngIf="!event_notes.length"><br>*no events</small> -->
@@ -29,7 +28,7 @@
     <h4>{{note.mean}}</h4>
     <h6>{{note.text}}</h6>    
   </div>
-  <div class="modal-footer">
+  <!-- <div class="modal-footer">
     <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
-  </div>
+  </div> -->
 </ng-template>
