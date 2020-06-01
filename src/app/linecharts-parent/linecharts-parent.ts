@@ -89,6 +89,8 @@ export class LinechartsParent implements OnInit {
       this.drawAxis();  
       this.defineZoomFeature(); 
       // this.addResetFeatureToButton();
+
+      this.updateSelectedDay();
     }
     getBasicDimensions() {      
       this.width = $(this.divKey).width()//*1.05;
@@ -704,8 +706,10 @@ export class LinechartsParent implements OnInit {
 
     updateSelectedDay(){
       let date = this.dm.getSelectedDate();
-      let end_incubation_date = this.dm.addDaysToMillisecondDate(date,this.incubation_days);
-      this.drawIncubationPeriodShadow(date, end_incubation_date);
+      if(date){      
+        let end_incubation_date = this.dm.addDaysToMillisecondDate(date,this.incubation_days);
+        this.drawIncubationPeriodShadow(date, end_incubation_date);
+      }
     }
 
     resetShadow(){
