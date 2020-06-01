@@ -15,7 +15,7 @@ export class DataManagerComponent implements OnInit {
     private _lastweek_data: Array<any>;
     private _lastweek_data_groupedByCountry: any;
     private _events_data;
-    private _graph_height_proportion = 0.25;
+    private _graph_height_proportion = 0.26;
 
     private _predictionSummary_data: Array<any>;
     private _prediction_data: Array<any>;
@@ -309,7 +309,7 @@ export class DataManagerComponent implements OnInit {
         let g = grouped.get(country);
         g.forEach(sample => { result.push(sample) });            
 
-        this.selected_date = result[9].date;//first event
+        this.selected_date = result[24].date;//first event
         
         return result;        
     }
