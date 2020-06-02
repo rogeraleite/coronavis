@@ -861,7 +861,7 @@ export class LinechartsParent implements OnInit {
 
     getColorOpacityByCountry(country){
       if(this.dm.isSelectedCountry(country)){ return 1; }
-      else if(this.dm.isHighlightSelectedCountryFlag()){ return 0.2; }
+      else if(this.dm.isHighlightSelectedCountryFlag()){ return 0.1; }
       return 0.6
     }
 
