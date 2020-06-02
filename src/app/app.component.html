@@ -28,7 +28,15 @@
             <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('cases')" checked>Cases</label><br>             
             <label class="radio-inline"><input type="radio" name="featureradio" (click)="changeFeature('deaths')">Deaths</label>
           </div> 
-        </div>            
+        </div>  
+        
+        <div class="row">              
+          <div class="col-sm-8 highlight_country">  
+            <div class="row">              
+            <h6>Highlight selected country:&nbsp; </h6> <input type="checkbox" name="hihglightCountry" (click)="switchHighlightSelectedCountry()">
+            </div>  
+          </div>
+        </div>          
            
         
         

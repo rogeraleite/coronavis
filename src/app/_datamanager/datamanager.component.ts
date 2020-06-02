@@ -42,6 +42,8 @@ export class DataManagerComponent implements OnInit {
     private selected_view = "all";
     private selected_event_notes:any ;
 
+    private highlight_selected_country_flag:any = false;
+
     private _colors: d3.ScaleOrdinal<string, string>;
     // private _colors_array = [
     //     '#e6194b', '#f58231', '#ffe119', '#bfef45', '#3cb44b',
@@ -771,4 +773,12 @@ export class DataManagerComponent implements OnInit {
         return date += 1000 * 60 * 60 * 24 * days;
       }
 
+      isHighlightSelectedCountryFlag(){
+        return this.highlight_selected_country_flag;
+      }
+      
+      switchHighlightSelectedCountryFlag(){
+        this.highlight_selected_country_flag = !this.highlight_selected_country_flag;
+        console.log(this.highlight_selected_country_flag)
+      }
 }//end class

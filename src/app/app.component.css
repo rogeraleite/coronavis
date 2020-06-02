@@ -17,6 +17,11 @@ div.menu-option{
     padding-left: 8px;
     padding-right: 0px;
 }
+div.highlight_country{    
+    padding-left: 22px;
+    bottom:0px;
+    /* left:22px; */
+}
 div.cards{
     padding-left: 0%;
 }

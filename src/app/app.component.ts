@@ -125,12 +125,15 @@ export class AppComponent {
     else{
       this._dm.separateEventNotes(event);
       this.eventViewComponent_child.updateEvent();
-
-      this.lineChartNComponent_child.updateSelectedDay();
-      this.lineChartTestsComponent_child.updateSelectedDay();
-      this.lineChartPredictionComponent_child.updateSelectedDay();
-      this.lineChartNewCases_child.updateSelectedDay();
+      this.updateSelectedDayAllLinechartViews();
     }
+  }
+
+  updateSelectedDayAllLinechartViews(){
+    this.lineChartNComponent_child.updateSelectedDay();
+    this.lineChartTestsComponent_child.updateSelectedDay();
+    this.lineChartPredictionComponent_child.updateSelectedDay();
+    this.lineChartNewCases_child.updateSelectedDay();
   }
 
   async updateSelectedDay_FromLinecharts($event){    
@@ -242,6 +245,18 @@ export class AppComponent {
   }
   getControls() {
     return (this.form.get('countries') as FormArray).controls;
+  }
+
+  switchHighlightSelectedCountry(){
+    this._dm.switchHighlightSelectedCountryFlag();
+    this.refreshAllLinecharts();
+  }
+
+  refreshAllLinecharts(){    
+    this.lineChartNComponent_child.refreshChart();
+    this.lineChartNewCases_child.refreshChart();
+    this.lineChartTestsComponent_child.refreshChart();
+    this.lineChartPredictionComponent_child.refreshChart();
   }
   
 }
