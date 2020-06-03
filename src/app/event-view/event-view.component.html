@@ -4,11 +4,11 @@
   <!-- <span class="badge">{{note.type}}</span>  -->
   <!-- {{note.text}} -->
         <div class="event-none" *ngIf="note.text == 'none'">
-          <input type="checkbox" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)">
+          <input type="checkbox" class="event-type" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)">
           <small class="event-list"> {{note.mean}}</small>
         </div>
         <div class="event-exist" *ngIf="note.text != 'none'">
-          <input type="checkbox" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)">
+          <input type="checkbox" class="event-type" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)">
           <!-- <input type="checkbox" class="checkbox-checked" name="{{note.type}}" id="{{note.type}}" (click)="selectCheckBox(note.type)" checked> -->
           <button class="btn btn-sm btn-outline-dark"
                   style="font-size: 0.6em; font-weight: bold;" 

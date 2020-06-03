@@ -90,8 +90,18 @@ export class LinechartsParent implements OnInit {
       this.defineZoomFeature(); 
       // this.addResetFeatureToButton();
 
-      this.updateSelectedDay();
+      this.updateTemporalShade();
     }
+
+    updateTemporalShade() {
+      if(this.dm.isSelectedEventsTypesEmpty()){
+        this.updateSelectedDay();
+      }
+      else{
+        this.drawSeveralDateShadows();
+      }
+    }
+
     getBasicDimensions() {      
       this.width = $(this.divKey).width()//*1.05;
       this.margin.right = 0;//- $(this.divKey).width()*0.05;
@@ -390,10 +400,6 @@ export class LinechartsParent implements OnInit {
 
       this.addTooltipBehaviorToDots();
     }
-
-    
-
-
 
     emitTimelineShadow(date){
       this.selectedDayOutput.emit(date);
@@ -704,7 +710,7 @@ export class LinechartsParent implements OnInit {
       }    
     }
 
-    updateSelectedDay(){
+    protected updateSelectedDay(){
       let date = this.dm.getSelectedDate();
       if(date){      
         let end_incubation_date = this.dm.addDaysToMillisecondDate(date,this.incubation_days);
@@ -718,11 +724,10 @@ export class LinechartsParent implements OnInit {
       if(this.event_label) this.event_label.remove();
     }
 
-    drawSeveralDateShadows(date_list){
+    protected drawSeveralDateShadows(){
       this.resetShadow();
-
+      let date_list = this.dm.getSelectedEventsDates();
       let shadow_size = 10000;
-
       this.event_shadow = this.gCanvas.selectAll(".event-shadow")
                                       .data(date_list)
                                       .enter()
@@ -869,12 +874,5 @@ export class LinechartsParent implements OnInit {
       this.dm.setSelectedView($event)
       this.viewFocusOutput.emit($event)
     }
-
-    updateSelectedCountry(){
-      this.refreshChart();
-    }
-
-    
-
 
 }

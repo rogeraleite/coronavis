@@ -67,6 +67,7 @@ export class AppComponent {
   async updateViewsFocus($event){
     let view_id = $event;
     this.maximazeViewById(view_id)
+    this.syncCheckbox();
   }
 
   maximazeViewById(id){
@@ -83,23 +84,24 @@ export class AppComponent {
     }
     this.refreshChartById(id);
   }  
+
   refreshChartById(id){
     switch(id){
       case "linechart-n":
         this.lineChartNComponent_child.refreshChart();
-        this.lineChartNComponent_child.updateSelectedDay();
+        this.lineChartNComponent_child.updateTemporalShade();
       break;
       case "linechart-tests": 
         this.lineChartTestsComponent_child.refreshChart();
-        this.lineChartTestsComponent_child.updateSelectedDay();
+        this.lineChartTestsComponent_child.updateTemporalShade();
       break;
       case "linechart-newcases": 
         this.lineChartNewCases_child.refreshChart();
-        this.lineChartNewCases_child.updateSelectedDay();
+        this.lineChartNewCases_child.updateTemporalShade();
       break;
       case "linechart-prediction": 
         this.lineChartPredictionComponent_child.refreshChart();
-        this.lineChartPredictionComponent_child.updateSelectedDay();
+        this.lineChartPredictionComponent_child.updateTemporalShade();
       break;
     }
   }
@@ -125,15 +127,16 @@ export class AppComponent {
     else{
       this._dm.separateEventNotes(event);
       this.eventViewComponent_child.updateEvent();
-      this.updateSelectedDayAllLinechartViews();
+      this.updateTemporalShadeInAllLinechartViews();
     }
+    this.syncCheckbox();
   }
 
-  updateSelectedDayAllLinechartViews(){
-    this.lineChartNComponent_child.updateSelectedDay();
-    this.lineChartTestsComponent_child.updateSelectedDay();
-    this.lineChartPredictionComponent_child.updateSelectedDay();
-    this.lineChartNewCases_child.updateSelectedDay();
+  updateTemporalShadeInAllLinechartViews(){
+    this.lineChartNComponent_child.updateTemporalShade();
+    this.lineChartTestsComponent_child.updateTemporalShade();
+    this.lineChartPredictionComponent_child.updateTemporalShade();
+    this.lineChartNewCases_child.updateTemporalShade();
   }
 
   async updateSelectedDay_FromLinecharts($event){    
@@ -146,6 +149,7 @@ export class AppComponent {
       let event = this.timelineComponent_child.getDataEventByDate(date_minus_incubation_phase);
       this.updateSelectedDay_FromTimeline(event);
     }
+    this.syncCheckbox();
   }
   resetShadowInViews() {
     this.timelineComponent_child.resetShadow();
@@ -157,25 +161,26 @@ export class AppComponent {
   }
 
   async applySelectCountry($event){
-    this.lineChartNComponent_child.updateSelectedCountry();
-    this.lineChartTestsComponent_child.updateSelectedCountry();
-    this.lineChartPredictionComponent_child.updateSelectedCountry();
-    this.lineChartNewCases_child.updateSelectedCountry();
-
     this.timelineComponent_child.updateSelectedCountry();
     this.eventViewComponent_child.updateEvent();
+    
+    this.refreshAllLinecharts();
+    this.syncCheckbox();
   }
 
-  async updateTimelineTypeSelection($event){
-    let dates_event_occur = this.timelineComponent_child.updateTypeSelection($event);
-    this.addEventTypeShadowGroup(dates_event_occur);
+  async updateEventTypeSelection($event){
+    this.timelineComponent_child.updateEventTypeSelection($event);
+    this.updateTemporalShadeInAllLinechartViews();
+    this.syncCheckbox();
   }
 
-  addEventTypeShadowGroup(dates_event_occur){
-    this.lineChartNComponent_child.drawSeveralDateShadows(dates_event_occur);
-    this.lineChartTestsComponent_child.drawSeveralDateShadows(dates_event_occur);
-    this.lineChartPredictionComponent_child.drawSeveralDateShadows(dates_event_occur);
-    this.lineChartNewCases_child.drawSeveralDateShadows(dates_event_occur);
+  syncCheckbox(){
+    setTimeout(() => {
+      let ids = this._dm.getSelectedEventsTypes();
+      ids.forEach((e)=>{
+        $("#"+e).prop("checked", true);
+      })
+    }, 50);
   }
 
   async applyZoomToTimeline($event){
@@ -184,7 +189,8 @@ export class AppComponent {
   }
   async applyZoomToLineChart($event){
     let zoom_transform = $event;
-    this.lineChartNComponent_child.receiveZoom(zoom_transform)
+    this.lineChartNComponent_child.receiveZoom(zoom_transform);
+    this.syncCheckbox();
   }
 
   async updateCountriesSelection($event){
@@ -198,6 +204,7 @@ export class AppComponent {
 
     this.timelineComponent_child.loadCountriesByArray(countries);
     this.cardsPanelComponent_child.loadCountriesGroupsByArray(countries);
+    this.syncCheckbox();
   }
 
   addCountry(content){   

@@ -50,8 +50,6 @@ export class TimelineComponent implements OnInit {
   protected gAxis_x: any;
   protected gAxis_y: any;
 
-  protected eventTypesDate: any = [];
-
   //https://www.weforum.org/agenda/2020/04/coronavirus-spread-covid19-pandemic-timeline-milestones/
   protected global_events = [{type:"global", title: "Diamond Princess cruise ship in quarantine", date: 1580857200000},
                              {type:"global", title: "first death in Europe", date: 1581634800000},
@@ -67,8 +65,6 @@ export class TimelineComponent implements OnInit {
   protected global_event_elements: any;
   protected added_event_elements: any;
 
-  private type_selection = [];
-  
   constructor(private modalService: NgbModal,
               private formBuilder: FormBuilder) { }
 
@@ -182,16 +178,40 @@ export class TimelineComponent implements OnInit {
     return result[0]
   }
 
+  updateSelectedEventDates(){
+    let selected_events_dates = this.verifySelectedEventsDate();
+    this.dm.setSelectedEventsDates(selected_events_dates);
+  }
 
-  updateTypeSelection(type){
-    if(this.type_selection.includes(type)){
-      this.type_selection = this.type_selection.filter(d=> d != type)
+  updateEventTypeSelection(type){
+    let event_type_selection = this.dm.getSelectedEventsTypes();
+    if(event_type_selection.includes(type)){
+      //exclude from list
+      event_type_selection = event_type_selection.filter(d=> d != type);
     }
     else{
-      this.type_selection.push(type);
+      //include in list
+      event_type_selection.push(type);
     }
+    this.dm.setSelectedEventsTypes(event_type_selection);
+
+    this.updateSelectedEventDates();
     this.refreshChart();
-    return this.eventTypesDate;
+  }
+
+  verifySelectedEventsDate() {    
+    let event_type_selection = this.dm.getSelectedEventsTypes();
+    let result = [];
+
+    this.events_data.forEach((d)=>{
+      let date_events = this.dm.separateEventNotes(d);
+      let events = date_events.filter(d => event_type_selection.includes(d.type) )
+      if(events.length>0) {
+        result.push(d.date)
+      }
+    })
+
+    return result;
   }
 
 
@@ -315,9 +335,7 @@ export class TimelineComponent implements OnInit {
   createLinesRules() {
     this.lineRule = d3.line()
                       .x((d) => { return this.scale_x(d.date); })
-                      .y((d)=>{ 
-                        console.log(d)
-                        return this.scale_y(d.StringencyLegacyIndexForDisplay); });
+                      .y((d)=>{ return this.scale_y(d.StringencyLegacyIndexForDisplay); });
   }
   drawLines() {
     let color = this.dm.getColorByCountry(this.dm.getSelectedCountry());
@@ -332,7 +350,6 @@ export class TimelineComponent implements OnInit {
                   .attr("stroke-width", 2);
   }
   drawCountryEventBars() {
-    this.eventTypesDate = [];
     this.country_event_elements = this.gCanvas.selectAll("rect.country-events")
                           .data(this.events_data)
                           .enter()
@@ -370,11 +387,11 @@ export class TimelineComponent implements OnInit {
 
   checkEventTypes(d: any) {
     let date_events = this.dm.separateEventNotes(d);
-    if(this.type_selection.length == 0) return 1;
+    if(this.dm.isSelectedEventsTypesEmpty()) return 1;
     
-    let result = date_events.filter(d => this.type_selection.includes(d.type) )
+    let event_type_selection = this.dm.getSelectedEventsTypes();
+    let result = date_events.filter(d => event_type_selection.includes(d.type) )
     if(result.length>0) {
-      this.eventTypesDate.push(d.date)
       return 1;
     }
     return 0.2;
@@ -565,7 +582,7 @@ export class TimelineComponent implements OnInit {
   updateSelectedCountry(){
     let selected_country = this.dm.getSelectedCountry();
     this.loadCountriesByArray([selected_country]);
-    this.type_selection = [];
+    this.updateSelectedEventDates();
     this.refreshChart();
   }
   updateSelectedDate(date){

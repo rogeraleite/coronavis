@@ -43,6 +43,8 @@ export class DataManagerComponent implements OnInit {
     private selected_event_notes:any ;
 
     private highlight_selected_country_flag:any = false;
+    private selected_events_dates:any = [];
+    private selected_events_types:any = [];
 
     private _colors: d3.ScaleOrdinal<string, string>;
     // private _colors_array = [
@@ -779,6 +781,30 @@ export class DataManagerComponent implements OnInit {
       
       switchHighlightSelectedCountryFlag(){
         this.highlight_selected_country_flag = !this.highlight_selected_country_flag;
-        console.log(this.highlight_selected_country_flag)
       }
+
+      getSelectedEventsDates(){
+          return this.selected_events_dates;
+      }
+      setSelectedEventsDates(new_selected_events_dates){
+          this.selected_events_dates = new_selected_events_dates;
+      }
+      setSelectedEventsTypes(new_selected_events_types){
+          this.selected_events_types = new_selected_events_types;
+      }
+      isSelectedEventsTypesEmpty(){
+        if(this.selected_events_types){
+            return this.selected_events_types.length == 0;
+        }
+        return true
+      }
+      getSelectedEventsTypes(){
+        return this.selected_events_types;
+      }
+
+      resetEventsSelection(){
+        this.selected_events_types = []
+        this.selected_events_dates = []
+      }
+
 }//end class

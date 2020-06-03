@@ -94,29 +94,29 @@ export class EventViewComponent implements OnInit {
     // }
     // debugger;
 
-    let checked:any = document.querySelector("#"+type+".checkbox-checked");
-    let unchecked:any = document.querySelector("#"+type+".checkbox-unchecked");
+    // let checked:any = document.querySelector("#"+type+".checkbox-checked");
+    // let unchecked:any = document.querySelector("#"+type+".checkbox-unchecked");
     
-    console.log("--------------------")
-    // console.log(checked)
-    // console.log(unchecked)
+    // console.log("--------------------")
+    // // console.log(checked)
+    // // console.log(unchecked)
     
-    if(checked.style.visibility == ""){    
-      console.log("checked.style.visibility == ''")
-      checked.style.visibility = "hidden";
-      unchecked.style.visibility = "visible";
-    }
+    // if(checked.style.visibility == ""){    
+    //   console.log("checked.style.visibility == ''")
+    //   checked.style.visibility = "hidden";
+    //   unchecked.style.visibility = "visible";
+    // }
 
-    if(checked.style.visibility == "hidden"){      
-      console.log("checked.style.visibility == 'hidden'")
-      checked.style.visibility = "visible"
-      unchecked.style.visibility = "hidden"
-    }
-    else{   
-      console.log("else")
-      checked.style.visibility = "hidden"
-      unchecked.style.visibility = "visible"
-    }
+    // if(checked.style.visibility == "hidden"){      
+    //   console.log("checked.style.visibility == 'hidden'")
+    //   checked.style.visibility = "visible"
+    //   unchecked.style.visibility = "hidden"
+    // }
+    // else{   
+    //   console.log("else")
+    //   checked.style.visibility = "hidden"
+    //   unchecked.style.visibility = "visible"
+    // }
     debugger;
     // console.log(checked)
     // console.log(unchecked)

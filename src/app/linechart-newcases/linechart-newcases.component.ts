@@ -138,7 +138,6 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     this.addTooltipBehaviorToDots();
   }
   getCurrentDotsTooltipText(d){
-
     let last_week = d.confirmed_last_week;
     let total = d.total_confirmed;
     let percentage_growth = last_week*100/total;
@@ -216,7 +215,8 @@ export class LinechartNewcasesComponent extends LinechartsParent {
   drawPrediction() {
     //leave it empty
   }
-  updateSelectedDay(){
+
+  protected updateSelectedDay(){
     let date = this.dm.getSelectedDate();
     if(date){
       let end_incubation_date = this.dm.addDaysToMillisecondDate(date,this.incubation_days);
@@ -226,11 +226,10 @@ export class LinechartNewcasesComponent extends LinechartsParent {
     }    
   }
 
-  drawSeveralDateShadows(date_list){
+  protected drawSeveralDateShadows(){
     this.resetShadow();
-
+    let date_list = this.dm.getSelectedEventsDates();
     let shadow_size = 10000;
-
     this.event_shadow = this.gCanvas.selectAll(".event-shadow")
                                     .data(date_list)
                                     .enter()
