@@ -315,7 +315,9 @@ export class TimelineComponent implements OnInit {
   createLinesRules() {
     this.lineRule = d3.line()
                       .x((d) => { return this.scale_x(d.date); })
-                      .y((d)=>{ return this.scale_y(d.LegacyStringencyIndexForDisplay); });
+                      .y((d)=>{ 
+                        console.log(d)
+                        return this.scale_y(d.StringencyLegacyIndexForDisplay); });
   }
   drawLines() {
     let color = this.dm.getColorByCountry(this.dm.getSelectedCountry());
@@ -337,7 +339,7 @@ export class TimelineComponent implements OnInit {
                             .append("rect")
                             .attr("class", "country-events")
                             .attr("height", (d)=>{ 
-                              let size = this.height - this.scale_y(d.LegacyStringencyIndexForDisplay)
+                              let size = this.height - this.scale_y(d.StringencyLegacyIndexForDisplay)
                               return size;
                             })
                             .attr("width", this.bar_width)
@@ -352,7 +354,7 @@ export class TimelineComponent implements OnInit {
                             })
                             .attr("x", (d) => { return this.scale_x(d.date); })
                             .attr("y", (d)=>{ 
-                              let y = this.scale_y(d.LegacyStringencyIndexForDisplay)
+                              let y = this.scale_y(d.StringencyLegacyIndexForDisplay)
                               return y;
                             })
                             .on("click", (d) => {
