@@ -42,7 +42,7 @@ export class DataManagerComponent implements OnInit {
     private selected_view = "all";
     private selected_event_notes:any ;
 
-    private highlight_selected_country_flag:any = false;
+    private highlight_selected_country_flag:any = true;
     private selected_events_dates:any = [];
     private selected_events_types:any = [];
 
