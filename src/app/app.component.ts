@@ -208,7 +208,6 @@ export class AppComponent {
   }
 
   addCountry(content){   
-    console.log(content) 
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, 

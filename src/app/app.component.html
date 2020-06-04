@@ -52,15 +52,15 @@
       <div class="col-sm-10">          
           <div class="row">      
             <div id="linechart-n" class="col-sm-6 linechart-n">
-                <app-linechart-n [dm]="_dm"
-                                (zoomOutput)="applyZoomToTimeline($event)"
-                                (viewFocusOutput)="updateViewsFocus($event)"
-                                (selectedDayOutput)="updateSelectedDay_FromLinecharts($event)"></app-linechart-n>
+              <app-linechart-n [dm]="_dm"
+                               (zoomOutput)="applyZoomToTimeline($event)"
+                               (viewFocusOutput)="updateViewsFocus($event)"
+                               (selectedDayOutput)="updateSelectedDay_FromLinecharts($event)"></app-linechart-n>
             </div>
             <div id="linechart-tests" class="col-sm-6 linechart-tests">
               <app-linechart-tests [dm]="_dm"
-                                  (viewFocusOutput)="updateViewsFocus($event)"
-                                  (selectedDayOutput)="updateSelectedDay_FromLinecharts($event)"></app-linechart-tests>
+                                   (viewFocusOutput)="updateViewsFocus($event)"
+                                   (selectedDayOutput)="updateSelectedDay_FromLinecharts($event)"></app-linechart-tests>
             </div> 
             <div id="linechart-newcases" class="col-sm-6 linechart-newcases">
               <app-linechart-newcases [dm]="_dm"
