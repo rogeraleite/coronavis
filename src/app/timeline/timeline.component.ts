@@ -102,7 +102,8 @@ export class TimelineComponent implements OnInit {
     this.setXYScales();
     this.scaleXYDomains();
     this.calculateColors();
-    /////////////////////// Part3
+    /////////////////////// Part3    
+    this.addSelectedDayShadow();
     this.drawToolTip();
     this.drawData();
     this.drawAxis();  
@@ -356,13 +357,13 @@ export class TimelineComponent implements OnInit {
                             .append("rect")
                             .attr("class", "country-events")
                             .attr("height", (d)=>{ 
-                              let size = this.height - this.scale_y(d.StringencyLegacyIndexForDisplay)
+                              let size = this.height - this.scale_y(d.StringencyLegacyIndexForDisplay)                              
+                              if(this.dm.isEventEmpty(d)){ size = 0 }
                               return size;
                             })
                             .attr("width", this.bar_width)
                             .style("fill", (d) => { 
                               let color = this.dm.getColorByCountry(d.country);
-                              if(this.dm.isEventEmpty(d)){ color = "white" }
                               return color;
                             })
                             .attr("opacity", (d) => { 
@@ -382,7 +383,6 @@ export class TimelineComponent implements OnInit {
 
   updateSelectedDateBehavior(date){
     this.updateSelectedDate(date);
-    this.addSelectedDayShadow(date);
   }
 
   checkEventTypes(d: any) {
@@ -399,7 +399,8 @@ export class TimelineComponent implements OnInit {
   resetShadow(){
     if(this.day_shadow) this.day_shadow.remove();
   }
-  addSelectedDayShadow(date){
+  addSelectedDayShadow(){
+    let date = this.dm.getSelectedDate();
     this.resetShadow();
     this.day_shadow = this.gCanvas.append("rect")
                                   .attr("class","event-shadow")
